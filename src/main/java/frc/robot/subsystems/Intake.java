@@ -55,6 +55,7 @@ public class Intake extends SubsystemBase {
 
   public void stop(){
     setSpeed(0);
+    
   }
 
   public void intakeOut(){
