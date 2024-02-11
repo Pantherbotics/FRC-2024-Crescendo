@@ -8,15 +8,15 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Elevator;
+
 import frc.robot.subsystems.Intake;
 
 public class FullIntake extends SequentialCommandGroup {
   /** Creates a new RunShooter. */
-  public FullIntake(Shooter shooter, Intake intake, Elevator elevator) {
+  public FullIntake(Shooter shooter, Intake intake) {
     addCommands(
-      new ParallelCommandGroup( new IntakeUntilNote(intake), new ElevatorDown(elevator, shooter)),
-      new ParallelCommandGroup()
+      new ParallelCommandGroup( new IntakeUntilNote(intake))
+      //new ParallelCommandGroup()
       
 
       //intake run

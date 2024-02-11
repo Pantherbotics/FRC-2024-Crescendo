@@ -10,6 +10,7 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -37,29 +38,44 @@ public class Intake extends SubsystemBase {
 
 
   public void intakeDown(){
-    intakePivot.setControl(m_voltagePosition.withPosition(Constants.kIntakeDownPosition));
+    setAngle(Constants.kIntakeDownPosition);
   }
 
   public void intakeUp(){
-    intakePivot.setControl(m_voltagePosition.withPosition(Constants.kIntakeUpPosition));
+    setAngle(Constants.kIntakeUpPosition);
+  }
+
+  public void setAngle(double angle){
+    intakePivot.setControl(m_voltagePosition.withPosition(angle));
   }
 
   public void intakeIn(){
-    intakeRoller.set(Constants.kIntakeInSpeed);
+    setSpeed(Constants.kIntakeInSpeed);
   }
 
-  public void intakeStop(){
-    intakeRoller.set(0);
+  public void stop(){
+    setSpeed(0);
   }
 
   public void intakeOut(){
-    intakeRoller.set(Constants.kIntakeHandoffSpeed);
+    setSpeed(Constants.kIntakeHandoffSpeed);
+  }
+
+  public void setSpeed(double speed){
+    intakeRoller.set(speed);
   }
 
   public Boolean hasNote(){
     return(distanceSensor.getAverageValue() > Constants.kIntakeDistanceSensorThreshold);
   }
 
+  public Command setIntakeAngle(double angle){
+    return runOnce(() -> {setAngle(angle);});
+  }
+
+  public Command setIntakeSpeed(double speed){
+    return runOnce(() -> {setSpeed(speed);});
+  }
 
   @Override
   public void periodic() {
