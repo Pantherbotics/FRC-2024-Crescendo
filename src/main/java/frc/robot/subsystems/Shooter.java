@@ -42,35 +42,26 @@ public class Shooter extends SubsystemBase {
     leftWrist.setPosition(0);
   }
 
-  
 
-  public void spinUp(){
-    leftShooterWheel.set(Constants.kShooterSpinSpeed);
-    rightShooterWheel.set(-Constants.kShooterSpinSpeed);
+  public void setShooterSpeed(double speed){
+    leftShooterWheel.set(speed);
+    rightShooterWheel.set(-speed);
   }
 
-  public void turnOff(){
-    leftShooterWheel.set(0);
-    rightShooterWheel.set(0);
+  public void setIntakeSpeed(double speed){
+    leftShooterIntake.set(speed);
+    rightShooterIntake.set(-speed);
   }
 
   public void setWristAngle(double position){
     leftWrist.setControl(m_voltagePosition.withPosition(position));
   }
 
-  public void handoffPosition(){
-    leftWrist.setControl(m_voltagePosition.withPosition(Constants.kShooterHandoffPosition));
-  }
 
-  public void loadIntake(){
-    if (distanceSensor.getAverageValue() > 100){
-      leftShooterIntake.set(0);
-      rightShooterIntake.set(0);
-    } else {
-      leftShooterIntake.set(Constants.kShooterIntakeSpeed);
-      rightShooterIntake.set(-Constants.kShooterIntakeSpeed);
-    }
+  public boolean hasNote(){
+    return(distanceSensor.getAverageValue() > Constants.kShooterDistanceSensorTreshold);
   }
+  
 
 
 

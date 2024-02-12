@@ -7,37 +7,35 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Intake;
 
-public class IntakeUntilNote extends Command {
+public class setIntakeAngle extends Command {
+  /** Creates a new setIntakeAngle. */
+  private final Intake intake;
+  private double angle;
 
-  private final Intake m_intake;
-
-  /** Creates a new IntakeUntilNote. */
-  public IntakeUntilNote(Intake intake) {
-    m_intake = intake;
+  public setIntakeAngle(Intake intake, double angle) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_intake);
+    this.intake = intake;
+
+    addRequirements(intake);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    m_intake.intakeDown();
-    m_intake.intakeIn();
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    intake.setAngle(angle);
+  }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    m_intake.stop();
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_intake.hasNote();
+    return false;
   }
 }
