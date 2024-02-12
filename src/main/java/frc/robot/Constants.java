@@ -51,6 +51,9 @@ public class Constants {
     public static final double kIntakeInSpeed = 1;
     public static final double kIntakeHandoffSpeed = 0.8;
 
+    // climbers
+    public static final int kLeftClimberMotorID = 0;
+
     // pathfinding
     public static final Pose2d kAmpPose = new Pose2d(2.3, 7, Rotation2d.fromDegrees(90));
     public static final Pose2d kSourcePose = new Pose2d(14.5,1.4,Rotation2d.fromDegrees(-30));
