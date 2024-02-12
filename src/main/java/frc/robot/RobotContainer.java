@@ -12,7 +12,6 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -120,6 +119,22 @@ public class RobotContainer {
         new WaitCommand(1),
         new setShooterIntakeSpeed(shooter, 0)
         ) 
+      )
+    );
+
+    joystick.y().onTrue(
+      new SequentialCommandGroup(
+        new ParallelCommandGroup(
+          new setShooterAngle(shooter, Constants.kShooterSpeakerPosition),
+          drivetrain.pathfindToPosition(Constants.kSpeakerPose),
+          new setShooterSpeed(shooter, Constants.kShooterSpinSpeed)
+        ),
+        new setShooterIntakeSpeed(shooter, 1).until(intake::hasNote),
+        new WaitCommand(1),
+        new ParallelCommandGroup(
+          new setShooterSpeed(shooter,0),
+          new setShooterIntakeSpeed(shooter, 0)
+        )
       )
     );
       
