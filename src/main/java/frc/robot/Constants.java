@@ -8,6 +8,7 @@ package frc.robot;
 public class Constants {
 
     // shooter constants
+
     public static final int kLeftShooterID = 0;
     public static final int kRightShooterID = 0;
 
@@ -16,6 +17,8 @@ public class Constants {
 
     public static final int kShooterDistanceSensorID = 0;
     public static final int kShooterDistanceSensorTreshold = 100;
+    public static final int kShooterLimitSwitchID = 9;
+    public static final double kLimitSwitchToZero = -13;
 
     public static final int kLeftWristID = 0;
     public static final double kShooterHandoffPosition = 0;

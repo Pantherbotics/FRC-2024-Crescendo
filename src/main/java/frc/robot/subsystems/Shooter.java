@@ -14,6 +14,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -28,7 +29,7 @@ public class Shooter extends SubsystemBase {
   CANSparkMax leftShooterIntake = new CANSparkMax(Constants.kLeftShooterIntakeID, MotorType.kBrushless);
   
   AnalogInput distanceSensor = new AnalogInput(Constants.kShooterDistanceSensorID);
-
+  DigitalInput limitSwitch = new DigitalInput(Constants.kShooterLimitSwitchID);
   private final PositionVoltage m_voltagePosition = new PositionVoltage(0, 0, true, 0, 0, false, false, false);
 
   /** Creates a new shooter. */
@@ -67,6 +68,14 @@ public class Shooter extends SubsystemBase {
 
   public boolean hasNote(){
     return(distanceSensor.getAverageValue() > Constants.kShooterDistanceSensorTreshold);
+  }
+
+  public boolean limitSwitch(){
+    return(limitSwitch.get());
+  }
+
+  public void setZero(double position){
+    leftWrist.setPosition(position);
   }
   
 
