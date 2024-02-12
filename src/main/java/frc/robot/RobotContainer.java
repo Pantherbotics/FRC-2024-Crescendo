@@ -84,20 +84,29 @@ public class RobotContainer {
 
 
     // INTAKE BINDS
-    joystick.leftBumper().onTrue(
+    joystick.leftBumper().toggleOnTrue(
       new SequentialCommandGroup(
         new ParallelCommandGroup(
-          new ParallelCommandGroup(
-            new setIntakeAngle(intake, Constants.kIntakeDownPosition),
-            new setIntakeSpeed(intake, Constants.kIntakeInSpeed)
-          ).until(intake::hasNote),
+          new setIntakeAngle(intake, Constants.kIntakeDownPosition),
+          new setIntakeSpeed(intake, Constants.kIntakeInSpeed),
           new setShooterAngle(shooter, Constants.kShooterHandoffPosition)
-        ),
+        ).until(intake::hasNote), // intake down until it has a note
         new ParallelCommandGroup(
-          
+          new setIntakeSpeed(intake, 0),
+          new setIntakeAngle(intake, Constants.kIntakeHandoffPosition)
+        ).until(() -> Constants.kIntakeHandoffPosition - intake.intakeAngle() < 0.1), // TUNE THIS stop intake rollers and pivot up until it is close to the handoff position
+        new ParallelCommandGroup(
+          new setShooterIntakeSpeed(shooter, Constants.kShooterIntakeSpeed),
+          new setIntakeSpeed(intake, Constants.kIntakeHandoffSpeed)
+        ).until(shooter::hasNote), // feed note into shooter until the shooter has a note
+        new ParallelCommandGroup(
+          new setShooterIntakeSpeed(shooter, 0),
+          new setIntakeSpeed(intake, 0),
+          new setShooterAngle(shooter, Constants.kShooterAmpPosition)
         )
       )
     );
+
       
 
 

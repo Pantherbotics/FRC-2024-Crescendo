@@ -8,6 +8,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -27,6 +28,7 @@ public class Intake extends SubsystemBase {
 
   public Intake() {
     distanceSensor.setAverageBits(4);
+    intakeRoller.setNeutralMode(NeutralModeValue.Brake);
 
     //pivot PID
     TalonFXConfiguration configs = new TalonFXConfiguration();
@@ -37,28 +39,9 @@ public class Intake extends SubsystemBase {
   }
 
 
-  public void intakeDown(){
-    setAngle(Constants.kIntakeDownPosition);
-  }
-
-  public void intakeUp(){
-    setAngle(Constants.kIntakeUpPosition);
-  }
 
   public void setAngle(double angle){
     intakePivot.setControl(m_voltagePosition.withPosition(angle));
-  }
-
-  public void intakeIn(){
-    setSpeed(Constants.kIntakeInSpeed);
-  }
-
-  public void stop(){
-    setSpeed(0);
-  }
-
-  public void intakeOut(){
-    setSpeed(Constants.kIntakeHandoffSpeed);
   }
 
   public void setSpeed(double speed){
@@ -69,12 +52,8 @@ public class Intake extends SubsystemBase {
     return(distanceSensor.getAverageValue() > Constants.kIntakeDistanceSensorThreshold);
   }
 
-  public Command setIntakeAngle(double angle){
-    return runOnce(() -> {setAngle(angle);});
-  }
-
-  public Command setIntakeSpeed(double speed){
-    return runOnce(() -> {setSpeed(speed);});
+  public double intakeAngle(){
+    return(intakePivot.getPosition().getValueAsDouble());
   }
 
   @Override

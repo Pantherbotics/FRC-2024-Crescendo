@@ -10,6 +10,7 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -33,6 +34,9 @@ public class Shooter extends SubsystemBase {
   /** Creates a new shooter. */
   public Shooter() {
     leftShooterWheel.setNeutralMode(NeutralModeValue.Coast);
+    rightShooterWheel.setNeutralMode(NeutralModeValue.Coast);
+    rightShooterIntake.setIdleMode(IdleMode.kBrake);
+    leftShooterIntake.setIdleMode(IdleMode.kBrake);
     distanceSensor.setAverageBits(4);
 
     TalonFXConfiguration configs = new TalonFXConfiguration();
@@ -57,13 +61,14 @@ public class Shooter extends SubsystemBase {
     leftWrist.setControl(m_voltagePosition.withPosition(position));
   }
 
+  public double shooterAngle(){
+    return(leftWrist.getPosition().getValueAsDouble());
+  }
 
   public boolean hasNote(){
     return(distanceSensor.getAverageValue() > Constants.kShooterDistanceSensorTreshold);
   }
   
-
-
 
   @Override
   public void periodic() {

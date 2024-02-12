@@ -19,6 +19,7 @@ public class Constants {
 
     public static final int kLeftWristID = 0;
     public static final double kShooterHandoffPosition = 0;
+    public static final double kShooterAmpPosition = 0;
 
     public static final double kShooterSpinSpeed = 1; // speed that flywheels shoot at
     public static final double kShooterIntakeSpeed = 0.8; // speed that shooter intake wheels spin at
@@ -34,19 +35,9 @@ public class Constants {
     public static final double kIntakeEncoderOffset = 0.0;
 
     public static final double kIntakeDownPosition = 0.0;
-    public static final double kIntakeUpPosition = 0.0;
+    public static final double kIntakeHandoffPosition = 0.0;
 
     public static final double kIntakeInSpeed = 1;
     public static final double kIntakeHandoffSpeed = 0.8;
-    
-    // elevator constants
-    public static final int kElevatorMotorID = 0;
-    public static final int kElevatorEncoderID = 0;
-    public static final double kElevatorEncoderOffset = 0;
-
-    public static final double kElevatorIntakePosition = 0.0;
-    public static final double kElevatorAmpPosition = 0.0;
-    public static final double kElevatorTrapPosition = 0.0;
-
 
 }
