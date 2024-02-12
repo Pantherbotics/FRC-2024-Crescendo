@@ -16,11 +16,9 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Telemetry;
-
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
 
@@ -73,7 +71,7 @@ public class RobotContainer {
 
       
     // reset the field-centric heading on left bumper press
-    joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
+    joystick.x().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
 
     // if (Utils.isSimulation()) {
     //   drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
@@ -111,7 +109,19 @@ public class RobotContainer {
       )
     );
 
-    // 
+    //SHOOTER BINDINGS
+    joystick.rightBumper().onTrue(
+      new ParallelCommandGroup(
+        new setShooterAngle(shooter, Constants.kShooterAmpPosition),
+        drivetrain.pathfindToPosition(Constants.kAmpPose)
+      ).finallyDo(() -> 
+      new SequentialCommandGroup(
+        new setShooterIntakeSpeed(shooter, Constants.kShooterAmpSpeed),
+        new WaitCommand(1),
+        new setShooterIntakeSpeed(shooter, 0)
+        ) 
+      )
+    );
       
 
 
@@ -119,7 +129,9 @@ public class RobotContainer {
 
 
 
+
   public RobotContainer() {
+
     configureBindings();
 
     // Invert swerve encoders  DO NOT REMOVE
