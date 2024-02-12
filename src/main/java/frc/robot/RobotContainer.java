@@ -98,15 +98,19 @@ public class RobotContainer {
         new ParallelCommandGroup(
           new setShooterIntakeSpeed(shooter, Constants.kShooterIntakeSpeed),
           new setIntakeSpeed(intake, Constants.kIntakeHandoffSpeed)
-        ).until(shooter::hasNote), // feed note into shooter until the shooter has a note
+        ).until(shooter::hasNote) // feed note into shooter until the shooter has a note
+        
+      ).finallyDo(() ->
         new ParallelCommandGroup(
           new setShooterIntakeSpeed(shooter, 0),
           new setIntakeSpeed(intake, 0),
-          new setShooterAngle(shooter, Constants.kShooterAmpPosition)
+          new setShooterAngle(shooter, Constants.kShooterAmpPosition),
+          new setIntakeAngle(intake, Constants.kIntakeHandoffPosition)
         )
       )
     );
 
+    // 
       
 
 
