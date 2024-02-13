@@ -16,7 +16,7 @@ public class setShooterSpeed extends Command {
   public setShooterSpeed(Shooter shooter, double speed) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.shooter = shooter;
-    addRequirements(shooter);
+    //addRequirements(shooter);
   }
 
   // Called when the command is initially scheduled.

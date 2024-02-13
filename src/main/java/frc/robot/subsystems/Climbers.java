@@ -12,7 +12,6 @@ import frc.robot.Constants;
 public class Climbers extends SubsystemBase {
   /** Creates a new Climbers. */
   TalonFX leftClimber = new TalonFX(Constants.kLeftClimberMotorID);
-
   public Climbers() {}
 
   @Override

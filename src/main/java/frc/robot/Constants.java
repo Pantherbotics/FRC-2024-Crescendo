@@ -15,18 +15,18 @@ public class Constants {
 
     // shooter constants
 
-    public static final int kLeftShooterID = 0;
-    public static final int kRightShooterID = 0;
+    public static final int kLeftShooterID = 31;
+    public static final int kRightShooterID = 32;
 
-    public static final int kLeftShooterIntakeID = 0;
-    public static final int kRightShooterIntakeID = 0;
+    public static final int kLeftShooterIntakeID = 23;
+    public static final int kRightShooterIntakeID = 22;
 
     public static final int kShooterDistanceSensorID = 0;
     public static final int kShooterDistanceSensorTreshold = 100;
     public static final int kShooterLimitSwitchID = 9;
     public static final double kLimitSwitchToZero = -13;
 
-    public static final int kLeftWristID = 0;
+    public static final int kLeftWristID = 30;
     public static final double kShooterHandoffPosition = 0;
     public static final double kShooterAmpPosition = 0;
 
@@ -36,10 +36,10 @@ public class Constants {
     public static final double kShooterSpeakerPosition = 0;
 
     // intake constants
-    public static final int kIntakeRollerID = 0;
-    public static final int kIntakePivotID = 0;
+    public static final int kIntakeRollerID = 24;
+    public static final int kIntakePivotID = 25;
 
-    public static final int kIntakeDistanceSensorID = 0;
+    public static final int kIntakeDistanceSensorID = 1;
     public static final double kIntakeDistanceSensorThreshold = 100.0;
 
     public static final int kIntakeEncoderID = 0;
@@ -52,7 +52,7 @@ public class Constants {
     public static final double kIntakeHandoffSpeed = 0.8;
 
     // climbers
-    public static final int kLeftClimberMotorID = 0;
+    public static final int kLeftClimberMotorID = 26;
 
     // pathfinding
     public static final Pose2d kAmpPose = new Pose2d(2.3, 7, Rotation2d.fromDegrees(90));

@@ -16,7 +16,7 @@ public class setIntakeSpeed extends Command {
     // Use addRequirements() here to declare subsystem dependencies.
     this.intake = intake;
 
-    addRequirements(intake);
+    //addRequirements(intake);
   }
 
   // Called when the command is initially scheduled.
