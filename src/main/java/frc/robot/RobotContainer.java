@@ -56,7 +56,7 @@ public class RobotContainer {
   private void configureBindings() {
 
     // SWERVE BINDS
-    drivetrain.setDefaultCommand(
+    /*drivetrain.setDefaultCommand(
         drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with
                                                                                            // negative Y (forward)
             .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
@@ -79,7 +79,7 @@ public class RobotContainer {
 
     joystick.pov(0).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.5).withVelocityY(0)));
     joystick.pov(180).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(-0.5).withVelocityY(0)));
-
+    */
 
     // INTAKE BINDS
     joystick.leftBumper().toggleOnTrue(
@@ -108,6 +108,11 @@ public class RobotContainer {
       )
     );
 
+    joystick.y().toggleOnTrue(
+      new setIntakeAngle(intake, joystick.getLeftY())
+    );
+    
+
     //SHOOTER BINDINGS
     joystick.rightBumper().onTrue(
       new ParallelCommandGroup(
@@ -122,7 +127,7 @@ public class RobotContainer {
       )
     );
 
-    joystick.y().onTrue(
+/*     joystick.y().onTrue(
       new SequentialCommandGroup(
         new ParallelCommandGroup(
           new setShooterAngle(shooter, Constants.kShooterSpeakerPosition),
@@ -136,7 +141,7 @@ public class RobotContainer {
           new setShooterIntakeSpeed(shooter, 0)
         )
       )
-    );
+    ); */
       
 
 
