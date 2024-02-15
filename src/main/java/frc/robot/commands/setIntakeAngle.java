@@ -14,7 +14,7 @@ public class setIntakeAngle extends Command {
 
   public setIntakeAngle(Intake intake, double Angle) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.angle = Angle;;
+    this.angle = Angle;
     this.intake = intake;
     addRequirements(intake);
   }
@@ -26,7 +26,6 @@ public class setIntakeAngle extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    System.out.println(angle);
     intake.setAngle(angle);
   }
 
@@ -37,6 +36,6 @@ public class setIntakeAngle extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

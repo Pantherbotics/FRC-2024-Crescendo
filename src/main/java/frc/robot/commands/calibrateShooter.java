@@ -12,6 +12,8 @@ public class calibrateShooter extends Command {
   /** Creates a new calibrateShooter. */
   private final Shooter shooter;
   private double zero = 0;
+  private boolean finished = false;
+  
   public calibrateShooter(Shooter shooter) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.shooter = shooter;
@@ -33,6 +35,7 @@ public class calibrateShooter extends Command {
       zero += 0.05;
       shooter.setWristAngle(zero);
     }
+    finished = true;
     shooter.setZero(Constants.kLimitSwitchToZero);
   }
 
@@ -43,6 +46,6 @@ public class calibrateShooter extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return finished;
   }
 }
