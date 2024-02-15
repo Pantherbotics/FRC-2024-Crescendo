@@ -113,10 +113,16 @@ public class RobotContainer {
 
 
     joystick.y().onTrue(
-      new setIntakeAngle(intake, 4)
+      new SequentialCommandGroup(
+      new setIntakeAngle(intake, 8),
+      new setIntakeSpeed(intake, 0.5)
+      )
       
     ).onFalse(
-      new setIntakeAngle(intake, 0)
+      new SequentialCommandGroup(
+      new setIntakeAngle(intake, 0),
+      new setIntakeSpeed(intake, 0)
+      )
     );
 
     //SHOOTER BINDINGS
