@@ -45,7 +45,7 @@ public class Constants {
     public static final int kIntakeEncoderID = 0;
     public static final double kIntakeEncoderOffset = 0.0;
 
-    public static final double kIntakeDownPosition = 0.0;
+    public static final double kIntakeDownPosition = 3.0;
     public static final double kIntakeHandoffPosition = 0.0;
 
     public static final double kIntakeInSpeed = 1;

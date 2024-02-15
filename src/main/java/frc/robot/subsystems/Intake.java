@@ -19,7 +19,7 @@ public class Intake extends SubsystemBase {
   /** Creates a new intake. */
   TalonFX intakeRoller = new TalonFX(Constants.kIntakeRollerID);
   TalonFX intakePivot = new TalonFX(Constants.kIntakePivotID);
-  CANcoder intakeEncoder = new CANcoder(Constants.kIntakeEncoderID);
+  //CANcoder intakeEncoder = new CANcoder(Constants.kIntakeEncoderID);
   AnalogInput distanceSensor = new AnalogInput(Constants.kIntakeDistanceSensorID);
 
   private final PositionVoltage m_voltagePosition = new PositionVoltage(0, 0, true, 0, 0, false, false, false);
@@ -28,18 +28,20 @@ public class Intake extends SubsystemBase {
   public Intake() {
     distanceSensor.setAverageBits(4);
     intakeRoller.setNeutralMode(NeutralModeValue.Brake);
+    intakePivot.setNeutralMode(NeutralModeValue.Brake);
 
     //pivot PID
     TalonFXConfiguration configs = new TalonFXConfiguration();
-    configs.Slot0.kP = 2.4;
-    configs.Slot0.kD = 0.1;
+    configs.Slot0.kP = 0.8;
+    configs.Slot0.kD = 0.3;
     intakePivot.getConfigurator().apply(configs);
-    intakePivot.setPosition(intakeEncoder.getAbsolutePosition().getValueAsDouble() + Constants.kIntakeEncoderOffset);
+    intakePivot.setPosition(0);
   }
 
 
 
   public void setAngle(double angle){
+    
     intakePivot.setControl(m_voltagePosition.withPosition(angle));
   }
 

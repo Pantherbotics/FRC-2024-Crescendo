@@ -12,9 +12,11 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
@@ -29,7 +31,7 @@ public class RobotContainer {
 
 
 
-  private final CommandXboxController joystick = new CommandXboxController(0);
+  
 
 
   /* SWERVE STUFF */
@@ -52,9 +54,10 @@ public class RobotContainer {
 
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
+  private final CommandXboxController joystick = new CommandXboxController(0);
 
   private void configureBindings() {
-
+    
     // SWERVE BINDS
     /*drivetrain.setDefaultCommand(
         drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with
@@ -108,10 +111,13 @@ public class RobotContainer {
       )
     );
 
-    joystick.y().toggleOnTrue(
-      new setIntakeAngle(intake, joystick.getLeftY())
+
+    joystick.y().onTrue(
+      new setIntakeAngle(intake, 4)
+      
+    ).onFalse(
+      new setIntakeAngle(intake, 0)
     );
-    
 
     //SHOOTER BINDINGS
     joystick.rightBumper().onTrue(
