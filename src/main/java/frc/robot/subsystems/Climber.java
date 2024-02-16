@@ -9,10 +9,13 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class Climbers extends SubsystemBase {
+public class Climber extends SubsystemBase {
   /** Creates a new Climbers. */
   TalonFX leftClimber = new TalonFX(Constants.kLeftClimberMotorID);
-  public Climbers() {}
+  TalonFX rightClimber = new TalonFX(Constants.kRightClimberMotorID);
+  public Climber() {
+    
+  }
 
   @Override
   public void periodic() {

@@ -11,10 +11,12 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
@@ -24,17 +26,20 @@ public class RobotContainer {
 
   private final Intake intake = new Intake();
   private final Shooter shooter = new Shooter();
+  public final Vision vision = new Vision();
 
+  public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain;
 
-
+  private final CommandXboxController joystick = new CommandXboxController(0);
   
+  private Trigger intakeButton = joystick.y();
+  private Trigger ampButton = joystick.rightBumper();
+  private Trigger climbButton = joystick.leftBumper().and(joystick.rightBumper());
 
 
   /* SWERVE STUFF */
   private double MaxSpeed = 6; // 6 meters per second desired top speed
   private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
-
-  public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
       .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
@@ -50,7 +55,11 @@ public class RobotContainer {
 
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
-  private final CommandXboxController joystick = new CommandXboxController(0);
+
+
+
+
+
 
   private void configureBindings() {
     
@@ -80,39 +89,13 @@ public class RobotContainer {
     joystick.pov(180).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(-0.5).withVelocityY(0)));
     */
 
-    // INTAKE BINDS
-    /* 
-    joystick.leftBumper().toggleOnTrue(
-      new SequentialCommandGroup(
-        new ParallelCommandGroup(
-          new setIntakeAngle(intake, Constants.kIntakeDownPosition),
-          new setIntakeSpeed(intake, Constants.kIntakeInSpeed),
-          new setShooterAngle(shooter, Constants.kShooterHandoffPosition)
-        ).until(intake::hasNote), // intake down until it has a note
-        new ParallelCommandGroup(
-          new setIntakeSpeed(intake, 0),
-          new setIntakeAngle(intake, Constants.kIntakeHandoffPosition)
-        ).until(() -> Constants.kIntakeHandoffPosition - intake.intakeAngle() < 0.1), // TUNE THIS stop intake rollers and pivot up until it is close to the handoff position
-        new ParallelCommandGroup(
-          new setShooterIntakeSpeed(shooter, Constants.kShooterIntakeSpeed),
-          new setIntakeSpeed(intake, Constants.kIntakeHandoffSpeed)
-        ).until(shooter::hasNote) // feed note into shooter until the shooter has a note
-        
-      ).finallyDo(() ->
-        new ParallelCommandGroup(
-          new setShooterIntakeSpeed(shooter, 0),
-          new setIntakeSpeed(intake, 0),
-          new setShooterAngle(shooter, Constants.kShooterAmpPosition),
-          new setIntakeAngle(intake, Constants.kIntakeHandoffPosition)
-        )
-      )
-    );
-      */
+    vision.setDefaultCommand(vision.update(drivetrain));
+
     joystick.b().onTrue(
       new calibrateShooter(shooter)
     );
 
-    joystick.y().and(()->!intake.hasNote()).onTrue(
+    intakeButton.and(()->!intake.hasNote()).onTrue(
       new SequentialCommandGroup(
         new setIntakeAngle(intake, Constants.kIntakeDownPosition-3),
         new setIntakeSpeed(intake, -0.3),
@@ -128,35 +111,21 @@ public class RobotContainer {
       )
     );
 
-    /*SHOOTER BINDINGS
-    joystick.rightBumper().onTrue(
+    ampButton.and(shooter::hasNote).onTrue(
       new ParallelCommandGroup(
         new setShooterAngle(shooter, Constants.kShooterAmpPosition),
         drivetrain.pathfindToPosition(Constants.kAmpPose)
       ).finallyDo(() -> 
       new SequentialCommandGroup(
         new setShooterIntakeSpeed(shooter, Constants.kShooterAmpSpeed),
-        new WaitCommand(1),
+        new WaitUntilCommand(shooter::hasNote),
+        new WaitCommand(0.1),
         new setShooterIntakeSpeed(shooter, 0)
         ) 
       )
     );
-*/
-/*     joystick.y().onTrue(
-      new SequentialCommandGroup(
-        new ParallelCommandGroup(
-          new setShooterAngle(shooter, Constants.kShooterSpeakerPosition),
-          drivetrain.pathfindToPosition(Constants.kSpeakerPose),
-          new setShooterSpeed(shooter, Constants.kShooterSpinSpeed)
-        ),
-        new setShooterIntakeSpeed(shooter, 1).until(intake::hasNote),
-        new WaitCommand(1),
-        new ParallelCommandGroup(
-          new setShooterSpeed(shooter,0),
-          new setShooterIntakeSpeed(shooter, 0)
-        )
-      )
-    ); */
+
+    //climbButton.onTrue();
       
 
 
