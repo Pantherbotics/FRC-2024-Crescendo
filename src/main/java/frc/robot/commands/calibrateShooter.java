@@ -26,7 +26,7 @@ public class calibrateShooter extends Command {
   @Override
   public void initialize() {
     finished = false;
-    shooter.setWristAngle(zero);
+    shooter.setWristAngle(0);
     zero = shooter.shooterAngle();
     System.out.println("started");
   }

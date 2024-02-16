@@ -15,6 +15,7 @@ public class setShooterIntakeSpeed extends Command {
   public setShooterIntakeSpeed(Shooter shooter, double speed) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.shooter = shooter;
+    this.speed = speed;
     addRequirements(shooter);
   }
 

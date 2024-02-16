@@ -15,7 +15,7 @@ public class setShooterAngle extends Command {
   public setShooterAngle(Shooter shooter, double angle) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.shooter = shooter;
-
+    this.angle = angle;
     addRequirements(shooter);
   }
 

@@ -12,6 +12,7 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -33,7 +34,7 @@ public class RobotContainer {
   private final CommandXboxController joystick = new CommandXboxController(0);
   
   private Trigger intakeButton = joystick.y();
-  private Trigger ampButton = joystick.rightBumper();
+  private Trigger ampButton = joystick.povDown();
   private Trigger climbButton = joystick.leftBumper().and(joystick.rightBumper());
 
 
@@ -53,7 +54,7 @@ public class RobotContainer {
   /* Path follower */
   private Command runAuto = drivetrain.getAutoPath("Tests");
 
-  private final Telemetry logger = new Telemetry(MaxSpeed);
+  //private final Telemetry logger = new Telemetry(MaxSpeed);
 
 
 
@@ -89,7 +90,7 @@ public class RobotContainer {
     joystick.pov(180).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(-0.5).withVelocityY(0)));
     */
 
-    vision.setDefaultCommand(vision.update(drivetrain));
+    //vision.setDefaultCommand(vision.update(vision, drivetrain));
 
     joystick.b().onTrue(
       new calibrateShooter(shooter)
@@ -100,14 +101,25 @@ public class RobotContainer {
         new setIntakeAngle(intake, Constants.kIntakeDownPosition-3),
         new setIntakeSpeed(intake, -0.3),
         new WaitUntilCommand(intake::hasNote),
+        new setShooterAngle(shooter, Constants.kShooterHandoffPosition),
         new setIntakeSpeed(intake, 0),
-        new setIntakeAngle(intake, 0),
-        new WaitUntilCommand(()-> intake.intakeAngle() < 0.5),
-        new setIntakeSpeed(intake, 0.5),
-        new setShooterIntakeSpeed(shooter, -0.1),
-        new WaitUntilCommand(()->!intake.hasNote()),
-        new WaitCommand(1),
-        new setIntakeSpeed(intake, 0)
+        new setIntakeAngle(intake, -0.1),
+        new setShooterIntakeSpeed(shooter, Constants.kShooterIntakeSpeed),
+        new WaitUntilCommand(()-> intake.intakeAngle() < 0),
+        new WaitCommand(0.5),
+        new ParallelCommandGroup(
+          new SequentialCommandGroup(
+            new setIntakeSpeed(intake, 0.3),
+            new WaitUntilCommand(()->!intake.hasNote()),
+            new WaitCommand(1),
+            new setIntakeSpeed(intake, 0)
+          ),
+          new SequentialCommandGroup(
+            new WaitCommand(0.5),
+            new setShooterIntakeSpeed(shooter, 0)
+          )
+
+        )
       )
     );
 
@@ -124,6 +136,21 @@ public class RobotContainer {
         ) 
       )
     );
+
+    joystick.rightBumper().onTrue(
+      new setShooterSpeed(shooter, 0.5)
+    ).onFalse(
+      new setShooterSpeed(shooter, 0)
+    );
+    joystick.leftBumper().whileTrue(
+      new setShooterIntakeSpeed(shooter, 0.3)
+    ).onFalse(
+      new setShooterIntakeSpeed(shooter, 0)
+    );
+
+
+    
+
 
     //climbButton.onTrue();
       

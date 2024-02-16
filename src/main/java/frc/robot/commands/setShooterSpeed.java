@@ -14,9 +14,10 @@ public class setShooterSpeed extends Command {
   private double speed;
 
   public setShooterSpeed(Shooter shooter, double speed) {
-    // Use addRequirements() here to declare subsystem dependencies.
+    // Use addRequirements() here to declare subsystem dependencies
+    this.speed = speed;
     this.shooter = shooter;
-    //addRequirements(shooter);
+    addRequirements(shooter);
   }
 
   // Called when the command is initially scheduled.
@@ -26,7 +27,7 @@ public class setShooterSpeed extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooter.setShooterSpeed(speed);
+    shooter.setShooterFlywheelSpeed(speed);
   }
 
   // Called once the command ends or is interrupted.

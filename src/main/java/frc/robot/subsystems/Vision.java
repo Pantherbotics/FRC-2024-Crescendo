@@ -74,7 +74,8 @@ public class Vision extends SubsystemBase {
     
   }
 
-  public Command update(SwerveDrivetrain swerve){
+  public Command update(Vision vision, SwerveDrivetrain swerve){
+    
     return new RunCommand(() -> updatePose(swerve));
   }
 

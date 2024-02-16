@@ -21,22 +21,24 @@ public class Intake extends SubsystemBase {
   //CANcoder intakeEncoder = new CANcoder(Constants.kIntakeEncoderID);
   AnalogInput distanceSensor = new AnalogInput(Constants.kIntakeDistanceSensorID);
 
-  private final PositionVoltage m_voltagePosition = new PositionVoltage(0, 0, true, 0, 0, false, false, false);
+  private final PositionVoltage m_voltagePosition;
 
 
   public Intake() {
+    m_voltagePosition = new PositionVoltage(0, 0, true, 0, 0, false, false, false);
     distanceSensor.setAverageBits(4);
     intakeRoller.setNeutralMode(NeutralModeValue.Brake);
     intakePivot.setNeutralMode(NeutralModeValue.Brake);
 
     //pivot PID
     TalonFXConfiguration configs = new TalonFXConfiguration();
-    configs.Slot0.kP = 1;
-    configs.Slot0.kD = 0.25;
+    configs.Slot0.kP = 1.4;
+    configs.Slot0.kD = 0.3;
     configs.Slot0.kI = 0.01;
 
-    intakePivot.getConfigurator().apply(configs);
     intakePivot.setPosition(0);
+    intakePivot.getConfigurator().apply(configs);
+    
   }
 
 
