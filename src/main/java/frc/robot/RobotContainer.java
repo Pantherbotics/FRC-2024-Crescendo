@@ -131,8 +131,9 @@ public class RobotContainer {
         new WaitUntilCommand(()-> intake.intakeAngle() < 0.5),
         new setIntakeSpeed(intake, 0.5),
         new setShooterIntakeSpeed(shooter, -0.1),
-        new WaitCommand(2),
-        new RunCommand(()->System.out.println(intake.intakeAngle()))
+        new WaitUntilCommand(()->!intake.hasNote()),
+        new WaitCommand(1),
+        new setIntakeSpeed(intake, 0)
       )
     );
 
