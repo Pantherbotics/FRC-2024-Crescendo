@@ -8,6 +8,8 @@ import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
 
 /** Add your docs here. */
@@ -48,6 +50,11 @@ public class Constants {
 
     // climbers
     public static final int kLeftClimberMotorID = 26;
+    public static final int kRightClimberMotorID = 27;
+
+    // vision
+    public static final String kPhotonCameraName = "Limelight";
+    public static final Transform3d kRobotToCamera = new Transform3d(0,0,0,new Rotation3d(0,0,0));
 
     // pathfinding
     public static final Pose2d kAmpPose = new Pose2d(2.3, 7, Rotation2d.fromDegrees(90));
@@ -58,6 +65,7 @@ public class Constants {
             3.0, 4.0,
             Units.degreesToRadians(540), Units.degreesToRadians(720)
         );
+
 
 
 }
