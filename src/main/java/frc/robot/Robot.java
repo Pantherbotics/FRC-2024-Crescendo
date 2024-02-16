@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.calibrateShooter;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 
 
@@ -67,15 +68,15 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    //new calibrateShooter(new Shooter()).schedule();
+  CommandScheduler.getInstance().cancelAll();
+
   
   }
 
   
-  
   @Override
   public void teleopPeriodic() {
-    
+
   }
 
   @Override

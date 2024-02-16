@@ -11,8 +11,8 @@ import frc.robot.subsystems.Shooter;
 public class calibrateShooter extends Command {
   /** Creates a new calibrateShooter. */
   private final Shooter shooter;
-  private double zero = 0;
-  private boolean finished = false;
+  private double zero;
+  private boolean finished;
   
   public calibrateShooter(Shooter shooter) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -25,18 +25,23 @@ public class calibrateShooter extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    finished = false;
     shooter.setWristAngle(zero);
+    zero = shooter.shooterAngle();
+    System.out.println("started");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    while(shooter.limitSwitch()){
-      zero += 0.05;
-      shooter.setWristAngle(zero);
+    zero += 0.1;
+    shooter.setWristAngle(zero);
+    if (shooter.limitSwitch()){
+      finished = true;
+      shooter.setZero(16);
+      System.out.println("ZEROED");
+      shooter.setWristAngle(0);
     }
-    finished = true;
-    shooter.setZero(Constants.kLimitSwitchToZero);
   }
 
   // Called once the command ends or is interrupted.

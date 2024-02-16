@@ -32,8 +32,10 @@ public class Intake extends SubsystemBase {
 
     //pivot PID
     TalonFXConfiguration configs = new TalonFXConfiguration();
-    configs.Slot0.kP = 0.8;
-    configs.Slot0.kD = 0.3;
+    configs.Slot0.kP = 1;
+    configs.Slot0.kD = 0.25;
+    configs.Slot0.kI = 0.01;
+
     intakePivot.getConfigurator().apply(configs);
     intakePivot.setPosition(0);
   }

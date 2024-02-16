@@ -12,13 +12,18 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
@@ -85,6 +90,7 @@ public class RobotContainer {
     */
 
     // INTAKE BINDS
+    /* 
     joystick.leftBumper().toggleOnTrue(
       new SequentialCommandGroup(
         new ParallelCommandGroup(
@@ -110,22 +116,27 @@ public class RobotContainer {
         )
       )
     );
+      */
+    joystick.b().onTrue(
+      new calibrateShooter(shooter)
+    );
 
-
-    joystick.y().onTrue(
+    joystick.y().and(()->!intake.hasNote()).onTrue(
       new SequentialCommandGroup(
-      new setIntakeAngle(intake, 8),
-      new setIntakeSpeed(intake, 0.5)
-      )
-      
-    ).onFalse(
-      new SequentialCommandGroup(
-      new setIntakeAngle(intake, 0),
-      new setIntakeSpeed(intake, 0)
+        new setIntakeAngle(intake, Constants.kIntakeDownPosition-3),
+        new setIntakeSpeed(intake, -0.3),
+        new WaitUntilCommand(intake::hasNote),
+        new setIntakeSpeed(intake, 0),
+        new setIntakeAngle(intake, 0),
+        new WaitUntilCommand(()-> intake.intakeAngle() < 0.5),
+        new setIntakeSpeed(intake, 0.5),
+        new setShooterIntakeSpeed(shooter, -0.1),
+        new WaitCommand(2),
+        new RunCommand(()->System.out.println(intake.intakeAngle()))
       )
     );
 
-    //SHOOTER BINDINGS
+    /*SHOOTER BINDINGS
     joystick.rightBumper().onTrue(
       new ParallelCommandGroup(
         new setShooterAngle(shooter, Constants.kShooterAmpPosition),
@@ -138,7 +149,7 @@ public class RobotContainer {
         ) 
       )
     );
-
+*/
 /*     joystick.y().onTrue(
       new SequentialCommandGroup(
         new ParallelCommandGroup(

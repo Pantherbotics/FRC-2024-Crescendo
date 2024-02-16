@@ -21,7 +21,7 @@ public class Constants {
     public static final int kLeftShooterIntakeID = 23;
     public static final int kRightShooterIntakeID = 22;
 
-    public static final int kShooterDistanceSensorID = 0;
+    public static final int kShooterDistanceSensorID = 1;
     public static final int kShooterDistanceSensorTreshold = 100;
     public static final int kShooterLimitSwitchID = 9;
     public static final double kLimitSwitchToZero = -13;
@@ -39,13 +39,13 @@ public class Constants {
     public static final int kIntakeRollerID = 24;
     public static final int kIntakePivotID = 25;
 
-    public static final int kIntakeDistanceSensorID = 1;
-    public static final double kIntakeDistanceSensorThreshold = 100.0;
+    public static final int kIntakeDistanceSensorID = 0;
+    public static final double kIntakeDistanceSensorThreshold = 300.0;
 
     public static final int kIntakeEncoderID = 0;
     public static final double kIntakeEncoderOffset = 0.0;
 
-    public static final double kIntakeDownPosition = 3.0;
+    public static final double kIntakeDownPosition = 6.8;
     public static final double kIntakeHandoffPosition = 0.0;
 
     public static final double kIntakeInSpeed = 1;

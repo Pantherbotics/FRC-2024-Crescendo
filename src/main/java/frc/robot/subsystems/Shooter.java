@@ -41,7 +41,7 @@ public class Shooter extends SubsystemBase {
     distanceSensor.setAverageBits(4);
 
     TalonFXConfiguration configs = new TalonFXConfiguration();
-    configs.Slot0.kP = 2.4; // An error of 0.5 rotations results in 1.2 volts output
+    configs.Slot0.kP = 0.7; // An error of 0.5 rotations results in 1.2 volts output
     configs.Slot0.kD = 0.1;
     leftWrist.setPosition(0);
     leftWrist.getConfigurator().apply(configs);
