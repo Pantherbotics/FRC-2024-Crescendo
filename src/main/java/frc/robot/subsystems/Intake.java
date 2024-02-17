@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.mechanisms.swerve.utility.PhoenixPIDController;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -18,6 +19,8 @@ import frc.robot.Constants;
 
 public class Intake extends SubsystemBase {
 
+  // need to switch to https://api.ctr-electronics.com/phoenix6/release/java/com/ctre/phoenix6/mechanisms/swerve/utility/PhoenixPIDController.html
+  PhoenixPIDController controller = new PhoenixPIDController(0, 0, 0);
   /** Creates a new intake. */
   TalonFX intakeRoller = new TalonFX(Constants.kIntakeRollerID);
   TalonFX intakePivot = new TalonFX(Constants.kIntakePivotID);
@@ -31,7 +34,7 @@ public class Intake extends SubsystemBase {
   public Intake() {
     m_voltagePosition = new PositionVoltage(0, 0, true, 0, 0, false, false, false);
     distanceSensor.setAverageBits(4);
-    intakePivot.setPosition(0);
+    
     intakeRoller.setNeutralMode(NeutralModeValue.Brake);
     intakePivot.setNeutralMode(NeutralModeValue.Brake);
 
@@ -43,7 +46,8 @@ public class Intake extends SubsystemBase {
 
 
     intakePivot.getConfigurator().apply(configs);
-    
+    intakePivot.setPosition(0);
+    intakePivot.setControl(m_voltagePosition.withPosition(0));
   }
 
 
