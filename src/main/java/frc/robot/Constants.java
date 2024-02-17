@@ -42,11 +42,13 @@ public class Constants {
     public static final int kIntakeDistanceSensorID = 0;
     public static final double kIntakeDistanceSensorThreshold = 650.0;
 
-    public static final double kIntakeDownPosition = 10.7;
+    public static final double kIntakeDownPosition = 11.1;
     public static final double kIntakeHandoffPosition = 0.0;
 
     public static final double kIntakeInSpeed = 1;
     public static final double kIntakeHandoffSpeed = 0.8;
+
+    public static final int kIntakeLimitSwitchID = 8;
 
     // climbers
     public static final int kLeftClimberMotorID = 26;

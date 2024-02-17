@@ -34,9 +34,9 @@ public class RobotContainer {
   private final CommandXboxController joystick = new CommandXboxController(0);
   
   private Trigger intakeButton = joystick.y();
-  private Trigger ampButton = joystick.povDown();
+  private Trigger ampButton = joystick.povLeft();
   private Trigger climbButton = joystick.leftBumper().and(joystick.rightBumper());
-
+  private Trigger intakeSwitch = new Trigger(intake::limitSwitch);
 
   /* SWERVE STUFF */
   private double MaxSpeed = 6; // 6 meters per second desired top speed
@@ -104,18 +104,18 @@ public class RobotContainer {
         new setShooterAngle(shooter, Constants.kShooterHandoffPosition),
         new setIntakeSpeed(intake, 0),
         new setIntakeAngle(intake, -0.1),
-        new setShooterIntakeSpeed(shooter, Constants.kShooterIntakeSpeed),
-        new WaitUntilCommand(()-> intake.intakeAngle() < 0),
+        new setShooterIntakeSpeed(shooter, -Constants.kShooterIntakeSpeed),
+        new WaitUntilCommand(()->intake.limitSwitch()),
         new WaitCommand(0.5),
         new ParallelCommandGroup(
           new SequentialCommandGroup(
-            new setIntakeSpeed(intake, 0.3),
+            new setIntakeSpeed(intake, 0.4),
             new WaitUntilCommand(()->!intake.hasNote()),
             new WaitCommand(1),
             new setIntakeSpeed(intake, 0)
           ),
           new SequentialCommandGroup(
-            new WaitCommand(0.5),
+            new WaitCommand(0.7),
             new setShooterIntakeSpeed(shooter, 0)
           )
 
@@ -137,17 +137,12 @@ public class RobotContainer {
       )
     );
 
-    joystick.rightBumper().onTrue(
-      new setShooterSpeed(shooter, 0.5)
-    ).onFalse(
-      new setShooterSpeed(shooter, 0)
+    intakeSwitch.onTrue(
+      new SequentialCommandGroup(
+      intake.setZero(),
+      intake.runOnce(()->System.out.println(intake.intakeAngle()))
+      )
     );
-    joystick.leftBumper().whileTrue(
-      new setShooterIntakeSpeed(shooter, 0.3)
-    ).onFalse(
-      new setShooterIntakeSpeed(shooter, 0)
-    );
-
 
     
 

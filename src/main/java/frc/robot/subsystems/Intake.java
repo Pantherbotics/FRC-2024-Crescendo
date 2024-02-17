@@ -10,6 +10,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -18,6 +21,7 @@ public class Intake extends SubsystemBase {
   /** Creates a new intake. */
   TalonFX intakeRoller = new TalonFX(Constants.kIntakeRollerID);
   TalonFX intakePivot = new TalonFX(Constants.kIntakePivotID);
+  DigitalInput zeroSwitch = new DigitalInput(Constants.kIntakeLimitSwitchID);
   //CANcoder intakeEncoder = new CANcoder(Constants.kIntakeEncoderID);
   AnalogInput distanceSensor = new AnalogInput(Constants.kIntakeDistanceSensorID);
 
@@ -27,16 +31,17 @@ public class Intake extends SubsystemBase {
   public Intake() {
     m_voltagePosition = new PositionVoltage(0, 0, true, 0, 0, false, false, false);
     distanceSensor.setAverageBits(4);
+    intakePivot.setPosition(0);
     intakeRoller.setNeutralMode(NeutralModeValue.Brake);
     intakePivot.setNeutralMode(NeutralModeValue.Brake);
 
     //pivot PID
     TalonFXConfiguration configs = new TalonFXConfiguration();
     configs.Slot0.kP = 1.4;
-    configs.Slot0.kD = 0.3;
+    configs.Slot0.kD = 0.35;
     configs.Slot0.kI = 0.01;
 
-    intakePivot.setPosition(0);
+
     intakePivot.getConfigurator().apply(configs);
     
   }
@@ -58,6 +63,14 @@ public class Intake extends SubsystemBase {
 
   public double intakeAngle(){
     return(intakePivot.getPosition().getValueAsDouble());
+  }
+
+  public boolean limitSwitch(){
+    return zeroSwitch.get();
+  }
+
+  public Command setZero(){
+    return new RunCommand(()->intakePivot.setPosition(0));
   }
 
   @Override

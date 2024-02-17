@@ -55,8 +55,9 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setIntakeSpeed(double speed){
-    leftShooterIntake.set(speed);
-    rightShooterIntake.set(-speed);
+    leftShooterIntake.set(-speed);
+    rightShooterIntake.set(
+      speed);
   }
 
   public void setWristAngle(double position){
