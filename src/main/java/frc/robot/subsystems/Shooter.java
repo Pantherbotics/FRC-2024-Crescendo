@@ -13,8 +13,13 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -30,7 +35,10 @@ public class Shooter extends SubsystemBase {
   
   AnalogInput distanceSensor = new AnalogInput(Constants.kShooterDistanceSensorID);
   DigitalInput limitSwitch = new DigitalInput(Constants.kShooterLimitSwitchID);
-  private final PositionVoltage m_voltagePosition = new PositionVoltage(0, 0, true, 0, 0, false, false, false);
+  double lastSpeed;
+  double lastTime;
+  ProfiledPIDController controller;
+  SimpleMotorFeedforward feedforward;
 
   /** Creates a new shooter. */
   public Shooter() {
@@ -40,12 +48,18 @@ public class Shooter extends SubsystemBase {
     leftShooterIntake.setIdleMode(IdleMode.kBrake);
     distanceSensor.setAverageBits(4);
 
-    TalonFXConfiguration configs = new TalonFXConfiguration();
-    configs.Slot0.kP = 0.7; // An error of 0.5 rotations results in 1.2 volts output
-    configs.Slot0.kD = 0.1;
+    lastSpeed = 0;
+    lastTime = Timer.getFPGATimestamp();
+
+    feedforward = new SimpleMotorFeedforward(0, 0, 0);
+
+     controller = new ProfiledPIDController(
+      0, 0, 0,
+      new TrapezoidProfile.Constraints(5, 10)
+    );
+    
     leftWrist.setPosition(0);
-    leftWrist.getConfigurator().apply(configs);
-    leftWrist.setPosition(0);
+
   }
 
 
@@ -61,7 +75,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setWristAngle(double position){
-    leftWrist.setControl(m_voltagePosition.withPosition(position));
+    controller.setGoal(position);
   }
 
   public double shooterAngle(){
@@ -83,6 +97,11 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    double acceleration = (controller.getSetpoint().velocity - lastSpeed) / (Timer.getFPGATimestamp() - lastTime);
+    leftWrist.setVoltage(
+        controller.calculate(shooterAngle())
+        + feedforward.calculate(controller.getSetpoint().velocity, acceleration));
+    lastSpeed = controller.getSetpoint().velocity;
+    lastTime = Timer.getFPGATimestamp();
   }
 }
