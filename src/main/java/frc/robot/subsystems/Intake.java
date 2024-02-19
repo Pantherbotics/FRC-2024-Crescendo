@@ -38,25 +38,33 @@ public class Intake extends SubsystemBase {
     
     intakeRoller.setNeutralMode(NeutralModeValue.Brake);
     intakePivot.setNeutralMode(NeutralModeValue.Brake);
-   
+    intakeRoller.set(0);
+    intakePivot.set(0);
     intakePivot.setPosition(0);
+    
 
     lastSpeed = 0;
     lastTime = Timer.getFPGATimestamp();
 
     feedforward = new ArmFeedforward(0, 0, 0);
 
-     controller = new ProfiledPIDController(
-      0, 0, 0,
-      new TrapezoidProfile.Constraints(5, 10)
+    this.controller = new ProfiledPIDController(
+      0.5, 0, 0.1,
+      new TrapezoidProfile.Constraints(6, 2)
     );
 
+    this.controller.setGoal(0);
+    this.controller.setTolerance(0.5);
 
   }
 
   public void setAngle(double goalPosition) {
     controller.setGoal(goalPosition);
   } 
+
+  public Boolean isAtGoal(){
+    return controller.atGoal();
+  }
 
 
   public void setSpeed(double speed){

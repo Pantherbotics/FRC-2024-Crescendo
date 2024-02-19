@@ -25,32 +25,26 @@ public class calibrateShooter extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    finished = false;
-    shooter.setWristAngle(0);
-    zero = shooter.shooterAngle();
+    shooter.setWristOpenLoop(0.1);
     System.out.println("started");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    zero += 0.1;
-    shooter.setWristAngle(zero);
-    if (shooter.limitSwitch()){
-      finished = true;
-      shooter.setZero(13);
-      System.out.println("ZEROED");
-      shooter.setWristAngle(0);
-    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    shooter.setZero(14);
+    System.out.println("ZEROED");
+    shooter.setWristAngle(0);
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return finished;
+    return shooter.limitSwitch();
   }
 }

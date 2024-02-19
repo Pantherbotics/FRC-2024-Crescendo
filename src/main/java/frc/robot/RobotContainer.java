@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import javax.swing.plaf.synth.SynthStyle;
+
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
@@ -39,8 +41,8 @@ public class RobotContainer {
   
 
   // buttons and triggers
-  private Trigger intakeButton = joystick.leftBumper().and(()->!intake.hasNote()).and(()->!shooter.hasNote()).debounce(1);
-  private Trigger ampButton = joystick.leftBumper().and(shooter::hasNote).and(joystick.rightBumper().negate());
+  private Trigger intakeButton = joystick.leftBumper();//.and(()->!intake.hasNote());//.and(()->!shooter.hasNote());
+  private Trigger ampButton = new Trigger(()->false);//joystick.leftBumper().and(shooter::hasNote).and(joystick.rightBumper().negate());
   private Trigger climbButton = joystick.leftBumper().and(joystick.rightBumper());
   private Trigger intakeSwitch = new Trigger(intake::limitSwitch);
   private Trigger shootButton = joystick.rightBumper().and(shooter::hasNote).and(joystick.leftBumper().negate()).debounce(1);
@@ -73,7 +75,7 @@ public class RobotContainer {
   private void configureBindings() {
     
     // SWERVE BINDS
-    drivetrain.setDefaultCommand(
+    /*drivetrain.setDefaultCommand(
       new ParallelCommandGroup(
         drivetrain.applyRequest(
           () -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
@@ -99,9 +101,9 @@ public class RobotContainer {
 
     //joystick.pov(0).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.5).withVelocityY(0)));
     //joystick.pov(180).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(-0.5).withVelocityY(0)));
-    
+    */
 
-    vision.setDefaultCommand(vision.update(vision, drivetrain));
+    vision.setDefaultCommand(new RunCommand(()->vision.update(vision, drivetrain),vision));
 
     joystick.b().onTrue(
       new calibrateShooter(shooter)
@@ -109,14 +111,18 @@ public class RobotContainer {
 
     intakeButton.onTrue(
       new SequentialCommandGroup(
+        new InstantCommand(()->System.out.println("intake")),
         new setIntakeAngle(intake, Constants.kIntakeDownPosition-3),
         new setIntakeSpeed(intake, -0.3),
         new WaitUntilCommand(intake::hasNote),
         new setShooterAngle(shooter, Constants.kShooterHandoffPosition),
         new setIntakeSpeed(intake, 0),
-        new setIntakeAngle(intake, -0.1),
-        new setShooterIntakeSpeed(shooter, -Constants.kShooterIntakeSpeed),
-        new WaitUntilCommand(intake::limitSwitch),
+        new setIntakeAngle(intake, 0.2),
+        new WaitUntilCommand(intake::isAtGoal),
+        new InstantCommand(()->System.out.println("intake at goal")),
+        new WaitUntilCommand(shooter::isAtGoal),
+        new InstantCommand(()->System.out.println("shooter at goal")),
+        new setShooterIntakeSpeed(shooter, Constants.kShooterIntakeSpeed),
         new WaitCommand(0.5),
         new ParallelCommandGroup(
           new SequentialCommandGroup(

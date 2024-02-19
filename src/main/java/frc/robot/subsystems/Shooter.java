@@ -43,6 +43,8 @@ public class Shooter extends SubsystemBase {
   ProfiledPIDController controller;
   SimpleMotorFeedforward feedforward;
 
+  Boolean openLoop = false;
+
   /** Creates a new shooter. */
   public Shooter() {
     leftShooterWheel.setNeutralMode(NeutralModeValue.Coast);
@@ -50,19 +52,24 @@ public class Shooter extends SubsystemBase {
     rightShooterIntake.setIdleMode(IdleMode.kBrake);
     leftShooterIntake.setIdleMode(IdleMode.kBrake);
     distanceSensor.setAverageBits(4);
+    leftShooterWheel.set(0);
+    rightShooterWheel.set(0);
+    leftShooterIntake.set(0);
+    rightShooterIntake.set(0);
 
     lastSpeed = 0;
     lastTime = Timer.getFPGATimestamp();
 
     feedforward = new SimpleMotorFeedforward(0, 0, 0);
 
-     controller = new ProfiledPIDController(
-      0, 0, 0,
-      new TrapezoidProfile.Constraints(5, 10)
+    this.controller = new ProfiledPIDController(
+      0.2, 0, 0,
+      new TrapezoidProfile.Constraints(6, 1.5)
     );
     
     leftWrist.setPosition(0);
-
+    this.controller.setGoal(0);
+    this.controller.setTolerance(1);
   }
 
 
@@ -78,7 +85,17 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setWristAngle(double position){
+    openLoop = false;
     controller.setGoal(position);
+  }
+
+  public void setWristOpenLoop(double speed){
+    openLoop = true;
+    leftWrist.set(speed);
+  }
+
+  public Boolean isAtGoal(){
+    return controller.atGoal();
   }
 
   public double radiansToWristAngle(double radians){
@@ -104,11 +121,13 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
+    if (!openLoop) {
     double acceleration = (controller.getSetpoint().velocity - lastSpeed) / (Timer.getFPGATimestamp() - lastTime);
     leftWrist.setVoltage(
         controller.calculate(shooterAngle())
         + feedforward.calculate(controller.getSetpoint().velocity, acceleration));
     lastSpeed = controller.getSetpoint().velocity;
     lastTime = Timer.getFPGATimestamp();
+    }
   }
 }
