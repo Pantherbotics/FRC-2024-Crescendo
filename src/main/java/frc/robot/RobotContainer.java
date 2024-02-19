@@ -10,6 +10,8 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -25,6 +27,7 @@ import frc.robot.commands.*;
 
 public class RobotContainer {
 
+  // Instantiate subsystems
   private final Intake intake = new Intake();
   private final Shooter shooter = new Shooter();
   public final Vision vision = new Vision();
@@ -33,16 +36,20 @@ public class RobotContainer {
 
   private final CommandXboxController joystick = new CommandXboxController(0);
   
-  private Trigger intakeButton = joystick.y();
-  private Trigger ampButton = joystick.povLeft();
+
+  // buttons and triggers
+  private Trigger intakeButton = joystick.leftBumper().and(()->!intake.hasNote()).and(()->!shooter.hasNote()).debounce(1);
+  private Trigger ampButton = joystick.leftBumper().and(shooter::hasNote).and(joystick.rightBumper().negate());
   private Trigger climbButton = joystick.leftBumper().and(joystick.rightBumper());
   private Trigger intakeSwitch = new Trigger(intake::limitSwitch);
+  private Trigger shootButton = joystick.rightBumper().and(shooter::hasNote).and(joystick.leftBumper().negate()).debounce(1);
 
   /* SWERVE STUFF */
   private double MaxSpeed = 6; // 6 meters per second desired top speed
   private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
+  public Rotation2d heading = new Rotation2d(0);
 
-  private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
+  private final SwerveRequest.FieldCentricFacingAngle drive = new SwerveRequest.FieldCentricFacingAngle()
       .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
                                                                // driving in open loop
@@ -65,11 +72,11 @@ public class RobotContainer {
   private void configureBindings() {
     
     // SWERVE BINDS
-    /*drivetrain.setDefaultCommand(
+    drivetrain.setDefaultCommand(
         drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with
                                                                                            // negative Y (forward)
             .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-            .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+            .withTargetDirection(heading) 
         ).ignoringDisable(true));
 
 
@@ -79,24 +86,24 @@ public class RobotContainer {
 
       
     // reset the field-centric heading on left bumper press
-    joystick.x().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
+    joystick.x().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative(drivetrain.getState().Pose)));
 
     // if (Utils.isSimulation()) {
     //   drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
     // }
-    drivetrain.registerTelemetry(logger::telemeterize);
+    //drivetrain.registerTelemetry(logger::telemeterize);
 
-    joystick.pov(0).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.5).withVelocityY(0)));
-    joystick.pov(180).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(-0.5).withVelocityY(0)));
-    */
+    //joystick.pov(0).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.5).withVelocityY(0)));
+    //joystick.pov(180).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(-0.5).withVelocityY(0)));
+    
 
-    //vision.setDefaultCommand(vision.update(vision, drivetrain));
+    vision.setDefaultCommand(vision.update(vision, drivetrain));
 
     joystick.b().onTrue(
       new calibrateShooter(shooter)
     );
 
-    intakeButton.and(()->!intake.hasNote()).onTrue(
+    intakeButton.onTrue(
       new SequentialCommandGroup(
         new setIntakeAngle(intake, Constants.kIntakeDownPosition-3),
         new setIntakeSpeed(intake, -0.3),
@@ -105,7 +112,7 @@ public class RobotContainer {
         new setIntakeSpeed(intake, 0),
         new setIntakeAngle(intake, -0.1),
         new setShooterIntakeSpeed(shooter, -Constants.kShooterIntakeSpeed),
-        new WaitUntilCommand(()->intake.limitSwitch()),
+        new WaitUntilCommand(intake::limitSwitch),
         new WaitCommand(0.5),
         new ParallelCommandGroup(
           new SequentialCommandGroup(
@@ -123,7 +130,8 @@ public class RobotContainer {
       )
     );
 
-    ampButton.and(shooter::hasNote).onTrue(
+
+    ampButton.onTrue(
       new ParallelCommandGroup(
         new setShooterAngle(shooter, Constants.kShooterAmpPosition),
         drivetrain.pathfindToPosition(Constants.kAmpPose)
@@ -134,6 +142,15 @@ public class RobotContainer {
         new WaitCommand(0.1),
         new setShooterIntakeSpeed(shooter, 0)
         ) 
+      )
+    );
+
+    shootButton.whileTrue(
+      new SequentialCommandGroup(
+        new setShooterSpeed(shooter, Constants.kShooterSpinSpeed),
+        new setShooterAngle(shooter, Math.atan(5/drivetrain.getState().Pose.getTranslation().getDistance(Constants.kSpeakerPose.getTranslation()))),
+        new RunCommand(() -> heading = new Rotation2d(drivetrain.getState().Pose.getX() - Constants.kSpeakerPose.getX(), drivetrain.getState().Pose.getY() - Constants.kSpeakerPose.getY()))
+        
       )
     );
 

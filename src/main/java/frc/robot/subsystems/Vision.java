@@ -35,8 +35,9 @@ public class Vision extends SubsystemBase {
   private SwerveDriveState swerveState;
   private Optional<EstimatedRobotPose> estimated;
 
-  public Vision() {
 
+
+  public Vision() {
     tagLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
     photonPoseEstimator = new PhotonPoseEstimator(tagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, Constants.kRobotToCamera);
 
@@ -82,6 +83,5 @@ public class Vision extends SubsystemBase {
 
   @Override
   public void periodic() {
-    
   }
 }
