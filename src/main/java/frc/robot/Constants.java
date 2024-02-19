@@ -61,7 +61,7 @@ public class Constants {
     // pathfinding
     public static final Pose2d kAmpPose = new Pose2d(2.3, 7, Rotation2d.fromDegrees(90));
     public static final Pose2d kSourcePose = new Pose2d(14.5,1.4,Rotation2d.fromDegrees(-30));
-    public static final Pose2d kSpeakerPose = new Pose2d(1.7, 5, Rotation2d.fromDegrees(180));
+    public static final Pose2d kSpeakerPose = new Pose2d(0.2, 5.5, Rotation2d.fromDegrees(180));
     public static final PathConstraints kPathfindingConstraints = 
         new PathConstraints(
             3.0, 4.0,
