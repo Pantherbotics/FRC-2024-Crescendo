@@ -36,7 +36,7 @@ public class Shooter extends SubsystemBase {
   CANSparkMax rightShooterIntake = new CANSparkMax(Constants.kRightShooterIntakeID, MotorType.kBrushless);
   CANSparkMax leftShooterIntake = new CANSparkMax(Constants.kLeftShooterIntakeID, MotorType.kBrushless);
   
-  AnalogInput distanceSensor = new AnalogInput(Constants.kShooterDistanceSensorID);
+  AnalogInput mydistanceSensor = new AnalogInput(Constants.kShooterDistanceSensorID);
   DigitalInput limitSwitch = new DigitalInput(Constants.kShooterLimitSwitchID);
   double lastSpeed;
   double lastTime;
@@ -51,7 +51,7 @@ public class Shooter extends SubsystemBase {
     rightShooterWheel.setNeutralMode(NeutralModeValue.Coast);
     rightShooterIntake.setIdleMode(IdleMode.kBrake);
     leftShooterIntake.setIdleMode(IdleMode.kBrake);
-    distanceSensor.setAverageBits(4);
+    mydistanceSensor.setAverageBits(4);
     leftShooterWheel.set(0);
     rightShooterWheel.set(0);
     leftShooterIntake.set(0);
@@ -107,7 +107,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean hasNote(){
-    return(distanceSensor.getAverageValue() > Constants.kShooterDistanceSensorTreshold);
+    return(mydistanceSensor.getAverageValue() > Constants.kShooterDistanceSensorTreshold);
   }
 
   public boolean limitSwitch(){

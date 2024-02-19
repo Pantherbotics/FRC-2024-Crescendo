@@ -54,7 +54,7 @@ public class Intake extends SubsystemBase {
     );
 
     this.controller.setGoal(0);
-    this.controller.setTolerance(0.5);
+    this.controller.setTolerance(0.3);
 
   }
 

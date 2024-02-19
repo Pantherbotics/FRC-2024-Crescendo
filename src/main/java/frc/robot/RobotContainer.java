@@ -15,6 +15,7 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -110,34 +111,7 @@ public class RobotContainer {
     );
 
     intakeButton.onTrue(
-      new SequentialCommandGroup(
-        new InstantCommand(()->System.out.println("intake")),
-        new setIntakeAngle(intake, Constants.kIntakeDownPosition-3),
-        new setIntakeSpeed(intake, -0.3),
-        new WaitUntilCommand(intake::hasNote),
-        new setShooterAngle(shooter, Constants.kShooterHandoffPosition),
-        new setIntakeSpeed(intake, 0),
-        new setIntakeAngle(intake, 0.2),
-        new WaitUntilCommand(intake::isAtGoal),
-        new InstantCommand(()->System.out.println("intake at goal")),
-        new WaitUntilCommand(shooter::isAtGoal),
-        new InstantCommand(()->System.out.println("shooter at goal")),
-        new setShooterIntakeSpeed(shooter, Constants.kShooterIntakeSpeed),
-        new WaitCommand(0.5),
-        new ParallelCommandGroup(
-          new SequentialCommandGroup(
-            new setIntakeSpeed(intake, 0.4),
-            new WaitUntilCommand(()->!intake.hasNote()),
-            new WaitCommand(1),
-            new setIntakeSpeed(intake, 0)
-          ),
-          new SequentialCommandGroup(
-            new WaitCommand(0.7),
-            new setShooterIntakeSpeed(shooter, 0)
-          )
-
-        )
-      )
+      new intakeHandoff(shooter, intake)
     );
 
 

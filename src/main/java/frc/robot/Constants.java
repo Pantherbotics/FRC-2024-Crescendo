@@ -23,8 +23,8 @@ public class Constants {
     public static final int kLeftShooterIntakeID = 23;
     public static final int kRightShooterIntakeID = 22;
 
-    public static final int kShooterDistanceSensorID = 1;
-    public static final double kShooterDistanceSensorTreshold = 650.0;
+    public static final int kShooterDistanceSensorID = 3;
+    public static final double kShooterDistanceSensorTreshold = 500.0;
     public static final int kShooterLimitSwitchID = 9;
 
     public static final int kLeftWristID = 30; //
