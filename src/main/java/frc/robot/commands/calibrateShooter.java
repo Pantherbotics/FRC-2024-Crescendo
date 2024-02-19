@@ -38,7 +38,7 @@ public class calibrateShooter extends Command {
     shooter.setWristAngle(zero);
     if (shooter.limitSwitch()){
       finished = true;
-      shooter.setZero(16);
+      shooter.setZero(13);
       System.out.println("ZEROED");
       shooter.setWristAngle(0);
     }

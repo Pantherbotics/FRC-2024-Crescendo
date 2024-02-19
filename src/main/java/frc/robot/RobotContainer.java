@@ -13,6 +13,7 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -54,7 +55,7 @@ public class RobotContainer {
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
                                                                // driving in open loop
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-  private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+  //private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
 
@@ -73,11 +74,14 @@ public class RobotContainer {
     
     // SWERVE BINDS
     drivetrain.setDefaultCommand(
-        drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with
-                                                                                           // negative Y (forward)
-            .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-            .withTargetDirection(heading) 
-        ).ignoringDisable(true));
+      new ParallelCommandGroup(
+        drivetrain.applyRequest(
+          () -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+          .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+          .withTargetDirection(heading) 
+        ),
+        new InstantCommand(()-> heading = heading.plus( new Rotation2d(joystick.getRightX() * MaxAngularRate)))
+      ).ignoringDisable(true));
 
 
     joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
@@ -148,9 +152,16 @@ public class RobotContainer {
     shootButton.whileTrue(
       new SequentialCommandGroup(
         new setShooterSpeed(shooter, Constants.kShooterSpinSpeed),
-        new setShooterAngle(shooter, Math.atan(5/drivetrain.getState().Pose.getTranslation().getDistance(Constants.kSpeakerPose.getTranslation()))),
-        new RunCommand(() -> heading = new Rotation2d(drivetrain.getState().Pose.getX() - Constants.kSpeakerPose.getX(), drivetrain.getState().Pose.getY() - Constants.kSpeakerPose.getY()))
-        
+        new ParallelCommandGroup(
+          new setShooterAngle(shooter, shooter.radiansToWristAngle(Math.atan(2.032/drivetrain.getState().Pose.getTranslation().getDistance(Constants.kSpeakerPose.getTranslation())))),
+          new InstantCommand(() -> heading = new Rotation2d(drivetrain.getState().Pose.getX() - Constants.kSpeakerPose.getX(), drivetrain.getState().Pose.getY() - Constants.kSpeakerPose.getY()))
+        ).repeatedly()
+      )
+    ).onFalse(
+      new SequentialCommandGroup(
+        new setShooterIntakeSpeed(shooter, 1),
+        new WaitCommand(1),
+        new setIntakeSpeed(intake, 0)
       )
     );
 
