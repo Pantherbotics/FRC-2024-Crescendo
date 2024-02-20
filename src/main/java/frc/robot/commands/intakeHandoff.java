@@ -37,7 +37,7 @@ public class intakeHandoff extends SequentialCommandGroup {
         new WaitUntilCommand(shooter::hasNote), //Problems start here
         new setShooterIntakeSpeed(shooter, -0.3),
         new setIntakeSpeed(intake, 0.3),
-        new WaitUntilCommand(1),
+        new WaitCommand(1),
         new setShooterIntakeSpeed(shooter, 0),
         new setIntakeSpeed(intake, 0)
     );
