@@ -51,13 +51,14 @@ public class RobotContainer {
   /* SWERVE STUFF */
   private double MaxSpeed = 6; // 6 meters per second desired top speed
   private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
-  public Rotation2d heading = new Rotation2d(0);
 
-  private final SwerveRequest.FieldCentricFacingAngle drive = new SwerveRequest.FieldCentricFacingAngle()
+  private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
       .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
                                                                // driving in open loop
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
+  private final SwerveRequest.FieldCentricFacingAngle facing = new SwerveRequest.FieldCentricFacingAngle()
+  .withDeadband(MaxSpeed * 0.1).withDriveRequestType(DriveRequestType.OpenLoopVoltage);
   //private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
@@ -76,14 +77,12 @@ public class RobotContainer {
   private void configureBindings() {
     
     // SWERVE BINDS
-    /*drivetrain.setDefaultCommand(
-      new ParallelCommandGroup(
-        drivetrain.applyRequest(
-          () -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-          .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-          .withTargetDirection(heading) 
-        ),
-        new InstantCommand(()-> heading = heading.plus( new Rotation2d(joystick.getRightX() * MaxAngularRate)))
+    drivetrain.setDefaultCommand(
+      drivetrain.applyRequest(
+        () -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+        .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+        .withRotationalRate(-joystick.getRightX()) 
+      
       ).ignoringDisable(true));
 
 
@@ -102,7 +101,7 @@ public class RobotContainer {
 
     //joystick.pov(0).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.5).withVelocityY(0)));
     //joystick.pov(180).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(-0.5).withVelocityY(0)));
-    */
+    
 
     //vision.setDefaultCommand(new RunCommand(()->vision.update(vision, drivetrain),vision));
 
@@ -135,12 +134,18 @@ public class RobotContainer {
       )
     );
 
+    
+
     shootButton.whileTrue(
       new SequentialCommandGroup(
         new setShooterSpeed(shooter, Constants.kShooterSpinSpeed),
         new ParallelCommandGroup(
           new setShooterAngle(shooter, shooter.radiansToWristAngle(Math.atan(2.032/drivetrain.getState().Pose.getTranslation().getDistance(Constants.kSpeakerPose.getTranslation())))),
-          new InstantCommand(() -> heading = new Rotation2d(drivetrain.getState().Pose.getX() - Constants.kSpeakerPose.getX(), drivetrain.getState().Pose.getY() - Constants.kSpeakerPose.getY()))
+          drivetrain.applyRequest(()->facing
+          .withTargetDirection(new Rotation2d(drivetrain.getState().Pose.getX() - Constants.kSpeakerPose.getX(), drivetrain.getState().Pose.getY() - Constants.kSpeakerPose.getY()))
+          .withVelocityX(-joystick.getLeftX())
+          .withVelocityY(-joystick.getLeftY())
+          )
         ).repeatedly()
       )
     ).onFalse(

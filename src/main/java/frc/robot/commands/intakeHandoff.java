@@ -19,11 +19,6 @@ import frc.robot.subsystems.Shooter;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class intakeHandoff extends SequentialCommandGroup {
   /** Creates a new intakeHandoff. */
-  private int cmdNum = 0;
-  private Command printPoint(){
-    cmdNum ++;
-    return new InstantCommand(()->System.out.println(cmdNum));
-  }
   public intakeHandoff(Shooter shooter, Intake intake) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
@@ -31,37 +26,22 @@ public class intakeHandoff extends SequentialCommandGroup {
     addCommands(
       /*new SequentialCommandGroup(
       ),*/
-        printPoint(),
         new setShooterAngle(shooter, Constants.kShooterHandoffPosition),
-        printPoint(),
         new setIntakeAngle(intake, Constants.kIntakeDownPosition-3),
-        printPoint(),
         new setIntakeSpeed(intake, -0.3),
-        printPoint(),
         new WaitUntilCommand(intake::hasNote),
-        printPoint(),
+        new WaitCommand(0.1),
         new setIntakeSpeed(intake, 0),
-        printPoint(),
         new setIntakeAngle(intake, 0.2),
-        printPoint(),
         new WaitUntilCommand(intake::isAtGoal),
-        printPoint(),
         new setShooterIntakeSpeed(shooter, Constants.kShooterIntakeSpeed),
-        printPoint(),
         new setIntakeSpeed(intake, 0.4),
-        printPoint(),
         new WaitUntilCommand(shooter::hasNote), //Problems start here
-        printPoint(),
-        new setShooterIntakeSpeed(shooter, -0.3),
-        printPoint(),
-        new setIntakeSpeed(intake, 0.3),
-        printPoint(),
-        new WaitCommand(1),
-        printPoint(),
+        new setShooterIntakeSpeed(shooter, -0.2),
+        new setIntakeSpeed(intake, 0.2),
+        new WaitCommand(0.73),
         new setShooterIntakeSpeed(shooter, 0),
-        printPoint(),
-        new setIntakeSpeed(intake, 0),
-        printPoint()
+        new setIntakeSpeed(intake, 0)
     );
   }
 }
