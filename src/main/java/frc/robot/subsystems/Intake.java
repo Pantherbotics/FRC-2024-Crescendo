@@ -62,7 +62,7 @@ public class Intake extends SubsystemBase {
     controller.setGoal(goalPosition);
   } 
 
-  public Boolean isAtGoal(){
+  public boolean isAtGoal(){
     return controller.atGoal();
   }
 
@@ -71,7 +71,7 @@ public class Intake extends SubsystemBase {
     intakeRoller.set(speed);
   }
 
-  public Boolean hasNote(){
+  public boolean hasNote(){
     return(sensorValue > Constants.kIntakeDistanceSensorThreshold);
   }
 

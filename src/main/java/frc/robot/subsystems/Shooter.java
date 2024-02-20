@@ -43,7 +43,7 @@ public class Shooter extends SubsystemBase {
   ProfiledPIDController controller;
   SimpleMotorFeedforward feedforward;
   int sensorValue = 0;
-  Boolean openLoop = false;
+  boolean openLoop = false;
 
   /** Creates a new shooter. */
   public Shooter() {
@@ -94,7 +94,7 @@ public class Shooter extends SubsystemBase {
     leftWrist.set(speed);
   }
 
-  public Boolean isAtGoal(){
+  public boolean isAtGoal(){
     return controller.atGoal();
   }
 
