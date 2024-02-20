@@ -34,7 +34,7 @@ public class Intake extends SubsystemBase {
   int sensorValue = 0;
 
   public Intake() {
-    distanceSensor.setAverageBits(2);
+    distanceSensor.setAverageBits(4);
     
     intakeRoller.setNeutralMode(NeutralModeValue.Brake);
     intakePivot.setNeutralMode(NeutralModeValue.Brake);

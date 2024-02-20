@@ -152,10 +152,7 @@ public class RobotContainer {
     );
 
     intakeSwitch.onTrue(
-      new SequentialCommandGroup(
-      intake.setZero(),
-      intake.runOnce(()->System.out.println(intake.intakeAngle()))
-      )
+      intake.setZero()
     );
 
     

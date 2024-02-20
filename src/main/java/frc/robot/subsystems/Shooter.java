@@ -51,7 +51,7 @@ public class Shooter extends SubsystemBase {
     rightShooterWheel.setNeutralMode(NeutralModeValue.Coast);
     rightShooterIntake.setIdleMode(IdleMode.kBrake);
     leftShooterIntake.setIdleMode(IdleMode.kBrake);
-    mydistanceSensor.setAverageBits(2);
+    mydistanceSensor.setAverageBits(4);
     leftShooterWheel.set(0);
     rightShooterWheel.set(0);
     leftShooterIntake.set(0);
