@@ -42,7 +42,7 @@ public class Shooter extends SubsystemBase {
   double lastTime;
   ProfiledPIDController controller;
   SimpleMotorFeedforward feedforward;
-
+  int sensorValue = 0;
   Boolean openLoop = false;
 
   /** Creates a new shooter. */
@@ -51,7 +51,7 @@ public class Shooter extends SubsystemBase {
     rightShooterWheel.setNeutralMode(NeutralModeValue.Coast);
     rightShooterIntake.setIdleMode(IdleMode.kBrake);
     leftShooterIntake.setIdleMode(IdleMode.kBrake);
-    mydistanceSensor.setAverageBits(4);
+    mydistanceSensor.setAverageBits(2);
     leftShooterWheel.set(0);
     rightShooterWheel.set(0);
     leftShooterIntake.set(0);
@@ -107,7 +107,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean hasNote(){
-    return(mydistanceSensor.getAverageValue() > Constants.kShooterDistanceSensorTreshold);
+    return(sensorValue > Constants.kShooterDistanceSensorTreshold);
   }
 
   public boolean limitSwitch(){
@@ -121,6 +121,9 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
+
+
+    sensorValue = mydistanceSensor.getAverageValue();
     if (!openLoop) {
     double acceleration = (controller.getSetpoint().velocity - lastSpeed) / (Timer.getFPGATimestamp() - lastTime);
     leftWrist.setVoltage(

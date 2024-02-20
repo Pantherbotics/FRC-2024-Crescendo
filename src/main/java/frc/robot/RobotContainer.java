@@ -104,7 +104,7 @@ public class RobotContainer {
     //joystick.pov(180).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(-0.5).withVelocityY(0)));
     */
 
-    vision.setDefaultCommand(new RunCommand(()->vision.update(vision, drivetrain),vision));
+    //vision.setDefaultCommand(new RunCommand(()->vision.update(vision, drivetrain),vision));
 
     joystick.b().onTrue(
       new calibrateShooter(shooter)
@@ -112,6 +112,12 @@ public class RobotContainer {
 
     intakeButton.onTrue(
       new intakeHandoff(shooter, intake)
+    );
+
+    new Trigger(shooter::hasNote).onTrue(
+      new InstantCommand(()->System.out.println("shooter has note"))
+    ).onFalse(
+      new InstantCommand(()->System.out.println("No more note"))
     );
 
 

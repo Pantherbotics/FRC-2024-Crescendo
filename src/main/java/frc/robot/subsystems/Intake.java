@@ -31,10 +31,10 @@ public class Intake extends SubsystemBase {
   double lastTime;
   ProfiledPIDController controller;
   ArmFeedforward feedforward;
-
+  int sensorValue = 0;
 
   public Intake() {
-    distanceSensor.setAverageBits(4);
+    distanceSensor.setAverageBits(2);
     
     intakeRoller.setNeutralMode(NeutralModeValue.Brake);
     intakePivot.setNeutralMode(NeutralModeValue.Brake);
@@ -72,7 +72,7 @@ public class Intake extends SubsystemBase {
   }
 
   public Boolean hasNote(){
-    return(distanceSensor.getAverageValue() > Constants.kIntakeDistanceSensorThreshold);
+    return(sensorValue > Constants.kIntakeDistanceSensorThreshold);
   }
 
   public double intakeAngle(){
@@ -89,6 +89,7 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
+    sensorValue = distanceSensor.getAverageValue();
     double acceleration = (controller.getSetpoint().velocity - lastSpeed) / (Timer.getFPGATimestamp() - lastTime);
     intakePivot.setVoltage(
         controller.calculate(intakeAngle())
