@@ -56,7 +56,7 @@ public class Shooter extends SubsystemBase {
   //this way seems more convoluted than just reallocating, but its in the wpilib examples.
 
   // Create a new SysId routine for characterizing the shooter.
-  private final SysIdRoutine sysIdRoutine =
+  private final SysIdRoutine pivotSysIdRoutine =
       new SysIdRoutine(
           // Empty config defaults to 1 volt/second ramp rate and 7 volt step voltage.
           new SysIdRoutine.Config(),
@@ -69,7 +69,7 @@ public class Shooter extends SubsystemBase {
               // characterized.
               log -> {
                 // Record a frame for the shooter motor.
-                log.motor("shooter-wheel")
+                log.motor("shooter-pivot")
                     .voltage(
                         appliedVoltage.mut_replace(
                             leftWrist.get() * RobotController.getBatteryVoltage(), Volts))
@@ -80,6 +80,83 @@ public class Shooter extends SubsystemBase {
               // Tell SysId to make generated commands require this subsystem, suffix test state in
               // WPILog with this subsystem's name ("shooter")
               this));
+  
+  private final SysIdRoutine wheelSysIdRoutine =
+      new SysIdRoutine(
+          // Empty config defaults to 1 volt/second ramp rate and 7 volt step voltage.
+          new SysIdRoutine.Config(),
+          new SysIdRoutine.Mechanism(
+              // Tell SysId how to plumb the driving voltage to the motor(s).
+              (Measure<Voltage> volts) -> {
+                leftShooterWheel.setVoltage(-volts.magnitude());
+                rightShooterWheel.setVoltage(volts.magnitude());
+              },
+              // Tell SysId how to record a frame of data for each motor on the mechanism being
+              // characterized.
+              log -> {
+                // Record a frame for the shooter motor.
+                log.motor("right-shooter-wheel")
+                    .voltage(
+                        appliedVoltage.mut_replace(
+                            rightShooterWheel.get() * RobotController.getBatteryVoltage(), Volts))
+                    .angularPosition(angle.mut_replace(rightShooterWheel.getPosition().getValueAsDouble(), Rotations))
+                    .angularVelocity(
+                        velocity.mut_replace(rightShooterWheel.getVelocity().getValueAsDouble(), RotationsPerSecond));
+
+                // Record a frame for the shooter motor.
+                log.motor("left-shooter-wheel")
+                    .voltage(
+                        appliedVoltage.mut_replace(
+                            leftShooterWheel.get() * RobotController.getBatteryVoltage(), Volts))
+                    .angularPosition(angle.mut_replace(leftShooterWheel.getPosition().getValueAsDouble(), Rotations))
+                    .angularVelocity(
+                        velocity.mut_replace(leftShooterWheel.getVelocity().getValueAsDouble(), RotationsPerSecond));
+              },
+              // Tell SysId to make generated commands require this subsystem, suffix test state in
+              // WPILog with this subsystem's name ("shooter")
+              this));
+  
+
+/* can't do sysId on the intake bcecause we dont have encoders lol
+  private final SysIdRoutine intakeSysIdRoutine =
+      new SysIdRoutine(
+          // Empty config defaults to 1 volt/second ramp rate and 7 volt step voltage.
+          new SysIdRoutine.Config(),
+          new SysIdRoutine.Mechanism(
+              // Tell SysId how to plumb the driving voltage to the motor(s).
+              (Measure<Voltage> volts) -> {
+                leftShooterIntake.setVoltage(-volts.magnitude());
+                rightShooterIntake.setVoltage(volts.magnitude());
+              },
+              // Tell SysId how to record a frame of data for each motor on the mechanism being
+              // characterized.
+              log -> {
+                // Record a frame for the shooter motor.
+                log.motor("right-shooter-wheel")
+                    .voltage(
+                        appliedVoltage.mut_replace(
+                            rightShooterIntake.get() * RobotController.getBatteryVoltage(), Volts))
+                    .angularPosition(angle.mut_replace(rightShooterIntake.getEncoder.getPosition().getValueAsDouble(), Rotations))
+                    .angularVelocity(
+                        velocity.mut_replace(rightShooterIntake.getEncoder.getVelocity().getValueAsDouble(), RotationsPerSecond));
+
+                // Record a frame for the shooter motor.
+                log.motor("left-shooter-wheel")
+                    .voltage(
+                        appliedVoltage.mut_replace(
+                            leftShooterIntake.get() * RobotController.getBatteryVoltage(), Volts))
+                    .angularPosition(angle.mut_replace(leftShooterIntake.getEncoder.getPosition().getValueAsDouble(), Rotations))
+                    .angularVelocity(
+                        velocity.mut_replace(leftShooterIntake.getEncoder.getVelocity().getValueAsDouble(), RotationsPerSecond));
+              },
+              // Tell SysId to make generated commands require this subsystem, suffix test state in
+              // WPILog with this subsystem's name ("shooter")
+              this));
+ */
+  
+
+
+  
   
   /** Creates a new shooter. */
   public Shooter() {
@@ -142,11 +219,19 @@ public class Shooter extends SubsystemBase {
     leftWrist.setPosition(position);
   }
 
-   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return sysIdRoutine.quasistatic(direction);
+   public Command pivotSysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return pivotSysIdRoutine.quasistatic(direction);
   }
 
-   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return sysIdRoutine.dynamic(direction);
+   public Command pivotSysIdDynamic(SysIdRoutine.Direction direction) {
+    return pivotSysIdRoutine.dynamic(direction);
+  }
+
+   public Command wheelSysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return wheelSysIdRoutine.quasistatic(direction);
+  }
+
+   public Command wheelSysIdDynamic(SysIdRoutine.Direction direction) {
+    return wheelSysIdRoutine.dynamic(direction);
   }
 }
