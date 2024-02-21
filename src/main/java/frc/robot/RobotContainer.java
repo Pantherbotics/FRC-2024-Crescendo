@@ -43,7 +43,7 @@ public class RobotContainer {
 
   // buttons and triggers
   private Trigger intakeButton = joystick.leftBumper();//.and(()->!intake.hasNote());//.and(()->!shooter.hasNote());
-  private Trigger ampButton = new Trigger(()->false);//joystick.leftBumper().and(shooter::hasNote).and(joystick.rightBumper().negate());
+  private Trigger ampButton = joystick.x();//joystick.leftBumper().and(shooter::hasNote).and(joystick.rightBumper().negate());
   private Trigger climbButton = joystick.leftBumper().and(joystick.rightBumper());
   private Trigger intakeSwitch = new Trigger(intake::limitSwitch);
   private Trigger shootButton = joystick.rightBumper().and(shooter::hasNote).and(joystick.leftBumper().negate()).debounce(1);
@@ -113,26 +113,22 @@ public class RobotContainer {
       new intakeHandoff(shooter, intake)
     );
 
-    new Trigger(shooter::hasNote).onTrue(
-      new InstantCommand(()->System.out.println("shooter has note"))
-    ).onFalse(
-      new InstantCommand(()->System.out.println("No more note"))
-    );
-
-
     ampButton.onTrue(
-      new ParallelCommandGroup(
-        new setShooterAngle(shooter, Constants.kShooterAmpPosition),
-        drivetrain.pathfindToPosition(Constants.kAmpPose)
-      ).finallyDo(() -> 
+      new SequentialCommandGroup(
+        new setShooterAngle(shooter, 7),
+        new WaitUntilCommand(shooter::isAtGoal)
+        //drivetrain.pathfindToPosition(Constants.kAmpPose)
+      )
+      ).onFalse( 
       new SequentialCommandGroup(
         new setShooterIntakeSpeed(shooter, Constants.kShooterAmpSpeed),
-        new WaitUntilCommand(shooter::hasNote),
+        new WaitUntilCommand(()->!shooter.hasNote()),
         new WaitCommand(0.1),
-        new setShooterIntakeSpeed(shooter, 0)
+        new setShooterIntakeSpeed(shooter, 0),
+        new setShooterAngle(shooter, Constants.kShooterHandoffPosition)
         ) 
-      )
-    );
+      );
+    
 
     
 
@@ -156,9 +152,9 @@ public class RobotContainer {
       )
     );
 
-    intakeSwitch.onTrue(
+    /*intakeSwitch.onTrue(
       intake.setZero()
-    );
+    );*/
 
     
 

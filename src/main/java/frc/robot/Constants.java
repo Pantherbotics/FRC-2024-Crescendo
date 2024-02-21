@@ -29,11 +29,11 @@ public class Constants {
 
     public static final int kLeftWristID = 30; //
     public static final double kShooterHandoffPosition = 4.3; //
-    public static final double kShooterAmpPosition = 0; // not tuned yet
+    public static final double kShooterAmpPosition = 7; // not tuned yet
 
     public static final double kShooterSpinSpeed = 1; // speed that flywheels shoot at
     public static final double kShooterIntakeSpeed = -0.5; // speed that shooter intake wheels spin at
-    public static final double kShooterAmpSpeed = -1; // intake wheels on the shooter speed
+    public static final double kShooterAmpSpeed = 1; // intake wheels on the shooter speed
 
     // intake constants
     public static final int kIntakeRollerID = 24; 

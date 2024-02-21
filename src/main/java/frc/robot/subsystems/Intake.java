@@ -49,8 +49,8 @@ public class Intake extends SubsystemBase {
     feedforward = new ArmFeedforward(0, 0, 0);
 
     this.controller = new ProfiledPIDController(
-      0.5, 0, 0.1,
-      new TrapezoidProfile.Constraints(6, 2)
+      0.6, 0, 0.07,
+      new TrapezoidProfile.Constraints(6, 3)
     );
 
     this.controller.setGoal(0);

@@ -60,11 +60,11 @@ public class Shooter extends SubsystemBase {
     lastSpeed = 0;
     lastTime = Timer.getFPGATimestamp();
 
-    feedforward = new SimpleMotorFeedforward(0, 0, 0);
+    feedforward = new SimpleMotorFeedforward(0.2, 0.3, 0.3);
 
     this.controller = new ProfiledPIDController(
-      0.2, 0, 0,
-      new TrapezoidProfile.Constraints(6, 1.5)
+      0.6, 0.0, 0.05,
+      new TrapezoidProfile.Constraints(3.5, 2)
     );
     
     leftWrist.setPosition(0);
@@ -92,6 +92,10 @@ public class Shooter extends SubsystemBase {
   public void setWristOpenLoop(double speed){
     openLoop = true;
     leftWrist.set(speed);
+  }
+
+  public void setOpenLoop(boolean open){
+    openLoop = open;
   }
 
   public boolean isAtGoal(){
