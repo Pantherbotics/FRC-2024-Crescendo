@@ -45,7 +45,6 @@ public class RobotContainer {
   private Trigger intakeButton = joystick.leftBumper();//.and(()->!intake.hasNote());//.and(()->!shooter.hasNote());
   private Trigger ampButton = joystick.x();//joystick.leftBumper().and(shooter::hasNote).and(joystick.rightBumper().negate());
   private Trigger climbButton = joystick.leftBumper().and(joystick.rightBumper());
-  private Trigger intakeSwitch = new Trigger(intake::limitSwitch);
   private Trigger shootButton = joystick.rightBumper().and(shooter::hasNote).and(joystick.leftBumper().negate()).debounce(1);
 
   /* SWERVE STUFF */
@@ -151,12 +150,6 @@ public class RobotContainer {
         new setIntakeSpeed(intake, 0)
       )
     );
-
-    /*intakeSwitch.onTrue(
-      intake.setZero()
-    );*/
-
-    
 
 
     //climbButton.onTrue();
