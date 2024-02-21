@@ -14,7 +14,8 @@ public class Climber extends SubsystemBase {
   TalonFX leftClimber = new TalonFX(Constants.kLeftClimberMotorID);
   TalonFX rightClimber = new TalonFX(Constants.kRightClimberMotorID);
   public Climber() {
-    
+    leftClimber.setPosition(0);
+    rightClimber.setPosition(0);
   }
 
   @Override
