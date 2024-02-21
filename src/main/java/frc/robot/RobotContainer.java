@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
@@ -36,6 +37,7 @@ public class RobotContainer {
   private Trigger ampButton = joystick.povLeft();
   private Trigger climbButton = joystick.leftBumper().and(joystick.rightBumper());
   private Trigger intakeSwitch = new Trigger(intake::limitSwitch);
+  private Trigger testButton = joystick.leftTrigger();
 
   /* SWERVE STUFF */
   private double MaxSpeed = 6; // 6 meters per second desired top speed
@@ -143,13 +145,76 @@ public class RobotContainer {
       )
     );
 
-    
-
-
     //climbButton.onTrue();
       
+    //hopefully these aren't too hard to press
+    testButton
+      .and(joystick.povLeft())
+      .and(joystick.a())
+      .whileTrue(shooter.pivotSysIdDynamic(SysIdRoutine.Direction.kForward));
+    testButton
+      .and(joystick.povLeft())
+      .and(joystick.b())
+      .whileTrue(shooter.pivotSysIdDynamic(SysIdRoutine.Direction.kReverse));
+    testButton
+      .and(joystick.povLeft())
+      .and(joystick.x())
+      .whileTrue(shooter.pivotSysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    testButton
+      .and(joystick.povLeft())
+      .and(joystick.y())
+      .whileTrue(shooter.pivotSysIdDynamic(SysIdRoutine.Direction.kReverse));
 
+    testButton
+      .and(joystick.povRight())
+      .and(joystick.a())
+      .whileTrue(shooter.wheelSysIdDynamic(SysIdRoutine.Direction.kForward));
+    testButton
+      .and(joystick.povRight())
+      .and(joystick.b())
+      .whileTrue(shooter.wheelSysIdDynamic(SysIdRoutine.Direction.kReverse));
+    testButton
+      .and(joystick.povRight())
+      .and(joystick.x())
+      .whileTrue(shooter.wheelSysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    testButton
+      .and(joystick.povRight())
+      .and(joystick.y())
+      .whileTrue(shooter.wheelSysIdDynamic(SysIdRoutine.Direction.kReverse));
 
+    testButton
+      .and(joystick.povUp())
+      .and(joystick.a())
+      .whileTrue(intake.pivotSysIdDynamic(SysIdRoutine.Direction.kForward));
+    testButton
+      .and(joystick.povUp())
+      .and(joystick.b())
+      .whileTrue(intake.pivotSysIdDynamic(SysIdRoutine.Direction.kReverse));
+    testButton
+      .and(joystick.povUp())
+      .and(joystick.x())
+      .whileTrue(intake.pivotSysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    testButton
+      .and(joystick.povUp())
+      .and(joystick.y())
+      .whileTrue(intake.pivotSysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    testButton
+      .and(joystick.povDown())
+      .and(joystick.a())
+      .whileTrue(intake.rollerSysIdDynamic(SysIdRoutine.Direction.kForward));
+    testButton
+      .and(joystick.povDown())
+      .and(joystick.b())
+      .whileTrue(intake.rollerSysIdDynamic(SysIdRoutine.Direction.kReverse));
+    testButton
+      .and(joystick.povDown())
+      .and(joystick.x())
+      .whileTrue(intake.rollerSysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    testButton
+      .and(joystick.povDown())
+      .and(joystick.y())
+      .whileTrue(intake.rollerSysIdDynamic(SysIdRoutine.Direction.kReverse));
   }
 
 
