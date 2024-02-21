@@ -45,8 +45,8 @@ public class Constants {
     public static final double kIntakeDownPosition = 11.1;
     public static final double kIntakeHandoffPosition = 0.0;
 
-    public static final double kIntakeInSpeed = 1;
-    public static final double kIntakeHandoffSpeed = 0.8;
+    public static final double kIntakeInSpeed = -0.3;
+    public static final double kIntakeHandoffSpeed = 0.4;
 
     public static final int kIntakeLimitSwitchID = 8;
 
