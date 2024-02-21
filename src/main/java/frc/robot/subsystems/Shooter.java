@@ -46,7 +46,24 @@ public class Shooter extends SubsystemBase {
     distanceSensor.setAverageBits(4);
 
     var wristConfigs = new TalonFXConfiguration();
-    var slot0Configs = wristConfigs.
+    var slot0Configs = wristConfigs.Slot0;
+    
+    //examples taken from ctre docs
+    slot0Configs.kS = 0.25; //replace all these values with https://www.reca.lc/arm
+    slot0Configs.kV = 0.12; //and later we can use the SysID routines
+    slot0Configs.kA = 0.01; 
+
+    slot0Configs.kP = 1; 
+    slot0Configs.kI = 0; 
+    slot0Configs.kD = 0; 
+
+    // examples taken from ctre docs
+    var motionMagicConfigs = wristConfigs.MotionMagic;
+    motionMagicConfigs.MotionMagicCruiseVelocity = 80; 
+    motionMagicConfigs.MotionMagicAcceleration   = 160; 
+    motionMagicConfigs.MotionMagicJerk           = 1600; 
+
+    leftWrist.getConfigurator().apply(wristConfigs);
   };
 
 

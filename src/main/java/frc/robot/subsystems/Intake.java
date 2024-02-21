@@ -37,7 +37,7 @@ public class Intake extends SubsystemBase {
     var intakePivotConfigs = new TalonFXConfiguration();
     var slot0Configs = intakePivotConfigs.Slot0;
     
-    //honestly, from my reading, using feedforward and motion profiling is a bit overkill
+    //honestly, from my reading, using feedforward and motion profiling for this pivot is a bit overkill
     //examples taken from ctre docs
     slot0Configs.kS = 0.25; // Add 0.25 V output to overcome static friction
     slot0Configs.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
