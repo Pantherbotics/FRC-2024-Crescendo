@@ -27,7 +27,6 @@ public class RobotContainer {
 
   private final Intake intake = new Intake();
   private final Shooter shooter = new Shooter();
-  public final Vision vision = new Vision();
 
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain;
 

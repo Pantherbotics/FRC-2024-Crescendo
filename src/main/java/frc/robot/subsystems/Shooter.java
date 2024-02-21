@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -35,10 +36,6 @@ public class Shooter extends SubsystemBase {
   
   AnalogInput distanceSensor = new AnalogInput(Constants.kShooterDistanceSensorID);
   DigitalInput limitSwitch = new DigitalInput(Constants.kShooterLimitSwitchID);
-  double lastSpeed;
-  double lastTime;
-  ProfiledPIDController controller;
-  SimpleMotorFeedforward feedforward;
 
   /** Creates a new shooter. */
   public Shooter() {
@@ -48,19 +45,9 @@ public class Shooter extends SubsystemBase {
     leftShooterIntake.setIdleMode(IdleMode.kBrake);
     distanceSensor.setAverageBits(4);
 
-    lastSpeed = 0;
-    lastTime = Timer.getFPGATimestamp();
-
-    feedforward = new SimpleMotorFeedforward(0, 0, 0);
-
-     controller = new ProfiledPIDController(
-      0, 0, 0,
-      new TrapezoidProfile.Constraints(5, 10)
-    );
-    
-    leftWrist.setPosition(0);
-
-  }
+    var wristConfigs = new TalonFXConfiguration();
+    var slot0Configs = wristConfigs.
+  };
 
 
   public void setShooterFlywheelSpeed(double speed){
@@ -75,7 +62,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setWristAngle(double position){
-    controller.setGoal(position);
+    leftWrist.setControl(new MotionMagicVoltage(position));
   }
 
   public double shooterAngle(){
@@ -92,16 +79,5 @@ public class Shooter extends SubsystemBase {
 
   public void setZero(double position){
     leftWrist.setPosition(position);
-  }
-  
-
-  @Override
-  public void periodic() {
-    double acceleration = (controller.getSetpoint().velocity - lastSpeed) / (Timer.getFPGATimestamp() - lastTime);
-    leftWrist.setVoltage(
-        controller.calculate(shooterAngle())
-        + feedforward.calculate(controller.getSetpoint().velocity, acceleration));
-    lastSpeed = controller.getSetpoint().velocity;
-    lastTime = Timer.getFPGATimestamp();
   }
 }
