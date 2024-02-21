@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -39,6 +40,8 @@ public class RobotContainer {
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain;
 
   private final CommandXboxController joystick = new CommandXboxController(0);
+
+  private boolean manualShooting = true;
   
 
   // buttons and triggers
@@ -134,14 +137,17 @@ public class RobotContainer {
     shootButton.whileTrue(
       new SequentialCommandGroup(
         new setShooterSpeed(shooter, Constants.kShooterSpinSpeed),
-        new ParallelCommandGroup(
-          new setShooterAngle(shooter, shooter.radiansToWristAngle(Math.atan(2.032/drivetrain.getState().Pose.getTranslation().getDistance(Constants.kSpeakerPose.getTranslation())))),
-          drivetrain.applyRequest(()->facing
-          .withTargetDirection(new Rotation2d(drivetrain.getState().Pose.getX() - Constants.kSpeakerPose.getX(), drivetrain.getState().Pose.getY() - Constants.kSpeakerPose.getY()))
-          .withVelocityX(-joystick.getLeftX())
-          .withVelocityY(-joystick.getLeftY())
-          )
-        ).repeatedly()
+        new ConditionalCommand(
+          new ParallelCommandGroup(
+            new setShooterAngle(shooter, shooter.radiansToWristAngle(Math.atan(2.032/drivetrain.getState().Pose.getTranslation().getDistance(Constants.kSpeakerPose.getTranslation())))),
+            drivetrain.applyRequest(()->facing
+            .withTargetDirection(new Rotation2d(drivetrain.getState().Pose.getX() - Constants.kSpeakerPose.getX(), drivetrain.getState().Pose.getY() - Constants.kSpeakerPose.getY()))
+            .withVelocityX(-joystick.getLeftX())
+            .withVelocityY(-joystick.getLeftY())
+            )
+          ).repeatedly(),
+          new setShooterAngle(shooter, joystick.getLeftTriggerAxis()*5),
+        ()->manualShooting)
       )
     ).onFalse(
       new SequentialCommandGroup(
