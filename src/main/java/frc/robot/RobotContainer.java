@@ -117,7 +117,10 @@ public class RobotContainer {
 
     ampButton.onTrue(
       new SequentialCommandGroup(
+        new setShooterIntakeSpeed(shooter, -0.3),
         new setShooterAngle(shooter, 7),
+        new WaitCommand(0.3),
+        new setShooterIntakeSpeed(shooter, 0),
         new WaitUntilCommand(shooter::isAtGoal)
         //drivetrain.pathfindToPosition(Constants.kAmpPose)
       )

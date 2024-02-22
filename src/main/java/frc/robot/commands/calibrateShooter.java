@@ -39,8 +39,7 @@ public class calibrateShooter extends Command {
   public void end(boolean interrupted) {
     shooter.setZero(14);
     System.out.println("ZEROED");
-    shooter.setOpenLoop(false);
-    //shooter.setWristAngle(0);
+    shooter.setWristAngle(0);
   }
 
   // Returns true when the command should end.

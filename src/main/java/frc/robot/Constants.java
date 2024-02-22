@@ -28,7 +28,7 @@ public class Constants {
     public static final int kShooterLimitSwitchID = 9;
 
     public static final int kLeftWristID = 30; //
-    public static final double kShooterHandoffPosition = 4.3; //
+    public static final double kShooterHandoffPosition = 3.8; //
     public static final double kShooterAmpPosition = 7; // not tuned yet
 
     public static final double kShooterSpinSpeed = 1; // speed that flywheels shoot at
@@ -42,7 +42,7 @@ public class Constants {
     public static final int kIntakeDistanceSensorID = 0;
     public static final double kIntakeDistanceSensorThreshold = 650.0;
 
-    public static final double kIntakeDownPosition = 11.1;
+    public static final double kIntakeDownPosition = 9;
     public static final double kIntakeHandoffPosition = 0.0;
 
     public static final double kIntakeInSpeed = -0.3;
@@ -53,6 +53,8 @@ public class Constants {
     // climbers
     public static final int kLeftClimberMotorID = 26;
     public static final int kRightClimberMotorID = 27;
+
+    public static final double kClimberDownPosition = 0;
 
     // vision
     public static final String kPhotonCameraName = "Limelight";

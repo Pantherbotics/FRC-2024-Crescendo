@@ -27,21 +27,23 @@ public class intakeHandoff extends SequentialCommandGroup {
   public intakeHandoff(Shooter shooter, Intake intake) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-
+    interrupted = false;
     addCommands(
       new setShooterAngle(shooter, Constants.kShooterHandoffPosition),
-      new setIntakeAngle(intake, Constants.kIntakeDownPosition-3),
+      new setIntakeAngle(intake, Constants.kIntakeDownPosition),
       new setIntakeSpeed(intake, Constants.kIntakeInSpeed),
       new WaitUntilCommand(intake::hasNote),
+      
       new WaitCommand(0.1),
       new setIntakeSpeed(intake, 0),
       new setIntakeAngle(intake, Constants.kIntakeHandoffPosition),
       new WaitUntilCommand(intake::isAtGoal),
+      new WaitUntilCommand(shooter::isAtGoal),
       new setShooterIntakeSpeed(shooter, Constants.kShooterIntakeSpeed),
       new setIntakeSpeed(intake, Constants.kIntakeHandoffSpeed),
       new ParallelDeadlineGroup(
-        new WaitCommand(1).andThen(
-          new InstantCommand(()->interrupted = true)
+        new WaitCommand(2).andThen(
+          new ConditionalCommand(new InstantCommand(),new InstantCommand(()->interrupted = true),shooter::hasNote)
         ),
         new SequentialCommandGroup(
           new WaitUntilCommand(shooter::hasNote),
