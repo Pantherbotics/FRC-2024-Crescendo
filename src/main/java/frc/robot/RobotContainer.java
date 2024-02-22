@@ -136,7 +136,7 @@ public class RobotContainer {
     
 
     
-
+    /*
     shootButton.whileTrue(
       new SequentialCommandGroup(
         new setShooterSpeed(shooter, Constants.kShooterSpinSpeed),
@@ -160,7 +160,7 @@ public class RobotContainer {
         new setShooterSpeed(shooter,0)
       )
     );
-
+    */
 
     //climbButton.onTrue();
       
