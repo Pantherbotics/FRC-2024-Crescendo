@@ -29,7 +29,7 @@ public class Constants {
 
     public static final int kLeftWristID = 30; //
     public static final double kShooterHandoffPosition = 3.8; //
-    public static final double kShooterAmpPosition = 7; // not tuned yet
+    public static final double kShooterAmpPosition = 11; // not tuned yet
 
     public static final double kShooterSpinSpeed = 1; // speed that flywheels shoot at
     public static final double kShooterIntakeSpeed = -0.5; // speed that shooter intake wheels spin at
@@ -57,7 +57,7 @@ public class Constants {
     public static final double kClimberDownPosition = 0;
 
     // vision
-    public static final String kPhotonCameraName = "Limelight";
+    public static final String kPhotonCameraName = "RightCam";
     public static final Transform3d kRobotToCamera = new Transform3d(0,0,0,new Rotation3d(0,0,0));
 
     // pathfinding

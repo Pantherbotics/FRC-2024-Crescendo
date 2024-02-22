@@ -118,7 +118,7 @@ public class RobotContainer {
     ampButton.onTrue(
       new SequentialCommandGroup(
         new setShooterIntakeSpeed(shooter, -0.3),
-        new setShooterAngle(shooter, 7),
+        new setShooterAngle(shooter, Constants.kShooterAmpPosition),
         new WaitCommand(0.3),
         new setShooterIntakeSpeed(shooter, 0),
         new WaitUntilCommand(shooter::isAtGoal)
@@ -154,9 +154,10 @@ public class RobotContainer {
       )
     ).onFalse(
       new SequentialCommandGroup(
-        new setShooterIntakeSpeed(shooter, 1),
+        new setShooterIntakeSpeed(shooter, -1),
         new WaitCommand(1),
-        new setIntakeSpeed(intake, 0)
+        new setIntakeSpeed(intake, 0),
+        new setShooterSpeed(shooter,0)
       )
     );
 
