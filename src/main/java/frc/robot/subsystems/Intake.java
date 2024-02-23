@@ -32,6 +32,7 @@ public class Intake extends SubsystemBase {
   ProfiledPIDController controller;
   ArmFeedforward feedforward;
   int sensorValue = 0;
+  boolean openLoop = false;
 
   public Intake() {
     distanceSensor.setAverageBits(4);
@@ -59,8 +60,14 @@ public class Intake extends SubsystemBase {
   }
 
   public void setAngle(double goalPosition) {
+    openLoop = false;
     controller.setGoal(goalPosition);
   } 
+
+  public void setOpenLoop(double speed){
+    openLoop = true;
+    intakePivot.set(speed);
+  }
 
   public boolean isAtGoal(){
     return controller.atGoal();
@@ -79,23 +86,32 @@ public class Intake extends SubsystemBase {
     return(intakePivot.getPosition().getValueAsDouble());
   }
 
+
+
   public boolean limitSwitch(){
     return zeroSwitch.get();
   }
 
+  public void setZeroPoint(double zero){
+    intakeRoller.setPosition(zero);
+  }
+  
+
   public Command setZero(){
-    return new InstantCommand(()->intakePivot.setPosition(0));
+    return new InstantCommand(()->setZeroPoint(0));
   }
 
   @Override
   public void periodic() {
     sensorValue = distanceSensor.getAverageValue();
-    double acceleration = (controller.getSetpoint().velocity - lastSpeed) / (Timer.getFPGATimestamp() - lastTime);
-    intakePivot.setVoltage(
-        controller.calculate(intakeAngle())
-        + feedforward.calculate(controller.getSetpoint().velocity, acceleration));
-    lastSpeed = controller.getSetpoint().velocity;
-    lastTime = Timer.getFPGATimestamp();
+    if (!openLoop){
+      double acceleration = (controller.getSetpoint().velocity - lastSpeed) / (Timer.getFPGATimestamp() - lastTime);
+      intakePivot.setVoltage(
+          controller.calculate(intakeAngle())
+          + feedforward.calculate(controller.getSetpoint().velocity, acceleration));
+      lastSpeed = controller.getSetpoint().velocity;
+      lastTime = Timer.getFPGATimestamp();
+    }
   }
 
 }

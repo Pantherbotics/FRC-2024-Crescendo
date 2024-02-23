@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import javax.management.InstanceAlreadyExistsException;
 import javax.swing.plaf.synth.SynthStyle;
 import javax.xml.namespace.QName;
 
@@ -17,6 +18,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -112,7 +114,10 @@ public class RobotContainer {
     //vision.setDefaultCommand(new RunCommand(()->vision.update(vision, drivetrain),vision));
 
     joystick.b().onTrue(
-      new calibrateShooter(shooter)
+      new ParallelCommandGroup(
+        new calibrateShooter(shooter)
+        //new calibrateIntake(intake)
+      )
     );
 
     intakeButton.onTrue(
@@ -132,7 +137,8 @@ public class RobotContainer {
           //drivetrain.pathfindToPosition(Constants.kAmpPose)
         ), 
 
-        new SequentialCommandGroup(    // score amp
+        new SequentialCommandGroup(
+          new InstantCommand(()->ampReady=false),    // score amp
           new setShooterIntakeSpeed(shooter, Constants.kShooterAmpSpeed),
           new WaitUntilCommand(()->!shooter.hasNote()),
           new WaitCommand(0.1),
@@ -140,7 +146,7 @@ public class RobotContainer {
           new setShooterAngle(shooter, Constants.kShooterHandoffPosition)
         ),
 
-        ()->ampReady 
+        ()->!ampReady 
       )
     );
     
@@ -161,17 +167,21 @@ public class RobotContainer {
         new ParallelDeadlineGroup(
           new SequentialCommandGroup(
           new WaitUntilCommand(()->!shootButton.getAsBoolean()),
+          new InstantCommand(()->System.out.println(shootButton.getAsBoolean())),
           new setShooterIntakeSpeed(shooter, -1),
           new WaitUntilCommand(()->!shooter.hasNote()),
           new WaitCommand(0.5),
           new setShooterSpeed(shooter, 0),
-          new setShooterIntakeSpeed(shooter, 0)
+          new setShooterIntakeSpeed(shooter, 0),
+          new setIntakeAngle(intake, 0),
+          new InstantCommand(()->System.out.println("ended"))
         ),
 
           new ConditionalCommand(
-            new autoAim(shooter, drivetrain, facing, joystick),
-            new setShooterAngle(shooter, joystick.getLeftTriggerAxis()*5),
-            ()->manualShooting)
+            new InstantCommand(()->System.out.println("Autoaiming")),
+            //new autoAim(shooter, drivetrain, facing, joystick),
+            new RunCommand(()->shooter.setWristAngle( joystick.getLeftTriggerAxis()*10)),
+            ()->!manualShooting)
 
         )
         

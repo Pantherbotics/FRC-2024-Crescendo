@@ -68,7 +68,7 @@ public class Shooter extends SubsystemBase {
     );
     
     leftWrist.setPosition(0);
-    this.controller.setGoal(0);
+    this.controller.setGoal(leftWrist.getPosition().getValueAsDouble());
     this.controller.setTolerance(1);
   }
 
