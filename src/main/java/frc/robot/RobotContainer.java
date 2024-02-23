@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -44,6 +45,7 @@ public class RobotContainer {
   private final CommandXboxController joystick = new CommandXboxController(0);
 
   private boolean manualShooting = true;
+  private boolean ampReady = false;
   
 
   // buttons and triggers
@@ -118,23 +120,29 @@ public class RobotContainer {
     );
 
     ampButton.onTrue(
-      new SequentialCommandGroup(
-        new setShooterIntakeSpeed(shooter, -0.3),
-        new setShooterAngle(shooter, Constants.kShooterAmpPosition),
-        new WaitCommand(0.3),
-        new setShooterIntakeSpeed(shooter, 0),
-        new WaitUntilCommand(shooter::isAtGoal)
-        //drivetrain.pathfindToPosition(Constants.kAmpPose)
+      new ConditionalCommand(
+
+        new SequentialCommandGroup(    //prepare amp score
+          new setShooterIntakeSpeed(shooter, -0.3),
+          new setShooterAngle(shooter, Constants.kShooterAmpPosition),
+          new WaitCommand(0.3),
+          new setShooterIntakeSpeed(shooter, 0),
+          new WaitUntilCommand(shooter::isAtGoal),
+          new InstantCommand(()->ampReady = true)
+          //drivetrain.pathfindToPosition(Constants.kAmpPose)
+        ), 
+
+        new SequentialCommandGroup(    // score amp
+          new setShooterIntakeSpeed(shooter, Constants.kShooterAmpSpeed),
+          new WaitUntilCommand(()->!shooter.hasNote()),
+          new WaitCommand(0.1),
+          new setShooterIntakeSpeed(shooter, 0),
+          new setShooterAngle(shooter, Constants.kShooterHandoffPosition)
+        ),
+
+        ()->ampReady 
       )
-      ).onFalse( 
-      new SequentialCommandGroup(
-        new setShooterIntakeSpeed(shooter, Constants.kShooterAmpSpeed),
-        new WaitUntilCommand(()->!shooter.hasNote()),
-        new WaitCommand(0.1),
-        new setShooterIntakeSpeed(shooter, 0),
-        new setShooterAngle(shooter, Constants.kShooterHandoffPosition)
-        ) 
-      );
+    );
     
 
     
@@ -148,13 +156,17 @@ public class RobotContainer {
         new setShooterIntakeSpeed(shooter, 0.2),
         new WaitCommand(0.3),
         new setShooterIntakeSpeed(shooter, 0),
-        new ParallelCommandGroup(
-          new autoAim(shooter, drivetrain, facing, joystick),
+        new setShooterSpeed(shooter, 1),
+        new ParallelDeadlineGroup(
           new SequentialCommandGroup(
-            new WaitUntilCommand(()->!shootButton.getAsBoolean()),
-            new setShooterIntakeSpeed(shooter, -1)
-          )
-
+          new WaitUntilCommand(()->!shootButton.getAsBoolean()),
+          new setShooterIntakeSpeed(shooter, -1),
+          new WaitUntilCommand(()->!shooter.hasNote()),
+          new WaitCommand(0.5),
+          new setShooterSpeed(shooter, 0),
+          new setShooterIntakeSpeed(shooter, 0)
+        ),
+          new autoAim(shooter, drivetrain, facing, joystick)
         )
         
       )
