@@ -42,7 +42,7 @@ public class intakeHandoff extends SequentialCommandGroup {
       new setShooterIntakeSpeed(shooter, Constants.kShooterIntakeSpeed),
       new setIntakeSpeed(intake, Constants.kIntakeHandoffSpeed),
       new ParallelDeadlineGroup(
-        new WaitCommand(2).andThen(
+        new WaitCommand(2.5).andThen(
           new ConditionalCommand(new InstantCommand(),new InstantCommand(()->interrupted = true),shooter::hasNote)
         ),
         new SequentialCommandGroup(

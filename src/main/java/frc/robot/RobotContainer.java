@@ -120,7 +120,7 @@ public class RobotContainer {
       )
     );
 
-    intakeButton.onTrue(
+    intakeButton.toggleOnTrue(
       new intakeHandoff(shooter, intake)
     );
 
@@ -155,10 +155,7 @@ public class RobotContainer {
     
     shootButton.onTrue(
       new SequentialCommandGroup(
-        new setIntakeSpeed(intake, 0.3),
-        new setIntakeAngle(intake, 4),
-        new WaitCommand(1.5),
-        new setIntakeSpeed(intake, 0),
+        new setIntakeAngle(intake, 3),
         new setShooterIntakeSpeed(shooter, 0.2),
         new WaitCommand(0.3),
         new setShooterIntakeSpeed(shooter, 0),
@@ -180,7 +177,7 @@ public class RobotContainer {
           new ConditionalCommand(
             new InstantCommand(()->System.out.println("Autoaiming")),
             //new autoAim(shooter, drivetrain, facing, joystick),
-            new RunCommand(()->shooter.setWristAngle( joystick.getLeftTriggerAxis()*10)),
+            new RunCommand(()->shooter.setWristAngle(Constants.kShooterSpeakerAngle + (joystick.getLeftTriggerAxis() - joystick.getLeftTriggerAxis())*10)),
             ()->!manualShooting)
 
         )
