@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.generated.TunerConstants;
@@ -121,10 +122,17 @@ public class RobotContainer {
     );
 
     intakeButton.toggleOnTrue(
-      new intakeHandoff(shooter, intake)
+      new intakeHandoff(shooter, intake).finallyDo(
+        ()->
+        new SequentialCommandGroup(
+        new setIntakeSpeed(intake, 0),
+        new setIntakeAngle(intake, 0),
+        new setShooterIntakeSpeed(shooter, 0)
+        )
+      ).withInterruptBehavior(InterruptionBehavior.kCancelSelf)
     );
 
-    ampButton.onTrue(
+    ampButton.toggleOnTrue(
       new ConditionalCommand(
 
         new SequentialCommandGroup(    //prepare amp score
