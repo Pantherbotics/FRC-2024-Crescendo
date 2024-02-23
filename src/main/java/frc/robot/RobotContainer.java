@@ -157,6 +157,7 @@ public class RobotContainer {
         new WaitCommand(0.3),
         new setShooterIntakeSpeed(shooter, 0),
         new setShooterSpeed(shooter, 1),
+
         new ParallelDeadlineGroup(
           new SequentialCommandGroup(
           new WaitUntilCommand(()->!shootButton.getAsBoolean()),
@@ -166,7 +167,12 @@ public class RobotContainer {
           new setShooterSpeed(shooter, 0),
           new setShooterIntakeSpeed(shooter, 0)
         ),
-          new autoAim(shooter, drivetrain, facing, joystick)
+
+          new ConditionalCommand(
+            new autoAim(shooter, drivetrain, facing, joystick),
+            new setShooterAngle(shooter, joystick.getLeftTriggerAxis()*5),
+            ()->manualShooting)
+
         )
         
       )
