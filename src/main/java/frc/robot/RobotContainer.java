@@ -148,10 +148,14 @@ public class RobotContainer {
         new setShooterIntakeSpeed(shooter, 0.2),
         new WaitCommand(0.3),
         new setShooterIntakeSpeed(shooter, 0),
-        new runShooter(shooter, drivetrain, facing, joystick, false),
-        new InstantCommand(()->System.out.println("ended")),
-        new setShooterIntakeSpeed(shooter, 0)
+        new ParallelCommandGroup(
+          new autoAim(shooter, drivetrain, facing, joystick),
+          new SequentialCommandGroup(
+            new WaitUntilCommand(()->!shootButton.getAsBoolean()),
+            new setShooterIntakeSpeed(shooter, -1)
+          )
 
+        )
         
       )
     );

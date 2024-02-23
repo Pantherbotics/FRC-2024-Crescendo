@@ -22,7 +22,7 @@ import frc.robot.Constants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Shooter;
 
-public class runShooter extends Command {
+public class autoAim extends Command {
   /** Creates a new runShooter. */
   private final Shooter shooter;
   private final CommandSwerveDrivetrain swerve;
@@ -31,55 +31,33 @@ public class runShooter extends Command {
   private Pose2d robotPose;
   private CommandXboxController joystick;
   private Rotation2d rotationToGoal;
-  private boolean manual;
-  private boolean released = false;
-  private boolean ready = false;
 
-  public runShooter(Shooter shooter, CommandSwerveDrivetrain swerve, SwerveRequest.FieldCentricFacingAngle facing, CommandXboxController joystick, boolean manual) {
+  public autoAim(Shooter shooter, CommandSwerveDrivetrain swerve, SwerveRequest.FieldCentricFacingAngle facing, CommandXboxController joystick) {
     this.joystick = joystick;
     this.shooter = shooter;
     this.swerve = swerve;
     this.facing = facing;
-    this.manual = manual;
-    System.out.println("Instantiated");
-    addRequirements(shooter);
-    // Use addRequirements() here to declare subsystem dependencies.
+    //addRequirements(shooter);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    System.out.println("initialized");
-    shooter.setShooterFlywheelSpeed(1);
-    shooter.setIntakeSpeed(0);
-    shooter.setWristAngle(3);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
 
-    if(manual){
-      robotPose = swerve.getState().Pose;
-      shooterAngle = shooter.radiansToWristAngle(Math.atan(2.032/robotPose.getTranslation().getDistance(Constants.kSpeakerPose.getTranslation())));
-      rotationToGoal = new Rotation2d(robotPose.getX() - Constants.kSpeakerPose.getX(), robotPose.getY() - Constants.kSpeakerPose.getY());
-      swerve.applyRequest(()->facing
-              .withTargetDirection(rotationToGoal)
-              .withVelocityX(-joystick.getLeftX())
-              .withVelocityY(-joystick.getLeftY()));
-    }
-    shooter.setWristAngle((joystick.getRightTriggerAxis() - joystick.getLeftTriggerAxis()) * 5);
-
-    joystick.rightBumper().onFalse(
-      new SequentialCommandGroup(
-        new setShooterIntakeSpeed(shooter, -1),
-        new InstantCommand(()->ready = true),
-        new WaitCommand(0.5),
-        new setShooterIntakeSpeed(shooter, 0),
-        new setShooterSpeed(shooter, 0)
-      )
-    );
-
+    robotPose = swerve.getState().Pose;
+    shooterAngle = shooter.radiansToWristAngle(Math.atan(2.032/robotPose.getTranslation().getDistance(Constants.kSpeakerPose.getTranslation())));
+    rotationToGoal = new Rotation2d(robotPose.getX() - Constants.kSpeakerPose.getX(), robotPose.getY() - Constants.kSpeakerPose.getY());
+    swerve.applyRequest(()->facing
+            .withTargetDirection(rotationToGoal)
+            .withVelocityX(-joystick.getLeftX())
+            .withVelocityY(-joystick.getLeftY()));
+    shooter.setWristAngle(shooterAngle);
+  
   }
 
   // Called once the command ends or is interrupted.
@@ -92,6 +70,6 @@ public class runShooter extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return ready;
+    return false;
   }
 }
