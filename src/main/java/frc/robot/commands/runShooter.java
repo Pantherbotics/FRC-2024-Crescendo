@@ -13,6 +13,10 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -28,6 +32,8 @@ public class runShooter extends Command {
   private CommandXboxController joystick;
   private Rotation2d rotationToGoal;
   private boolean manual;
+  private boolean released = false;
+  private boolean ready = false;
 
   public runShooter(Shooter shooter, CommandSwerveDrivetrain swerve, SwerveRequest.FieldCentricFacingAngle facing, CommandXboxController joystick, boolean manual) {
     this.joystick = joystick;
@@ -35,6 +41,7 @@ public class runShooter extends Command {
     this.swerve = swerve;
     this.facing = facing;
     this.manual = manual;
+    System.out.println("Instantiated");
     addRequirements(shooter);
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -42,6 +49,7 @@ public class runShooter extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    System.out.println("initialized");
     shooter.setShooterFlywheelSpeed(1);
     shooter.setIntakeSpeed(0);
     shooter.setWristAngle(3);
@@ -50,7 +58,7 @@ public class runShooter extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
+
     if(manual){
       robotPose = swerve.getState().Pose;
       shooterAngle = shooter.radiansToWristAngle(Math.atan(2.032/robotPose.getTranslation().getDistance(Constants.kSpeakerPose.getTranslation())));
@@ -62,15 +70,28 @@ public class runShooter extends Command {
     }
     shooter.setWristAngle((joystick.getRightTriggerAxis() - joystick.getLeftTriggerAxis()) * 5);
 
+    joystick.rightBumper().onFalse(
+      new SequentialCommandGroup(
+        new setShooterIntakeSpeed(shooter, -1),
+        new InstantCommand(()->ready = true),
+        new WaitCommand(0.5),
+        new setShooterIntakeSpeed(shooter, 0),
+        new setShooterSpeed(shooter, 0)
+      )
+    );
+
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+
+
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return ready;
   }
 }

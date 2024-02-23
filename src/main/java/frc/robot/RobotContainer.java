@@ -5,6 +5,7 @@
 package frc.robot;
 
 import javax.swing.plaf.synth.SynthStyle;
+import javax.xml.namespace.QName;
 
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
@@ -12,6 +13,7 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -48,11 +50,11 @@ public class RobotContainer {
   private Trigger intakeButton = joystick.leftBumper();//.and(()->!intake.hasNote());//.and(()->!shooter.hasNote());
   private Trigger ampButton = joystick.x();//joystick.leftBumper().and(shooter::hasNote).and(joystick.rightBumper().negate());
   private Trigger climbButton = joystick.leftBumper().and(joystick.rightBumper());
-  private Trigger shootButton = joystick.rightBumper().and(shooter::hasNote).and(joystick.leftBumper().negate()).debounce(1);
+  private Trigger shootButton = joystick.rightBumper().and(shooter::hasNote);
 
   /* SWERVE STUFF */
-  private double MaxSpeed = 6; // 6 meters per second desired top speed
-  private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
+  private double MaxSpeed = 3; // 6 meters per second desired top speed
+  private double MaxAngularRate = 1 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
       .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
@@ -83,7 +85,7 @@ public class RobotContainer {
       drivetrain.applyRequest(
         () -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
         .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-        .withRotationalRate(-joystick.getRightX()) 
+        .withRotationalRate(-joystick.getRightX() * MaxAngularRate) 
       
       ).ignoringDisable(true));
 
@@ -94,7 +96,7 @@ public class RobotContainer {
 
       
     // reset the field-centric heading on left bumper press
-    joystick.x().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative(drivetrain.getState().Pose)));
+    joystick.a().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative(new Pose2d(0,0,new Rotation2d(0)))));
 
     // if (Utils.isSimulation()) {
     //   drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
@@ -136,31 +138,23 @@ public class RobotContainer {
     
 
     
-    /*
-    shootButton.whileTrue(
+    
+    shootButton.onTrue(
       new SequentialCommandGroup(
-        new setShooterSpeed(shooter, Constants.kShooterSpinSpeed),
-        new ConditionalCommand(
-          new ParallelCommandGroup(
-            new setShooterAngle(shooter, shooter.radiansToWristAngle(Math.atan(2.032/drivetrain.getState().Pose.getTranslation().getDistance(Constants.kSpeakerPose.getTranslation())))),
-            drivetrain.applyRequest(()->facing
-            .withTargetDirection(new Rotation2d(drivetrain.getState().Pose.getX() - Constants.kSpeakerPose.getX(), drivetrain.getState().Pose.getY() - Constants.kSpeakerPose.getY()))
-            .withVelocityX(-joystick.getLeftX())
-            .withVelocityY(-joystick.getLeftY())
-            )
-          ).repeatedly(),
-          new setShooterAngle(shooter, joystick.getLeftTriggerAxis()*5),
-        ()->manualShooting)
-      )
-    ).onFalse(
-      new SequentialCommandGroup(
-        new setShooterIntakeSpeed(shooter, -1),
-        new WaitCommand(1),
+        new setIntakeSpeed(intake, 0.3),
+        new setIntakeAngle(intake, 4),
+        new WaitCommand(1.5),
         new setIntakeSpeed(intake, 0),
-        new setShooterSpeed(shooter,0)
+        new setShooterIntakeSpeed(shooter, 0.2),
+        new WaitCommand(0.3),
+        new setShooterIntakeSpeed(shooter, 0),
+        new runShooter(shooter, drivetrain, facing, joystick, false),
+        new InstantCommand(()->System.out.println("ended")),
+        new setShooterIntakeSpeed(shooter, 0)
+
+        
       )
     );
-    */
 
     //climbButton.onTrue();
       
