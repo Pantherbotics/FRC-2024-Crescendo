@@ -49,6 +49,8 @@ public class RobotContainer {
 
   private boolean manualShooting = true;
   private boolean ampReady = false;
+  private boolean shooterReady = false;
+  private boolean shooting = false;
   
 
   // buttons and triggers
@@ -155,36 +157,35 @@ public class RobotContainer {
     
     
     shootButton.onTrue(
-      new SequentialCommandGroup(
-        new setIntakeAngle(intake, 4),
-        new setShooterIntakeSpeed(shooter, 0.2),
-        new WaitCommand(0.2),
-        new setShooterIntakeSpeed(shooter, 0),
-        new setShooterSpeed(shooter, 1),
-
-        new ParallelDeadlineGroup(
+      new ConditionalCommand(
+        new ParallelCommandGroup(
           new SequentialCommandGroup(
-          new WaitUntilCommand(()->!shootButton.getAsBoolean()),
-          new InstantCommand(()->System.out.println(shootButton.getAsBoolean())),
+            new setShooterIntakeSpeed(shooter, 0.2),
+            new WaitCommand(0.2),
+            new setShooterIntakeSpeed(shooter, 0),
+            new setShooterSpeed(shooter, 1),
+            new InstantCommand(()->shooterReady = true)
+          ),
+          new ConditionalCommand(
+            new autoAim(shooter, drivetrain, facing, joystick).until(()->shooting),
+            new RunCommand(()->shooter.setWristAngle(Constants.kShooterSpeakerAngle + joystick.getLeftTriggerAxis() * 5)).until(()->shooting),
+            ()->!manualShooting
+          )
+        ),
+      
+
+        new SequentialCommandGroup(
+          new InstantCommand(()->shooting = true),
           new setShooterIntakeSpeed(shooter, -1),
           new WaitUntilCommand(()->!shooter.hasNote()),
           new WaitCommand(0.5),
           new setShooterSpeed(shooter, 0),
-          new setShooterIntakeSpeed(shooter, 0),
-          new setIntakeAngle(intake, 0),
-          new InstantCommand(()->System.out.println("ended"))
+          new setShooterIntakeSpeed(shooter, 0)
         ),
-
-          new ConditionalCommand(
-            new InstantCommand(()->System.out.println("Autoaiming")),
-            //new autoAim(shooter, drivetrain, facing, joystick),
-            new RunCommand(()->shooter.setWristAngle(Constants.kShooterSpeakerAngle + (joystick.getLeftTriggerAxis() - joystick.getLeftTriggerAxis())*10)),
-            ()->!manualShooting)
-
-        )
-        
-      )
+        ()->!shooterReady)
     );
+      
+
 
     //climbButton.onTrue();
       
