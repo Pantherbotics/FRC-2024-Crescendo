@@ -104,14 +104,17 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     sensorValue = distanceSensor.getAverageValue();
+    double acceleration = (controller.getSetpoint().velocity - lastSpeed) / (Timer.getFPGATimestamp() - lastTime);
+
     if (!openLoop){
-      double acceleration = (controller.getSetpoint().velocity - lastSpeed) / (Timer.getFPGATimestamp() - lastTime);
       intakePivot.setVoltage(
           controller.calculate(intakeAngle())
           + feedforward.calculate(controller.getSetpoint().velocity, acceleration));
-      lastSpeed = controller.getSetpoint().velocity;
-      lastTime = Timer.getFPGATimestamp();
     }
+    
+    lastSpeed = controller.getSetpoint().velocity;
+    lastTime = Timer.getFPGATimestamp();
+
   }
 
 }

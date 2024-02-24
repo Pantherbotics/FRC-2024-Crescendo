@@ -121,15 +121,8 @@ public class RobotContainer {
       )
     );
 
-    intakeButton.toggleOnTrue(
-      new intakeHandoff(shooter, intake).finallyDo(
-        ()->
-        new SequentialCommandGroup(
-        new setIntakeSpeed(intake, 0),
-        new setIntakeAngle(intake, 0),
-        new setShooterIntakeSpeed(shooter, 0)
-        )
-      ).withInterruptBehavior(InterruptionBehavior.kCancelSelf)
+    intakeButton.onTrue(
+      new intakeHandoff(shooter, intake)
     );
 
     ampButton.toggleOnTrue(
@@ -163,9 +156,9 @@ public class RobotContainer {
     
     shootButton.onTrue(
       new SequentialCommandGroup(
-        new setIntakeAngle(intake, 3),
+        new setIntakeAngle(intake, 4),
         new setShooterIntakeSpeed(shooter, 0.2),
-        new WaitCommand(0.3),
+        new WaitCommand(0.2),
         new setShooterIntakeSpeed(shooter, 0),
         new setShooterSpeed(shooter, 1),
 

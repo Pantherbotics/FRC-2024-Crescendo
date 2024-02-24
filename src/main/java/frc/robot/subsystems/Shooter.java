@@ -128,13 +128,17 @@ public class Shooter extends SubsystemBase {
 
 
     sensorValue = mydistanceSensor.getAverageValue();
-    if (!openLoop) {
+
     double acceleration = (controller.getSetpoint().velocity - lastSpeed) / (Timer.getFPGATimestamp() - lastTime);
-    leftWrist.setVoltage(
-        controller.calculate(shooterAngle())
-        + feedforward.calculate(controller.getSetpoint().velocity, acceleration));
+    
+    if (!openLoop) {
+      leftWrist.setVoltage(
+          controller.calculate(shooterAngle())
+          + feedforward.calculate(controller.getSetpoint().velocity, acceleration));
+    }
+
     lastSpeed = controller.getSetpoint().velocity;
     lastTime = Timer.getFPGATimestamp();
-    }
+    
   }
 }
