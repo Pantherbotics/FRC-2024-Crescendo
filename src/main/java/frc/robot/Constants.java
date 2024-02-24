@@ -55,7 +55,7 @@ public class Constants {
     public static final int kLeftClimberMotorID = 26;
     public static final int kRightClimberMotorID = 27;
 
-    public static final double kClimberDownPosition = 0;
+    public static final double kClimberDownPosition = -600;
 
     // vision
     public static final String kPhotonCameraName = "RightCam";

@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -42,6 +43,7 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final Shooter shooter = new Shooter();
   public final Vision vision = new Vision();
+  private final Climber climber = new Climber();
 
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain;
 
@@ -56,7 +58,7 @@ public class RobotContainer {
   // buttons and triggers
   private Trigger intakeButton = joystick.leftBumper();//.and(()->!intake.hasNote());//.and(()->!shooter.hasNote());
   private Trigger ampButton = joystick.x();//joystick.leftBumper().and(shooter::hasNote).and(joystick.rightBumper().negate());
-  private Trigger climbButton = joystick.leftBumper().and(joystick.rightBumper());
+  private Trigger climbButton = joystick.y();
   private Trigger shootButton = joystick.rightBumper().and(shooter::hasNote);
 
   /* SWERVE STUFF */
@@ -157,39 +159,43 @@ public class RobotContainer {
     
     
     shootButton.onTrue(
+
       new ConditionalCommand(
-        new ParallelCommandGroup(
           new SequentialCommandGroup(
+            
             new setShooterIntakeSpeed(shooter, 0.2),
             new WaitCommand(0.2),
             new setShooterIntakeSpeed(shooter, 0),
-            new setShooterSpeed(shooter, 1),
+            new setShooterSpeed(shooter, 0.25),
+            new setShooterAngle(shooter, Constants.kShooterSpeakerAngle),
+            new RunCommand(()->shooter.setWristAngle(Constants.kShooterSpeakerAngle + joystick.getLeftTriggerAxis()*5)).until(shootButton),
             new InstantCommand(()->shooterReady = true)
-          ),
-          new ConditionalCommand(
-            new autoAim(shooter, drivetrain, facing, joystick).until(()->shooting),
-            new RunCommand(()->shooter.setWristAngle(Constants.kShooterSpeakerAngle + joystick.getLeftTriggerAxis() * 5)).until(()->shooting),
-            ()->!manualShooting
-          )
-        ),
+           
+              ),
       
+      new SequentialCommandGroup(
+        new InstantCommand(()->System.out.println("Shooting")),
+        new InstantCommand(()->shooterReady = false),
+        new InstantCommand(()->shooting = true),
+        new setShooterIntakeSpeed(shooter, -1),
+        new WaitUntilCommand(()->!shooter.hasNote()),
+        new WaitCommand(0.5),
+        new setShooterSpeed(shooter, 0),
+        new setShooterIntakeSpeed(shooter, 0)
 
-        new SequentialCommandGroup(
-          new InstantCommand(()->shooterReady = false),
-          new InstantCommand(()->shooting = true),
-          new setShooterIntakeSpeed(shooter, -1),
-          new WaitUntilCommand(()->!shooter.hasNote()),
-          new WaitCommand(0.5),
-          new setShooterSpeed(shooter, 0),
-          new setShooterIntakeSpeed(shooter, 0)
-
-        ),
+      ),
         ()->!shooterReady)
     );
       
 
 
-    //climbButton.onTrue();
+
+    climbButton.onTrue(
+      new setClimberHeight(climber, Constants.kClimberDownPosition)
+    );
+    joystick.rightStick().onTrue(
+      new setClimberHeight(climber, 0)
+    );
       
 
 

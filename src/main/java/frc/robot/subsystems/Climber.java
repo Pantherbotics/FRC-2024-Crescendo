@@ -27,8 +27,8 @@ public class Climber extends SubsystemBase {
     rightClimber.setPosition(0);
 
     TalonFXConfiguration configs = new TalonFXConfiguration();
-    configs.Slot0.kP = 0.1;
-    configs.Slot0.kD = 0.01;
+    configs.Slot0.kP = 0.8;
+    configs.Slot0.kD = 0;
     configs.Slot0.kI = 0;
 
     leftClimber.getConfigurator().apply(configs);
