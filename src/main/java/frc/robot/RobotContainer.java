@@ -175,12 +175,14 @@ public class RobotContainer {
       
 
         new SequentialCommandGroup(
+          new InstantCommand(()->shooterReady = false),
           new InstantCommand(()->shooting = true),
           new setShooterIntakeSpeed(shooter, -1),
           new WaitUntilCommand(()->!shooter.hasNote()),
           new WaitCommand(0.5),
           new setShooterSpeed(shooter, 0),
           new setShooterIntakeSpeed(shooter, 0)
+
         ),
         ()->!shooterReady)
     );
