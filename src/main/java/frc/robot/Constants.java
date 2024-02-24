@@ -24,13 +24,13 @@ public class Constants {
     public static final int kRightShooterIntakeID = 22;
 
     public static final int kShooterDistanceSensorID = 3;
-    public static final double kShooterDistanceSensorTreshold = 500.0;
+    public static final double kShooterDistanceSensorTreshold = 600.0;
     public static final int kShooterLimitSwitchID = 9;
 
     public static final int kLeftWristID = 30; //
     public static final double kShooterHandoffPosition = 3.8; //
     public static final double kShooterAmpPosition = 11; // not tuned yet
-    public static final double kShooterSpeakerAngle = 1.75;
+    public static final double kShooterSpeakerAngle = 1.6;
 
     public static final double kShooterSpinSpeed = 1; // speed that flywheels shoot at
     public static final double kShooterIntakeSpeed = -0.5; // speed that shooter intake wheels spin at
@@ -55,11 +55,11 @@ public class Constants {
     public static final int kLeftClimberMotorID = 26;
     public static final int kRightClimberMotorID = 27;
 
-    public static final double kClimberDownPosition = -700;
+    public static final double kClimberDownPosition = -710;
 
     // vision
-    public static final String kPhotonCameraName = "RightCam";
-    public static final Transform3d kRobotToCamera = new Transform3d(0,0,0,new Rotation3d(0,0,0));
+    public static final String kPhotonCameraName = "LeftCam";
+    public static final Transform3d kRobotToCamera = new Transform3d(0,-0.4,1.3,new Rotation3d(0,0,0));
 
     // pathfinding
     public static final Pose2d kAmpPose = new Pose2d(2.3, 7, Rotation2d.fromDegrees(90));

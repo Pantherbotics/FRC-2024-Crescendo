@@ -103,7 +103,8 @@ public class Shooter extends SubsystemBase {
   }
 
   public double radiansToWristAngle(double radians){
-    return radians / (2 * Math.PI) * 25 * (12/37);
+    System.out.println("radians = " + radians);
+    return radians / (2 * Math.PI) * (1/ 25) * (12/37);
   }
 
   public double shooterAngle(){

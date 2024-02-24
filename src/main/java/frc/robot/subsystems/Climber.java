@@ -17,8 +17,8 @@ import frc.robot.Constants;
 
 public class Climber extends SubsystemBase {
   /** Creates a new Climbers. */
-  TalonFX leftClimber = new TalonFX(Constants.kLeftClimberMotorID);
-  TalonFX rightClimber = new TalonFX(Constants.kRightClimberMotorID);
+  public TalonFX leftClimber = new TalonFX(Constants.kLeftClimberMotorID);
+  public TalonFX rightClimber = new TalonFX(Constants.kRightClimberMotorID);
   private final PositionVoltage m_voltagePosition;
 
   public Climber() {
@@ -38,6 +38,15 @@ public class Climber extends SubsystemBase {
   public void setHeight(double height){
     leftClimber.setControl(m_voltagePosition.withPosition(height));
     rightClimber.setControl(m_voltagePosition.withPosition(-height));
+  }
+
+  public void setIndividualHeights(double leftHeight, double rightHeight){
+    leftClimber.setControl(m_voltagePosition.withPosition(leftHeight));
+    rightClimber.setControl(m_voltagePosition.withPosition(rightHeight));
+  }
+
+  public void setRightHeight(double height){
+    
   }
 
 

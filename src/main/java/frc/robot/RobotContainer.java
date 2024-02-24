@@ -49,7 +49,7 @@ public class RobotContainer {
 
   private final CommandXboxController joystick = new CommandXboxController(0);
 
-  private boolean manualShooting = true;
+  private boolean manualShooting = false;
   private boolean ampReady = false;
   private boolean shooterReady = false;
   private boolean shooting = false;
@@ -71,7 +71,7 @@ public class RobotContainer {
                                                                // driving in open loop
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.FieldCentricFacingAngle facing = new SwerveRequest.FieldCentricFacingAngle()
-  .withDeadband(MaxSpeed * 0.1).withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+  .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
   //private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
@@ -116,7 +116,7 @@ public class RobotContainer {
     //joystick.pov(180).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(-0.5).withVelocityY(0)));
     
 
-    //vision.setDefaultCommand(new RunCommand(()->vision.update(vision, drivetrain),vision));
+    vision.setDefaultCommand(new RunCommand(()->vision.update(vision, drivetrain),vision));
 
     joystick.b().onTrue(
       new ParallelCommandGroup(
@@ -129,10 +129,11 @@ public class RobotContainer {
       new intakeHandoff(shooter, intake)
     );
 
-    ampButton.toggleOnTrue(
+    ampButton.onTrue(
       new ConditionalCommand(
 
         new SequentialCommandGroup(    //prepare amp score
+          new setIntakeAngle(intake, 0),
           new setShooterIntakeSpeed(shooter, -0.3),
           new setShooterAngle(shooter, Constants.kShooterAmpPosition),
           new WaitCommand(0.3),
@@ -166,9 +167,10 @@ public class RobotContainer {
             new setShooterIntakeSpeed(shooter, 0.2),
             new WaitCommand(0.2),
             new setShooterIntakeSpeed(shooter, 0),
-            new setShooterSpeed(shooter, 0.25),
+            new setShooterSpeed(shooter, 1),
             new setShooterAngle(shooter, Constants.kShooterSpeakerAngle),
-            new RunCommand(()->shooter.setWristAngle(Constants.kShooterSpeakerAngle + joystick.getLeftTriggerAxis()*5)).until(shootButton),
+            new autoAim(shooter, drivetrain, facing, joystick),
+            //new RunCommand(()->shooter.setWristAngle(Constants.kShooterSpeakerAngle + joystick.getLeftTriggerAxis()*5)).until(shootButton),
             new InstantCommand(()->shooterReady = true)
            
               ),
@@ -179,7 +181,7 @@ public class RobotContainer {
         new InstantCommand(()->shooting = true),
         new setShooterIntakeSpeed(shooter, -1),
         new WaitUntilCommand(()->!shooter.hasNote()),
-        new WaitCommand(0.5),
+        new WaitCommand(1),
         new setShooterSpeed(shooter, 0),
         new setShooterIntakeSpeed(shooter, 0)
 
@@ -190,13 +192,16 @@ public class RobotContainer {
 
 
 
-    climbButton.onTrue(
-      new setClimberHeight(climber, Constants.kClimberDownPosition)
+    climbButton.toggleOnTrue(
+      
+      //new setClimberHeight(climber, Constants.kClimberDownPosition),
+      new RunCommand(()->climber.setIndividualHeights(climber.leftClimber.getPosition().getValueAsDouble() - joystick.getLeftTriggerAxis()*5, climber.rightClimber.getPosition().getValueAsDouble() + joystick.getRightTriggerAxis()*5))
     );
     joystick.rightStick().onTrue(
       new setClimberHeight(climber, 0)
     );
-      
+    
+    
 
 
   }

@@ -41,33 +41,15 @@ public class intakeHandoff extends SequentialCommandGroup {
       new WaitUntilCommand(shooter::isAtGoal),
       new setShooterIntakeSpeed(shooter, Constants.kShooterIntakeSpeed),
       new setIntakeSpeed(intake, Constants.kIntakeHandoffSpeed),
-      new ParallelDeadlineGroup(
-        new WaitCommand(2.5).andThen(
-          new ConditionalCommand(new InstantCommand(),new InstantCommand(()->interrupted = true),shooter::hasNote)
-        ),
-        new SequentialCommandGroup(
-          new WaitUntilCommand(shooter::hasNote),
-          new setShooterIntakeSpeed(shooter, -0.3),
-          new setIntakeSpeed(intake, 0.3),
-          new WaitCommand(0.8),
-          new setShooterIntakeSpeed(shooter, 0),
-          new setIntakeSpeed(intake, 0),
-          new setIntakeAngle(intake, 4)
-        )
-      ),
-      new ConditionalCommand(
-        new SequentialCommandGroup(
-          new InstantCommand(()->System.out.println("INTAKE FAILED")),
-          new setShooterIntakeSpeed(shooter, -Constants.kShooterIntakeSpeed),
-          new setIntakeSpeed(intake, Constants.kIntakeInSpeed),
-          new WaitUntilCommand(intake::hasNote),
-          new WaitCommand(0.1),
-          new setIntakeSpeed(intake, 0),
-          new setShooterIntakeSpeed(shooter, 0)
-        ), 
-        new InstantCommand(()->System.out.println("INTAKE SUCCESSFUL")),
-        ()->interrupted
-      )
+      new WaitUntilCommand(shooter::hasNote),
+      new setShooterIntakeSpeed(shooter, -0.3),
+      new setIntakeSpeed(intake, 0.3),
+      new WaitCommand(0.8),
+      new setShooterIntakeSpeed(shooter, 0),
+      new setIntakeSpeed(intake, 0),
+      new setIntakeAngle(intake, 4)
+        
+      
     );
   }
 }
