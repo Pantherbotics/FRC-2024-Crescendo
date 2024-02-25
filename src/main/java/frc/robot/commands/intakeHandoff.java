@@ -27,7 +27,6 @@ public class intakeHandoff extends SequentialCommandGroup {
   public intakeHandoff(Shooter shooter, Intake intake) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    interrupted = false;
     addCommands(
       new setShooterAngle(shooter, Constants.kShooterHandoffPosition),
       new setIntakeAngle(intake, Constants.kIntakeDownPosition),

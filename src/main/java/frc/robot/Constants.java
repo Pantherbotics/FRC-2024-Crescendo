@@ -63,6 +63,7 @@ public class Constants {
     public static final Transform3d kRobotToCamera = new Transform3d(0,-0.4,1.3,new Rotation3d(0,0,0));
 
     // pathfinding
+
     public static final Pose2d kAmpPose = new Pose2d(2.3, 7, Rotation2d.fromDegrees(90));
     public static final Pose2d kSourcePose = new Pose2d(14.5,1.4,Rotation2d.fromDegrees(-30));
     public static final Pose2d kSpeakerPose = new Pose2d(0.2, 5.5, Rotation2d.fromDegrees(180));
