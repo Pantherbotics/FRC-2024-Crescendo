@@ -53,13 +53,16 @@ public class RobotContainer {
   private boolean ampReady = false;
   private boolean shooterReady = false;
   private boolean shooting = false;
+
+  public static String RobotState = "Available";
   
 
   // buttons and triggers
-  private Trigger intakeButton = joystick.leftBumper();//.and(()->!intake.hasNote());//.and(()->!shooter.hasNote());
-  private Trigger ampButton = joystick.x();//joystick.leftBumper().and(shooter::hasNote).and(joystick.rightBumper().negate());
-  private Trigger climbButton = joystick.y();
-  private Trigger shootButton = joystick.rightBumper().and(shooter::hasNote);
+  private Trigger intakeButton = joystick.leftBumper().and(()->RobotState == "Available");//.and(()->!intake.hasNote());//.and(()->!shooter.hasNote());
+  private Trigger ampButton = joystick.x().and(()->RobotState == "Available");//joystick.leftBumper().and(shooter::hasNote).and(joystick.rightBumper().negate());
+  private Trigger climbButton = joystick.y().and(()->RobotState == "Available");
+  private Trigger shootButton = joystick.rightBumper().and(shooter::hasNote).and(()->RobotState == "Available");
+  private Trigger zeroButton = joystick.b().and(()->RobotState == "Available");
 
   /* SWERVE STUFF */
   private double MaxSpeed = 3; // 6 meters per second desired top speed
@@ -118,15 +121,12 @@ public class RobotContainer {
 
     vision.setDefaultCommand(new RunCommand(()->vision.update(vision, drivetrain),vision));
 
-    joystick.b().onTrue(
-      new ParallelCommandGroup(
-        new calibrateShooter(shooter)
-        //new calibrateIntake(intake)
-      )
+    zeroButton.onTrue(
+      new calibrateShooter(shooter).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Zeroing")
     );
 
     intakeButton.onTrue(
-      new intakeHandoff(shooter, intake)
+      new intakeHandoff(shooter, intake).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Intaking")
     );
 
     ampButton.onTrue(
@@ -141,7 +141,7 @@ public class RobotContainer {
           new WaitUntilCommand(shooter::isAtGoal),
           new InstantCommand(()->ampReady = true)
           //drivetrain.pathfindToPosition(Constants.kAmpPose)
-        ), 
+        ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Preparing Amp"), 
 
         new SequentialCommandGroup(
           new InstantCommand(()->ampReady=false),    // score amp
@@ -150,7 +150,7 @@ public class RobotContainer {
           new WaitCommand(0.1),
           new setShooterIntakeSpeed(shooter, 0),
           new setShooterAngle(shooter, Constants.kShooterHandoffPosition)
-        ),
+        ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Scoring Amp"),
 
         ()->!ampReady 
       )
@@ -173,7 +173,7 @@ public class RobotContainer {
             //new RunCommand(()->shooter.setWristAngle(Constants.kShooterSpeakerAngle + joystick.getLeftTriggerAxis()*5)).until(shootButton),
             new InstantCommand(()->shooterReady = true)
            
-              ),
+              ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Preparing Speaker"),
       
       new SequentialCommandGroup(
         new InstantCommand(()->System.out.println("Shooting")),
@@ -185,7 +185,7 @@ public class RobotContainer {
         new setShooterSpeed(shooter, 0),
         new setShooterIntakeSpeed(shooter, 0)
 
-      ),
+      ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Scoring Speaker"),
         ()->!shooterReady)
     );
       
@@ -195,7 +195,7 @@ public class RobotContainer {
     climbButton.toggleOnTrue(
       
       //new setClimberHeight(climber, Constants.kClimberDownPosition),
-      new RunCommand(()->climber.setIndividualHeights(climber.leftClimber.getPosition().getValueAsDouble() - joystick.getLeftTriggerAxis()*14, climber.rightClimber.getPosition().getValueAsDouble() + joystick.getRightTriggerAxis()*14))
+      new RunCommand(()->climber.setIndividualHeights(climber.leftClimber.getPosition().getValueAsDouble() - joystick.getLeftTriggerAxis()*14, climber.rightClimber.getPosition().getValueAsDouble() + joystick.getRightTriggerAxis()*14)).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Climbing")
     );
     joystick.rightStick().onTrue(
       new setClimberHeight(climber, 0)
