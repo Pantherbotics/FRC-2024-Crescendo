@@ -160,33 +160,22 @@ public class RobotContainer {
     
     
     shootButton.onTrue(
-
-      new ConditionalCommand(
-          new SequentialCommandGroup(
-            
-            new setShooterIntakeSpeed(shooter, 0.2),
-            new WaitCommand(0.2),
-            new setShooterIntakeSpeed(shooter, 0),
-            new setShooterSpeed(shooter, 1),
-            new setShooterAngle(shooter, Constants.kShooterSpeakerAngle),
-            new autoAim(shooter, drivetrain, facing, joystick),
-            //new RunCommand(()->shooter.setWristAngle(Constants.kShooterSpeakerAngle + joystick.getLeftTriggerAxis()*5)).until(shootButton),
-            new InstantCommand(()->shooterReady = true)
-           
-              ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Preparing Speaker"),
-      
       new SequentialCommandGroup(
-        new InstantCommand(()->System.out.println("Shooting")),
-        new InstantCommand(()->shooterReady = false),
-        new InstantCommand(()->shooting = true),
+        new setShooterIntakeSpeed(shooter, 0.2),
+        new WaitCommand(0.2),
+        new setShooterIntakeSpeed(shooter, 0),
+        new setShooterSpeed(shooter, 1),
+        new setShooterAngle(shooter, Constants.kShooterSpeakerAngle),
+        new WaitUntilCommand(shootButton.negate()),
+        new RunCommand(()->new instantAutoAim(shooter, drivetrain, facing, joystick)).until(shootButton),
+
         new setShooterIntakeSpeed(shooter, -1),
         new WaitUntilCommand(()->!shooter.hasNote()),
         new WaitCommand(1),
         new setShooterSpeed(shooter, 0),
         new setShooterIntakeSpeed(shooter, 0)
-
-      ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Scoring Speaker"),
-        ()->!shooterReady)
+        
+      ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Preparing Speaker")
     );
       
 
