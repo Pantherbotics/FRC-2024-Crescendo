@@ -195,7 +195,7 @@ public class RobotContainer {
     climbButton.toggleOnTrue(
       
       //new setClimberHeight(climber, Constants.kClimberDownPosition),
-      new RunCommand(()->climber.setIndividualHeights(climber.leftClimber.getPosition().getValueAsDouble() - joystick.getLeftTriggerAxis()*12, climber.rightClimber.getPosition().getValueAsDouble() + joystick.getRightTriggerAxis()*12))
+      new RunCommand(()->climber.setIndividualHeights(climber.leftClimber.getPosition().getValueAsDouble() - joystick.getLeftTriggerAxis()*14, climber.rightClimber.getPosition().getValueAsDouble() + joystick.getRightTriggerAxis()*14))
     );
     joystick.rightStick().onTrue(
       new setClimberHeight(climber, 0)
