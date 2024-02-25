@@ -31,6 +31,7 @@ public class Constants {
     public static final double kShooterHandoffPosition = 3.8; //
     public static final double kShooterAmpPosition = 11; // not tuned yet
     public static final double kShooterSpeakerAngle = 1.6;
+    public static final double kSpeakerHeight = 2.0431125;
 
     public static final double kShooterSpinSpeed = 1; // speed that flywheels shoot at
     public static final double kShooterIntakeSpeed = -0.5; // speed that shooter intake wheels spin at
