@@ -39,7 +39,7 @@ public class RobotContainer {
   //states (very scuffed)
   private boolean manualShooting = false;
   private boolean ampReady = false;
-  public static String RobotState = "Available";
+  public static String RobotState = "Available"; // very janky but whatever
 
   // buttons and triggers
   private Trigger intakeButton = joystick.leftBumper().and(()->RobotState == "Available");//.and(()->!intake.hasNote());//.and(()->!shooter.hasNote());
@@ -51,11 +51,9 @@ public class RobotContainer {
   //swerve settings
   private double MaxSpeed = 3; // 6 meters per second desired top speed
   private double MaxAngularRate = 1 * Math.PI; // 3/4 of a rotation per second max angular velocity
-
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric() // main drive type
       .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1)
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake(); // swerve braking
   private final SwerveRequest.FieldCentricFacingAngle facing = new SwerveRequest.FieldCentricFacingAngle() // facing angle for auto aiming
   .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
@@ -63,6 +61,9 @@ public class RobotContainer {
 
   // auto path
   private Command runAuto = drivetrain.getAutoPath("Tests");
+
+  //logger
+  private final Telemetry logger = new Telemetry(MaxSpeed);
 
 
 
@@ -79,6 +80,8 @@ public class RobotContainer {
         .withRotationalRate(-joystick.getRightX() * MaxAngularRate) 
       ).ignoringDisable(true));
 
+    //register telemetry
+    drivetrain.registerTelemetry(logger::telemeterize);
       
     // reset the field-centric heading
     joystick.a().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative(new Pose2d(0,0,new Rotation2d(0)))));
