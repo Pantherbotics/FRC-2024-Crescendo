@@ -27,17 +27,21 @@ import frc.robot.Constants;
 
 public class Vision extends SubsystemBase {
   /** Creates a new Vision. */
-  public final PhotonCamera camera = new PhotonCamera(Constants.kPhotonCameraName);
+  public final PhotonCamera camera;
   public AprilTagFieldLayout tagLayout;
   public Transform3d camToTarget = new Transform3d();
   public PhotonPoseEstimator photonPoseEstimator;
   private Pose2d returnedPose;
   private SwerveDriveState swerveState;
   private Optional<EstimatedRobotPose> estimated;
+  private CommandSwerveDrivetrain swerve;
 
 
 
-  public Vision() {
+  public Vision(CommandSwerveDrivetrain swerve) {
+    camera = new PhotonCamera("LeftCam");
+    this.swerve = swerve;
+    System.out.println("Instantiated");
     tagLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
     photonPoseEstimator = new PhotonPoseEstimator(tagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, Constants.kRobotToCamera);
 
@@ -60,28 +64,29 @@ public class Vision extends SubsystemBase {
 
   }
 
-  public void updatePose(SwerveDrivetrain swerve){
+  public void updatePose(){
 
     swerveState = swerve.getState();
+    
     photonPoseEstimator.setReferencePose(swerveState.Pose);
-    estimated = photonPoseEstimator.update();
-
+    estimated = photonPoseEstimator.update(camera.getLatestResult());
     if (estimated.isPresent()){
-      
+
       returnedPose = estimated.get().estimatedPose.toPose2d();
       swerve.addVisionMeasurement(returnedPose, estimated.get().timestampSeconds);
-
+      System.out.println(returnedPose);
     }
     
   }
 
   public Command update(Vision vision, SwerveDrivetrain swerve){
     
-    return new InstantCommand(() -> updatePose(swerve));
+    return new InstantCommand(() -> updatePose());
   }
 
 
   @Override
   public void periodic() {
+    updatePose();
   }
 }

@@ -33,7 +33,7 @@ public class Constants {
     public static final int kShooterLimitSwitchID = 9;
 
     public static final int kLeftWristID = 30; //
-    public static final double kShooterHandoffPosition = 3.8; //
+    public static final double kShooterHandoffPosition = 3.1; //
     public static final double kShooterAmpPosition = 11; // not tuned yet
     public static final double kShooterSpeakerAngle = 1.6;
     public static final double kSpeakerHeight = 2.0431125;

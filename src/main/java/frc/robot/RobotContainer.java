@@ -31,9 +31,10 @@ public class RobotContainer {
   // Instantiate subsystems
   private final Intake intake = new Intake();
   private final Shooter shooter = new Shooter();
-  public final Vision vision = new Vision();
+
   private final Climber climber = new Climber();
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain;
+  public final Vision vision = new Vision(drivetrain);
   private final CommandXboxController joystick = new CommandXboxController(0);
 
   //states (very scuffed)
@@ -70,7 +71,7 @@ public class RobotContainer {
   private void configureBindings() {
     
     //setup vision
-    vision.setDefaultCommand(new RunCommand(()->vision.update(vision, drivetrain),vision));
+    //vision.setDefaultCommand(new RunCommand(()->vision.update(vision, drivetrain),vision));
 
     // setup swerve
     drivetrain.setDefaultCommand(

@@ -37,8 +37,7 @@ public class intakeHandoff extends SequentialCommandGroup {
       new setIntakeSpeed(intake, 0.3),
       new WaitCommand(0.8),
       new setShooterIntakeSpeed(shooter, 0),
-      new setIntakeSpeed(intake, 0),
-      new setIntakeAngle(intake, 4)
+      new setIntakeSpeed(intake, 0)
     );
   }
 }
