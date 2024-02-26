@@ -5,14 +5,11 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
 import frc.robot.subsystems.Shooter;
 
 public class calibrateShooter extends Command {
   /** Creates a new calibrateShooter. */
   private final Shooter shooter;
-  private double zero;
-  private boolean finished;
   
   public calibrateShooter(Shooter shooter) {
     // Use addRequirements() here to declare subsystem dependencies.

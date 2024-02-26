@@ -4,10 +4,6 @@
 
 package frc.robot;
 
-import javax.management.InstanceAlreadyExistsException;
-import javax.swing.plaf.synth.SynthStyle;
-import javax.xml.namespace.QName;
-
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
@@ -16,20 +12,13 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.generated.TunerConstants;
@@ -44,18 +33,13 @@ public class RobotContainer {
   private final Shooter shooter = new Shooter();
   public final Vision vision = new Vision();
   private final Climber climber = new Climber();
-
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain;
-
   private final CommandXboxController joystick = new CommandXboxController(0);
 
+  //states (very scuffed)
   private boolean manualShooting = false;
   private boolean ampReady = false;
-  private boolean shooterReady = false;
-  private boolean shooting = false;
-
   public static String RobotState = "Available";
-  
 
   // buttons and triggers
   private Trigger intakeButton = joystick.leftBumper().and(()->RobotState == "Available");//.and(()->!intake.hasNote());//.and(()->!shooter.hasNote());
@@ -64,75 +48,55 @@ public class RobotContainer {
   private Trigger shootButton = joystick.rightBumper().and(shooter::hasNote).and(()->RobotState == "Available");
   private Trigger zeroButton = joystick.b().and(()->RobotState == "Available");
 
-  /* SWERVE STUFF */
+  //swerve settings
   private double MaxSpeed = 3; // 6 meters per second desired top speed
   private double MaxAngularRate = 1 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
-  private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-      .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-      .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
-                                                               // driving in open loop
-  private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-  private final SwerveRequest.FieldCentricFacingAngle facing = new SwerveRequest.FieldCentricFacingAngle()
+  private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric() // main drive type
+      .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1)
+      .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+
+  private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake(); // swerve braking
+  private final SwerveRequest.FieldCentricFacingAngle facing = new SwerveRequest.FieldCentricFacingAngle() // facing angle for auto aiming
   .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-  //private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-  private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+  private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt(); // point wheels
 
-
-  /* Path follower */
+  // auto path
   private Command runAuto = drivetrain.getAutoPath("Tests");
-
-  //private final Telemetry logger = new Telemetry(MaxSpeed);
-
-
-
-
 
 
 
   private void configureBindings() {
     
-    // SWERVE BINDS
-    drivetrain.setDefaultCommand(
-      drivetrain.applyRequest(
-        () -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-        .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-        .withRotationalRate(-joystick.getRightX() * MaxAngularRate) 
-      
-      ).ignoringDisable(true));
-
-
-    //joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-    //joystick.b().whileTrue(drivetrain
-    //    .applyRequest(() -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
-
-      
-    // reset the field-centric heading on left bumper press
-    joystick.a().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative(new Pose2d(0,0,new Rotation2d(0)))));
-
-    // if (Utils.isSimulation()) {
-    //   drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
-    // }
-    //drivetrain.registerTelemetry(logger::telemeterize);
-
-    //joystick.pov(0).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.5).withVelocityY(0)));
-    //joystick.pov(180).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(-0.5).withVelocityY(0)));
-    
-
+    //setup vision
     vision.setDefaultCommand(new RunCommand(()->vision.update(vision, drivetrain),vision));
 
+    // setup swerve
+    drivetrain.setDefaultCommand(
+      drivetrain.applyRequest(
+        () -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed)
+        .withVelocityY(-joystick.getLeftX() * MaxSpeed) 
+        .withRotationalRate(-joystick.getRightX() * MaxAngularRate) 
+      ).ignoringDisable(true));
+
+      
+    // reset the field-centric heading
+    joystick.a().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative(new Pose2d(0,0,new Rotation2d(0)))));
+
+    // zero the shooter wrist
     zeroButton.onTrue(
       new calibrateShooter(shooter).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Zeroing")
     );
 
+    // intake and handoff
     intakeButton.onTrue(
       new intakeHandoff(shooter, intake).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Intaking")
     );
 
+    // prepare and score amp
     ampButton.onTrue(
       new ConditionalCommand(
-
-        new SequentialCommandGroup(    //prepare amp score
+        new SequentialCommandGroup(
           new setIntakeAngle(intake, 0),
           new setShooterIntakeSpeed(shooter, -0.3),
           new setShooterAngle(shooter, Constants.kShooterAmpPosition),
@@ -142,7 +106,6 @@ public class RobotContainer {
           new InstantCommand(()->ampReady = true)
           //drivetrain.pathfindToPosition(Constants.kAmpPose)
         ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Preparing Amp"), 
-
         new SequentialCommandGroup(
           new InstantCommand(()->ampReady=false),    // score amp
           new setShooterIntakeSpeed(shooter, Constants.kShooterAmpSpeed),
@@ -151,14 +114,11 @@ public class RobotContainer {
           new setShooterIntakeSpeed(shooter, 0),
           new setShooterAngle(shooter, Constants.kShooterHandoffPosition)
         ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Scoring Amp"),
-
-        ()->!ampReady 
+      ()->!ampReady 
       )
     );
     
-
-    
-    
+    // shoot and auto aim speaker
     shootButton.onTrue(
       new SequentialCommandGroup(
         new setShooterIntakeSpeed(shooter, 0.2),
@@ -178,25 +138,18 @@ public class RobotContainer {
       ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Preparing Speaker")
     );
       
-
-
-
+    // climb chain
     climbButton.toggleOnTrue(
-      
       //new setClimberHeight(climber, Constants.kClimberDownPosition),
       new RunCommand(()->climber.setIndividualHeights(climber.leftClimber.getPosition().getValueAsDouble() - joystick.getLeftTriggerAxis()*14, climber.rightClimber.getPosition().getValueAsDouble() + joystick.getRightTriggerAxis()*14)).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Climbing")
     );
+
+    // climbers back to zero
     joystick.rightStick().onTrue(
       new setClimberHeight(climber, 0)
     );
-    
-    
-
 
   }
-
-
-
 
   public RobotContainer() {
 
