@@ -38,7 +38,7 @@ public class Vision extends SubsystemBase {
   private Pose2d returnedPose;
   private SwerveDriveState swerveState;
   private Optional<EstimatedRobotPose> mainEstimated;
-  private Opsional<EstimatedRobotPose> sideEstimated;
+  private Optional<EstimatedRobotPose> sideEstimated;
   private Optional<EstimatedRobotPose> backEstimated;
   private CommandSwerveDrivetrain swerve;
 
