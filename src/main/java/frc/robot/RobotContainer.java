@@ -154,7 +154,7 @@ public class RobotContainer {
 
     // climbers back to zero
     joystick.rightStick().onTrue(
-      new setClimberHeight(climber, 0)
+      new stabilizedClimb(climber, 0)
     );
 
   }

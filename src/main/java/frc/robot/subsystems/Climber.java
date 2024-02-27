@@ -6,8 +6,10 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -16,6 +18,7 @@ public class Climber extends SubsystemBase {
   public TalonFX leftClimber = new TalonFX(Constants.kLeftClimberMotorID);
   public TalonFX rightClimber = new TalonFX(Constants.kRightClimberMotorID);
   private final PositionVoltage m_voltagePosition;
+  private Pigeon2 gyro = new Pigeon2(13);
 
   public Climber() {
     m_voltagePosition = new PositionVoltage(0, 0, true, 0, 0, false, false, false);
@@ -23,7 +26,7 @@ public class Climber extends SubsystemBase {
     rightClimber.setPosition(0);
 
     TalonFXConfiguration configs = new TalonFXConfiguration();
-    configs.Slot0.kP = 0.8;
+    configs.Slot0.kP = 1;
     configs.Slot0.kD = 0;
     configs.Slot0.kI = 0;
 
@@ -41,8 +44,17 @@ public class Climber extends SubsystemBase {
     rightClimber.setControl(m_voltagePosition.withPosition(rightHeight));
   }
 
-  public void setRightHeight(double height){
-    
+  public void changeIndividualHeights(double leftChange, double rightChange){
+    setIndividualHeights(leftClimber.getPosition().getValueAsDouble() + leftChange, rightClimber.getPosition().getValueAsDouble() + rightChange);
+  }
+
+  public void setIndividualSpeeds(double leftSpeed, double rightSpeed){
+    leftClimber.set(leftSpeed);
+    rightClimber.set(rightSpeed);
+  }
+
+  public Rotation3d getGyroRotation3d(){
+    return gyro.getRotation3d();
   }
 
 

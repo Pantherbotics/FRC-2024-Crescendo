@@ -14,6 +14,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
@@ -98,7 +99,7 @@ public class Shooter extends SubsystemBase {
 
   public double radiansToWristAngle(double radians){
     System.out.println("radians = " + radians);
-    return radians / (2 * Math.PI) * (1/ 25) * (12/37);
+    return Units.radiansToRotations(radians) * (1/ 25) * (12/37);
   }
 
   public double shooterAngle(){
