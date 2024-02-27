@@ -64,8 +64,12 @@ public class Constants {
     public static final double kClimberDownPosition = -710;
 
     // vision
-    public static final String kPhotonCameraName = "LeftCam";
-    public static final Transform3d kRobotToCamera = new Transform3d(0,-0.4,1.3,new Rotation3d(0,0,0));
+    public static final string kMainCameraName = "MainCam";
+    public static final String kSideCameraName = "SideCam";
+    public static final string kBackCameraName = "BackCam";
+    public static final Transform3d kRobotToMainCam = new Transform3d(0,-0.4,1.3,new Rotation3d(0,0,0));
+    public static final Transform3d kRobotToSideCam = new Transform3d(0,0,0, new Rotation3d(0,0,0));
+    public static final Transform3d kRobotToBackCam = new Transform3d(0,0,0, new Rotaion3d(0,-35,180))
 
     // pathfinding
     private Optional<Alliance> ally = DriverStation.getAlliance();
