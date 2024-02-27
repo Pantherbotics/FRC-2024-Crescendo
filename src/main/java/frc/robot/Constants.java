@@ -70,21 +70,24 @@ public class Constants {
     // pathfinding
     private Optional<Alliance> ally = DriverStation.getAlliance();
     public static Pose2d kSpeakerPose;
-
+    public static Pose2d kAmpPose;
+    public static Pose2d kSourcePose;
     public Constants(){
         if (ally.isPresent()){
             if (ally.get() == Alliance.Red){
                 kSpeakerPose = new Pose2d(16.3, 5.5, Rotation2d.fromDegrees(180));
+                kAmpPose = new Pose2d(14.26, 7, Rotation2d.fromDegrees(90));
+                kSourcePose = new Pose2d(2.06,1.4,Rotation2d.fromDegrees(-30));
             } else {
                 kSpeakerPose = new Pose2d(0.25, 5.5, Rotation2d.fromDegrees(180));
+                kAmpPose = new Pose2d(2.3, 7, Rotation2d.fromDegrees(90));
+                kSourcePose = new Pose2d(14.5,1.4,Rotation2d.fromDegrees(-30));
             }
         } else {
             kSpeakerPose = new Pose2d(16.3, 5.5, Rotation2d.fromDegrees(180));
         }
     }
-    
-    public static final Pose2d kAmpPose = new Pose2d(2.3, 7, Rotation2d.fromDegrees(90));
-    public static final Pose2d kSourcePose = new Pose2d(14.5,1.4,Rotation2d.fromDegrees(-30));
+
     public static final PathConstraints kPathfindingConstraints = 
         new PathConstraints(
             3.0, 4.0,
