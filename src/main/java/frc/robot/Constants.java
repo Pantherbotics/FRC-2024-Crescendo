@@ -33,9 +33,9 @@ public class Constants {
     public static final int kShooterLimitSwitchID = 9;
 
     public static final int kLeftWristID = 30; //
-    public static final double kShooterHandoffPosition = 3.1; //
-    public static final double kShooterAmpPosition = 11; // not tuned yet
-    public static final double kShooterSpeakerAngle = 1.6;
+    public static final double kShooterHandoffPosition = -1.65; //
+    public static final double kShooterAmpPosition = 6.25; // not tuned yet
+    public static final double kShooterSpeakerAngle = -3.15;
     public static final double kSpeakerHeight = 2.0431125;
 
     public static final double kShooterSpinSpeed = 1; // speed that flywheels shoot at
@@ -68,7 +68,7 @@ public class Constants {
     public static final String kSideCameraName = "SideCam";
     public static final String kBackCameraName = "BackCam";
     public static final Transform3d kRobotToMainCam = new Transform3d(0,-0.4,1.3,new Rotation3d(0,0,0));
-    public static final Transform3d kRobotToSideCam = new Transform3d(0,0,0, new Rotation3d(0,0,0));
+    public static final Transform3d kRobotToSideCam = new Transform3d(0,-0.4,0, new Rotation3d(0,0,0));
     public static final Transform3d kRobotToBackCam = new Transform3d(0,0,0, new Rotation3d(0,-35,180));
 
     // pathfinding

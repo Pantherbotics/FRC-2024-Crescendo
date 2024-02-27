@@ -34,7 +34,7 @@ public class calibrateShooter extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shooter.setZero(14);
+    shooter.setZero(9.25);
     System.out.println("ZEROED");
     shooter.setWristAngle(0);
   }

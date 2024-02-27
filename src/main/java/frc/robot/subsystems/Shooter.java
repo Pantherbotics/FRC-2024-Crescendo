@@ -58,8 +58,8 @@ public class Shooter extends SubsystemBase {
     feedforward = new SimpleMotorFeedforward(0, 0, 0);
 
     this.controller = new ProfiledPIDController(
-      0.5, 0, 0.0005,
-      new TrapezoidProfile.Constraints(10, 10)
+      0.34, 0, 0.001,
+      new TrapezoidProfile.Constraints(10, 20)
     );
     
     leftWrist.setPosition(0);
