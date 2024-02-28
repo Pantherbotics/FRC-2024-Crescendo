@@ -108,6 +108,8 @@ public class Telemetry {
             SmartDashboard.putData("Module " + i, m_moduleMechanisms[i]);
         }
 
+        
+
         SignalLogger.writeDoubleArray("odometry", new double[] {pose.getX(), pose.getY(), pose.getRotation().getDegrees()});
         SignalLogger.writeDouble("odom period", state.OdometryPeriod, "seconds");
     }

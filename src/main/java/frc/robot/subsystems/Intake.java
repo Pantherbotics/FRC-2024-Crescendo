@@ -13,6 +13,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -103,6 +104,10 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
+
+    SmartDashboard.putBoolean("Intake Note", hasNote());
+    SmartDashboard.putNumber("Intake Angle", intakeAngle());
+
     sensorValue = distanceSensor.getAverageValue();
     double acceleration = (controller.getSetpoint().velocity - lastSpeed) / (Timer.getFPGATimestamp() - lastTime);
 

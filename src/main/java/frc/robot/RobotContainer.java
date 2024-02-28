@@ -101,7 +101,7 @@ public class RobotContainer {
         new WaitCommand(1),
         new setIntakeSpeed(intake, 1),
         new WaitUntilCommand(()->!intake.hasNote()),
-        new WaitCommand(0.5),
+        new WaitCommand(0.2),
         new setIntakeSpeed(intake, 0),
         new setIntakeAngle(intake,0)
       )
