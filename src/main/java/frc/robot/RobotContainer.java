@@ -12,6 +12,7 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -41,7 +42,7 @@ public class RobotContainer {
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain;
   public final Vision vision = new Vision(drivetrain);
   private final CommandXboxController joystick = new CommandXboxController(0);
-  private final SendableChooser<Command> autoChooser;
+
 
   //states (very scuffed)
   private boolean manualShooting = true;
@@ -179,13 +180,37 @@ public class RobotContainer {
 
   }
 
+  public SendableChooser <Command> autoChooser;
+
+  public void setupPathPlanner(){
+
+    NamedCommands.registerCommand("intake", new intakeHandoff(shooter, intake));
+    NamedCommands.registerCommand("prepare shoot", new SequentialCommandGroup(
+      new setShooterAngle(shooter, Constants.kShooterSpeakerAngle),
+      new setShooterIntakeSpeed(shooter, 0.2),
+      new WaitCommand(0.2),
+      new setShooterSpeed(shooter, 1)
+    ));
+    NamedCommands.registerCommand("Shoot", new SequentialCommandGroup(
+      new setShooterIntakeSpeed(shooter, -1),
+      new WaitCommand(0.2),
+      new setShooterIntakeSpeed(shooter, 0),
+      new setShooterSpeed(shooter, 0)
+    ));
+    
+
+
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auto Chooser", autoChooser);
+  }
+
   public RobotContainer() {
 
     configureBindings();
 
+    setupPathPlanner();
     //auto chooser
-    autoChooser = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("Auto Chooser", autoChooser);
+
 
     // Invert swerve encoders  DO NOT REMOVE
     for (int i = 0; i < 4; ++i)
