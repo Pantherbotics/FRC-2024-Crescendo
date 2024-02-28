@@ -6,6 +6,8 @@ package frc.robot;
 
 import java.time.Instant;
 
+import javax.xml.namespace.QName;
+
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
@@ -19,6 +21,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -55,12 +58,14 @@ public class RobotContainer {
   private Trigger climbButton = joystick.y().and(()->RobotState == "Available");
   private Trigger shootButton = joystick.rightBumper().and(shooter::hasNote);
   private Trigger zeroButton = joystick.b().and(()->RobotState == "Available");
+  private Trigger tacoBell = joystick.povDown().and(()->RobotState == "Available");
+  private Trigger cancelButton = joystick.povUp();
 
   //swerve settings
   private double MaxSpeed = 3; // 6 meters per second desired top speed
   private double MaxAngularRate = 1 * Math.PI; // 3/4 of a rotation per second max angular velocity
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric() // main drive type
-      .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1)
+      .withDeadband(MaxSpeed * 0.05).withRotationalDeadband(MaxAngularRate * 0.05)
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake(); // swerve braking
   private final SwerveRequest.FieldCentricFacingAngle facing = new SwerveRequest.FieldCentricFacingAngle() // facing angle for auto aiming
@@ -91,7 +96,18 @@ public class RobotContainer {
     //register telemetry
     drivetrain.registerTelemetry(logger::telemeterize);
       
-    joystick.povDown().onTrue(
+    cancelButton.onTrue(
+      new SequentialCommandGroup(
+        new setShooterAngle(shooter, Constants.kShooterHandoffPosition),
+        new setShooterIntakeSpeed(shooter, 0),
+        new setShooterSpeed(shooter, 0),
+        new setIntakeAngle(intake, 0),
+        new setIntakeSpeed(intake, 0),
+        new InstantCommand(()->CommandScheduler.getInstance().cancelAll())
+      )
+    );
+
+    tacoBell.onTrue(
       new SequentialCommandGroup(
         new setShooterIntakeSpeed(shooter, 0.3),
         new setIntakeSpeed(intake, -0.3),
@@ -104,7 +120,7 @@ public class RobotContainer {
         new WaitCommand(0.2),
         new setIntakeSpeed(intake, 0),
         new setIntakeAngle(intake,0)
-      )
+      ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Zeroing")
     );
 
     // reset the field-centric heading
@@ -124,7 +140,7 @@ public class RobotContainer {
     ampButton.onTrue(
       new ConditionalCommand(
         new SequentialCommandGroup(
-          new setIntakeAngle(intake, 0),
+          new InstantCommand(()->MaxSpeed = 1),
           new setShooterIntakeSpeed(shooter, -0.3),
           new setShooterAngle(shooter, Constants.kShooterAmpPosition),
           new WaitCommand(0.3),
@@ -139,7 +155,8 @@ public class RobotContainer {
           new WaitUntilCommand(()->!shooter.hasNote()),
           new WaitCommand(0.1),
           new setShooterIntakeSpeed(shooter, 0),
-          new setShooterAngle(shooter, Constants.kShooterHandoffPosition)
+          new setShooterAngle(shooter, Constants.kShooterHandoffPosition),
+          new InstantCommand(()->MaxSpeed = 3)
         ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Scoring Amp"),
       ()->!ampReady 
       )
