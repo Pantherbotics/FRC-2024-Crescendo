@@ -21,7 +21,7 @@ public class Climber extends SubsystemBase {
   private Pigeon2 gyro = new Pigeon2(13);
 
   public Climber() {
-    m_voltagePosition = new PositionVoltage(0, 0, true, 0, 0, false, false, false);
+    m_voltagePosition = new PositionVoltage(0, 0, true, 0.5, 0, false, false, false);
     leftClimber.setPosition(0);
     rightClimber.setPosition(0);
 

@@ -22,7 +22,7 @@ public class calibrateShooter extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    shooter.setWristOpenLoop(0.1);
+    shooter.setWristOpenLoop(0.175);
     System.out.println("started");
   }
 

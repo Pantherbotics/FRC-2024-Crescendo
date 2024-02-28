@@ -64,7 +64,7 @@ public class RobotContainer {
 
   //swerve settings
   private double MaxSpeed = 3; // 6 meters per second desired top speed
-  private double MaxAngularRate = 1 * Math.PI; // 3/4 of a rotation per second max angular velocity
+  private double MaxAngularRate = 1.25 * Math.PI; // 3/4 of a rotation per second max angular velocity
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric() // main drive type
       .withDeadband(MaxSpeed * 0.05).withRotationalDeadband(MaxAngularRate * 0.05)
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
@@ -92,7 +92,7 @@ public class RobotContainer {
         () -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed)
         .withVelocityY(-joystick.getLeftX() * MaxSpeed) 
         .withRotationalRate(-joystick.getRightX() * MaxAngularRate)
-        .withCenterOfRotation(new Translation2d(-joystick.getRightY(), 0))
+        .withCenterOfRotation(new Translation2d(Math.round(-joystick.getRightY())*0.75, 0))
       ).ignoringDisable(true));
 
     //register telemetry
@@ -111,10 +111,13 @@ public class RobotContainer {
 
     tacoBell.onTrue(
       new SequentialCommandGroup(
-        new setShooterIntakeSpeed(shooter, 0.3),
-        new setIntakeSpeed(intake, -0.3),
-        new WaitCommand(1),
+        new setShooterAngle(shooter, Constants.kShooterHandoffPosition),
+        new WaitUntilCommand(shooter::isAtGoal),
+        new setShooterIntakeSpeed(shooter, 0.4),
+        new setIntakeSpeed(intake, -0.4),
+        new WaitCommand(0.7),
         new setShooterIntakeSpeed(shooter, 0),
+        new setIntakeSpeed(intake, 0),
         new setIntakeAngle(intake, 4),
         new WaitCommand(1),
         new setIntakeSpeed(intake, 1),
@@ -134,7 +137,7 @@ public class RobotContainer {
     );
 
     // intake and handoff
-    intakeButton.toggleOnTrue(
+    intakeButton.onTrue(
       new intakeHandoff(shooter, intake).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Intaking")
     );
 
@@ -164,19 +167,21 @@ public class RobotContainer {
       )
     );
     
+    
+
     // shoot and auto aim speaker
     shootButton.and(()->RobotState == "Available").onTrue(
       new SequentialCommandGroup(
         new InstantCommand(()->MaxSpeed = Constants.kSlowDriveSpeed),
         new setShooterIntakeSpeed(shooter, 0.2),
-        new WaitCommand(0.2),
+        new WaitCommand(0.3),
         new setShooterIntakeSpeed(shooter, 0),
         new setShooterSpeed(shooter, 1),
         new setShooterAngle(shooter, Constants.kShooterSpeakerAngle),
         new WaitUntilCommand(shootButton.negate()),
         new ConditionalCommand(
           new RunCommand(()->new instantAutoAim(shooter, drivetrain, facing, joystick)).until(shootButton),
-          new setShooterAngle(shooter, Constants.kShooterSpeakerAngle + (joystick.getRightTriggerAxis() - joystick.getLeftTriggerAxis())*5).repeatedly().until(shootButton), 
+          new RunCommand(()->shooter.setWristAngle(Constants.kShooterSpeakerAngle + (joystick.getRightTriggerAxis() - joystick.getLeftTriggerAxis())*10)).until(shootButton), 
         ()->!manualShooting),
         new setShooterIntakeSpeed(shooter, -1),
         new WaitUntilCommand(()->!shooter.hasNote()),
@@ -188,7 +193,7 @@ public class RobotContainer {
     );
       
     // climb chain
-    climbButton.toggleOnTrue(
+    climbButton.onTrue(
       //new setClimberHeight(climber, Constants.kClimberDownPosition),
       new RunCommand(
         ()->climber.setIndividualHeights(
@@ -216,6 +221,7 @@ public class RobotContainer {
       new setShooterAngle(shooter, Constants.kReverseShootAngle),
       new setShooterIntakeSpeed(shooter, 0.2),
       new WaitCommand(0.2),
+      new setShooterIntakeSpeed(shooter, 0),
       new setShooterSpeed(shooter, 1)
     ));
     NamedCommands.registerCommand("prepare shoot", new SequentialCommandGroup(
@@ -224,7 +230,7 @@ public class RobotContainer {
       new WaitCommand(0.2),
       new setShooterSpeed(shooter, 1)
     ));
-    NamedCommands.registerCommand("Shoot", new SequentialCommandGroup(
+    NamedCommands.registerCommand("shoot", new SequentialCommandGroup(
       new setShooterIntakeSpeed(shooter, -1),
       new WaitCommand(0.2),
       new setShooterIntakeSpeed(shooter, 0),

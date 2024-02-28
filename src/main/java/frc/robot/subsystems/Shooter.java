@@ -61,7 +61,7 @@ public class Shooter extends SubsystemBase {
 
     this.controller = new ProfiledPIDController(
       0.34, 0, 0.001,
-      new TrapezoidProfile.Constraints(10, 20)
+      new TrapezoidProfile.Constraints(10, 23)
     );
     
     leftWrist.setPosition(0);
