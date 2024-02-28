@@ -184,7 +184,15 @@ public class RobotContainer {
 
   public void setupPathPlanner(){
 
+    NamedCommands.registerCommand("wait for shooter pos", new WaitUntilCommand(shooter::isAtGoal));
+    NamedCommands.registerCommand("zero shooter", new calibrateShooter(shooter));
     NamedCommands.registerCommand("intake", new intakeHandoff(shooter, intake));
+    NamedCommands.registerCommand("prepare reverse shoot", new SequentialCommandGroup(
+      new setShooterAngle(shooter, Constants.kReverseShootAngle),
+      new setShooterIntakeSpeed(shooter, 0.2),
+      new WaitCommand(0.2),
+      new setShooterSpeed(shooter, 1)
+    ));
     NamedCommands.registerCommand("prepare shoot", new SequentialCommandGroup(
       new setShooterAngle(shooter, Constants.kShooterSpeakerAngle),
       new setShooterIntakeSpeed(shooter, 0.2),
@@ -195,9 +203,10 @@ public class RobotContainer {
       new setShooterIntakeSpeed(shooter, -1),
       new WaitCommand(0.2),
       new setShooterIntakeSpeed(shooter, 0),
-      new setShooterSpeed(shooter, 0)
+      new setShooterSpeed(shooter, 0),
+      new setShooterAngle(shooter, Constants.kShooterHandoffPosition)
     ));
-    
+
 
 
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -209,8 +218,6 @@ public class RobotContainer {
     configureBindings();
 
     setupPathPlanner();
-    //auto chooser
-
 
     // Invert swerve encoders  DO NOT REMOVE
     for (int i = 0; i < 4; ++i)
