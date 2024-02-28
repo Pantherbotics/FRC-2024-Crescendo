@@ -20,6 +20,11 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 /** Add your docs here. */
 public class Constants {
 
+
+    // drive constants
+    public static final double kSlowDriveSpeed = 1;
+    public static final double kNormalDriveSpeed = 3;
+
     // shooter constants
 
     public static final int kLeftShooterID = 31;

@@ -18,6 +18,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -90,7 +91,8 @@ public class RobotContainer {
       drivetrain.applyRequest(
         () -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed)
         .withVelocityY(-joystick.getLeftX() * MaxSpeed) 
-        .withRotationalRate(-joystick.getRightX() * MaxAngularRate) 
+        .withRotationalRate(-joystick.getRightX() * MaxAngularRate)
+        .withCenterOfRotation(new Translation2d(-joystick.getRightY(), 0))
       ).ignoringDisable(true));
 
     //register telemetry
@@ -120,7 +122,7 @@ public class RobotContainer {
         new WaitCommand(0.2),
         new setIntakeSpeed(intake, 0),
         new setIntakeAngle(intake,0)
-      ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Zeroing")
+      ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Ejecting")
     );
 
     // reset the field-centric heading
@@ -140,7 +142,7 @@ public class RobotContainer {
     ampButton.onTrue(
       new ConditionalCommand(
         new SequentialCommandGroup(
-          new InstantCommand(()->MaxSpeed = 1),
+          new InstantCommand(()->MaxSpeed = Constants.kSlowDriveSpeed),
           new setShooterIntakeSpeed(shooter, -0.3),
           new setShooterAngle(shooter, Constants.kShooterAmpPosition),
           new WaitCommand(0.3),
@@ -156,7 +158,7 @@ public class RobotContainer {
           new WaitCommand(0.1),
           new setShooterIntakeSpeed(shooter, 0),
           new setShooterAngle(shooter, Constants.kShooterHandoffPosition),
-          new InstantCommand(()->MaxSpeed = 3)
+          new InstantCommand(()->MaxSpeed = Constants.kNormalDriveSpeed)
         ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Scoring Amp"),
       ()->!ampReady 
       )
@@ -165,6 +167,7 @@ public class RobotContainer {
     // shoot and auto aim speaker
     shootButton.and(()->RobotState == "Available").onTrue(
       new SequentialCommandGroup(
+        new InstantCommand(()->MaxSpeed = Constants.kSlowDriveSpeed),
         new setShooterIntakeSpeed(shooter, 0.2),
         new WaitCommand(0.2),
         new setShooterIntakeSpeed(shooter, 0),
@@ -179,8 +182,8 @@ public class RobotContainer {
         new WaitUntilCommand(()->!shooter.hasNote()),
         new WaitCommand(0.3),
         new setShooterSpeed(shooter, 0),
-        new setShooterIntakeSpeed(shooter, 0)
-        
+        new setShooterIntakeSpeed(shooter, 0),
+        new InstantCommand(()->MaxSpeed = Constants.kNormalDriveSpeed)
       ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Preparing Speaker")
     );
       
