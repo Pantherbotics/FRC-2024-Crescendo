@@ -190,7 +190,12 @@ public class RobotContainer {
     // climb chain
     climbButton.toggleOnTrue(
       //new setClimberHeight(climber, Constants.kClimberDownPosition),
-      new RunCommand(()->climber.setIndividualHeights(climber.leftClimber.getPosition().getValueAsDouble() - joystick.getLeftTriggerAxis()*14, climber.rightClimber.getPosition().getValueAsDouble() + joystick.getRightTriggerAxis()*14)).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Climbing").until(joystick.rightStick())
+      new RunCommand(
+        ()->climber.setIndividualHeights(
+          Math.max(climber.leftClimber.getPosition().getValueAsDouble() - joystick.getLeftTriggerAxis()*14, Constants.kClimberDownPosition), 
+          Math.max(climber.rightClimber.getPosition().getValueAsDouble() + joystick.getRightTriggerAxis()*14, Constants.kClimberDownPosition)
+        )
+      ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Climbing").until(joystick.rightStick())
     );
 
     // climbers back to zero
