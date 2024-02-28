@@ -67,9 +67,9 @@ public class Constants {
     public static final String kMainCameraName = "MainCam";
     public static final String kSideCameraName = "SideCam";
     public static final String kBackCameraName = "BackCam";
-    public static final Transform3d kRobotToMainCam = new Transform3d(0,-0.4,1.3,new Rotation3d(0,0,0));
-    public static final Transform3d kRobotToSideCam = new Transform3d(0,-0.4,0, new Rotation3d(0,0,0));
-    public static final Transform3d kRobotToBackCam = new Transform3d(0,0,0, new Rotation3d(0,-35,180));
+    public static final Transform3d kRobotToMainCam = new Transform3d(0,0.4,1.2,new Rotation3d(0,0,0)); // these are just estimated
+    public static final Transform3d kRobotToSideCam = new Transform3d(0,-0.4,1.2, new Rotation3d(0,0,0));
+    public static final Transform3d kRobotToBackCam = new Transform3d(-0.2,-0.35,0.4, new Rotation3d(0, -35,180));
 
     // pathfinding
     private Optional<Alliance> ally = DriverStation.getAlliance();
