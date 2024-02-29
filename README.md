@@ -1,2 +1,2 @@
 # FRC-2024-Crescendo
-:q
+The code for our 2024 FRC robot
