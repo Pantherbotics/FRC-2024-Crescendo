@@ -97,14 +97,7 @@ public class RobotContainer {
     drivetrain.registerTelemetry(logger::telemeterize);
       
     cancelButton.onTrue(
-      new SequentialCommandGroup(
-        new setShooterAngle(shooter, Constants.kShooterHandoffPosition),
-        new setShooterIntakeSpeed(shooter, 0),
-        new setShooterSpeed(shooter, 0),
-        new setIntakeAngle(intake, 0),
-        new setIntakeSpeed(intake, 0),
-        new InstantCommand(()->CommandScheduler.getInstance().cancelAll())
-      )
+      new cancelAll(shooter, intake)
     );
 
     tacoBell.onTrue(
