@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -133,7 +134,10 @@ public class RobotContainer {
 
     // zero the shooter wrist
     zeroButton.onTrue(
-      new calibrateShooter(shooter).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Zeroing")
+      new ParallelCommandGroup(
+        new calibrateShooter(shooter),
+        new calibrateIntake(intake)
+      ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Zeroing")
     );
 
     // intake and handoff
@@ -207,6 +211,7 @@ public class RobotContainer {
     joystick.rightStick().onTrue(
       new InstantCommand(()->climber.setHeight(0))
     );
+
 
   }
 

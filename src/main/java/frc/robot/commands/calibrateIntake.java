@@ -31,7 +31,7 @@ public class calibrateIntake extends Command {
   @Override
   public void end(boolean interrupted) {
     intake.setZeroPoint(0);
-    intake.setOpenLoop(0);
+    intake.setAngle(0);
   }
 
   // Returns true when the command should end.
