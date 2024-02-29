@@ -70,18 +70,12 @@ public class RobotContainer {
   .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt(); // point wheels
 
-  // auto path
-  //private Command runAuto = drivetrain.getAutoPath("Tests");
-
   //logger
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
 
 
   private void configureBindings() {
-    
-    //setup vision
-    //vision.setDefaultCommand(new RunCommand(()->vision.update(vision, drivetrain),vision));
 
     // setup swerve
     drivetrain.setDefaultCommand(
@@ -94,11 +88,13 @@ public class RobotContainer {
 
     //register telemetry
     drivetrain.registerTelemetry(logger::telemeterize);
-      
+
+    // cancel all commands and return components to zero position
     cancelButton.onTrue(
       new cancelAll(shooter, intake)
     );
 
+    // eject note from shooter and intake
     tacoBell.onTrue(
       new SequentialCommandGroup(
         new setShooterAngle(shooter, Constants.kShooterHandoffPosition),
@@ -125,6 +121,7 @@ public class RobotContainer {
     // reset the field-centric heading
     joystick.a().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative(new Pose2d(0,0,new Rotation2d(0)))));
 
+    // toggle manual shooting
     joystick.povRight().onTrue(
       new InstantCommand(()-> manualShooting = !manualShooting)
     );
@@ -169,8 +166,6 @@ public class RobotContainer {
       )
     );
     
-    
-
     // shoot and auto aim speaker
     shootButton.and(()->RobotState == "Available").onTrue(
       new SequentialCommandGroup(
@@ -209,10 +204,9 @@ public class RobotContainer {
     joystick.rightStick().onTrue(
       new InstantCommand(()->climber.setHeight(0))
     );
-
-
   }
 
+  // auto chooser
   public SendableChooser <Command> autoChooser;
 
   public void setupPathPlanner(){
