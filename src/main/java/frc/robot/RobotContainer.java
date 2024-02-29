@@ -50,7 +50,7 @@ public class RobotContainer {
 
 
   //states (very scuffed)
-  private boolean manualShooting = true;
+  public static boolean manualShooting = true;
   private boolean ampReady = false;
   public static String RobotState = "Available"; // very janky but whatever
 
@@ -131,6 +131,10 @@ public class RobotContainer {
 
     // reset the field-centric heading
     joystick.a().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative(new Pose2d(0,0,new Rotation2d(0)))));
+
+    joystick.povRight().onTrue(
+      new InstantCommand(()-> manualShooting = !manualShooting)
+    );
 
     // zero the shooter wrist
     zeroButton.onTrue(

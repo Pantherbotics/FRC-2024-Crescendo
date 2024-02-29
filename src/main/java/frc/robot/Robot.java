@@ -76,6 +76,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     SmartDashboard.putString("state", RobotContainer.RobotState);
+    SmartDashboard.putBoolean("manual aiming", RobotContainer.manualShooting);
   }
 
   @Override
