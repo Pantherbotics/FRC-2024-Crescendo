@@ -23,7 +23,6 @@ public class calibrateShooter extends Command {
   @Override
   public void initialize() {
     shooter.setWristOpenLoop(0.175);
-    System.out.println("started");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -35,7 +34,6 @@ public class calibrateShooter extends Command {
   @Override
   public void end(boolean interrupted) {
     shooter.setZero(9.25);
-    System.out.println("ZEROED");
     shooter.setWristAngle(0);
   }
 

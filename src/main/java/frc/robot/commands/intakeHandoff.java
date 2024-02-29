@@ -4,7 +4,6 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -38,8 +37,6 @@ public class intakeHandoff extends SequentialCommandGroup {
         new WaitCommand(1),
         new WaitUntilCommand(shooter::hasNote)
       ),
-      new setShooterIntakeSpeed(shooter, -0.3),
-      new setIntakeSpeed(intake, 0.3),
       new WaitCommand(0.8),
       new setShooterIntakeSpeed(shooter, 0),
       new setIntakeSpeed(intake, 0)
