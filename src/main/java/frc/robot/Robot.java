@@ -9,6 +9,10 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.calibrateIntake;
+import frc.robot.commands.calibrateShooter;
+import frc.robot.commands.cancelAll;
 
 
 
@@ -68,6 +72,13 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
 
+    CommandScheduler.getInstance().schedule(
+      new SequentialCommandGroup(
+        new cancelAll(RobotContainer.shooter, RobotContainer.intake),
+        new calibrateShooter(RobotContainer.shooter),
+        new calibrateIntake(RobotContainer.intake)
+      )
+    );
   
   }
 

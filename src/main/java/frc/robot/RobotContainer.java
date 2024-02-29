@@ -37,8 +37,8 @@ import frc.robot.commands.*;
 public class RobotContainer {
 
   // Instantiate subsystems
-  private final Intake intake = new Intake();
-  private final Shooter shooter = new Shooter();
+  public static final Intake intake = new Intake();
+  public static final Shooter shooter = new Shooter();
 
   private final Climber climber = new Climber();
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain;
