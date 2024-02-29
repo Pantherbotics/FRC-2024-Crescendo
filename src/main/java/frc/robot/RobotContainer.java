@@ -18,7 +18,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -106,11 +105,15 @@ public class RobotContainer {
         new WaitUntilCommand(shooter::isAtGoal),
         new setShooterIntakeSpeed(shooter, 0.4),
         new setIntakeSpeed(intake, -0.4),
-        new WaitCommand(0.7),
+        new ParallelRaceGroup(
+          new WaitUntilCommand(shooter::hasNote),
+          new WaitCommand(0.7)
+        ),
+        new WaitCommand(0.2),
         new setShooterIntakeSpeed(shooter, 0),
         new setIntakeSpeed(intake, 0),
         new setIntakeAngle(intake, 4),
-        new WaitCommand(1),
+        new WaitCommand(0.75),
         new setIntakeSpeed(intake, 1),
         new WaitUntilCommand(()->!intake.hasNote()),
         new WaitCommand(0.2),
