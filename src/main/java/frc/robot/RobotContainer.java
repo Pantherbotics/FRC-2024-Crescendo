@@ -173,11 +173,11 @@ public class RobotContainer {
     shootButton.and(()->RobotState == "Available").onTrue(
       new SequentialCommandGroup(
         new InstantCommand(()->MaxSpeed = Constants.kSlowDriveSpeed),
+        new setShooterAngle(shooter, Constants.kShooterSpeakerAngle),
         new setShooterIntakeSpeed(shooter, 0.2),
         new WaitCommand(0.3),
         new setShooterIntakeSpeed(shooter, 0),
         new setShooterSpeed(shooter, 1),
-        new setShooterAngle(shooter, Constants.kShooterSpeakerAngle),
         new WaitUntilCommand(shootButton.negate()),
         new ConditionalCommand(
           new RunCommand(()->new instantAutoAim(shooter, drivetrain, facing, joystick)).until(shootButton),

@@ -2,15 +2,21 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.2,
-      "y": 6.3
+      "x": 0.5411044202972841,
+      "y": 7.003080254377342
     },
-    "rotation": 35.6998849267512
+    "rotation": 0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "back to top shoot"
+          }
+        },
         {
           "type": "named",
           "data": {
