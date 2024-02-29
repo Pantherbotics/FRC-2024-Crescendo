@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.6431097477579587,
-      "y": 7.212735194701159
+      "x": 0.4951056055958282,
+      "y": 4.055313495242375
     },
     "rotation": 0
   },
@@ -12,33 +12,109 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "back to top shoot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "prepare reverse shoot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "wait for shooter pos"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.1
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "prepare reverse shoot"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "shoot bottom"
+                }
+              }
+            ]
           }
         },
         {
           "type": "named",
           "data": {
             "name": "shoot"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.2
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake down"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "bottom"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "wait for intake note"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "handoff note"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "prepare reverse shoot"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "wait for shooter pos"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.1
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "shoot"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "shoot bottom"
+                }
+              }
+            ]
           }
         },
         {
@@ -67,22 +143,10 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "top"
+                  "pathName": "collect 5th"
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "prepare reverse shoot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "wait for shooter pos"
           }
         },
         {
@@ -96,60 +160,9 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "prepare reverse shoot"
+                        "name": "handoff"
                       }
                     },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "wait for shooter pos"
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "back to top shoot"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "shoot"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "intake"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "top to 2nd"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
                     {
                       "type": "named",
                       "data": {
@@ -168,7 +181,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "top shoot facing towards"
+                  "pathName": "shoot bottom facing towards"
                 }
               }
             ]
@@ -178,6 +191,12 @@
           "type": "named",
           "data": {
             "name": "shoot"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.1
           }
         },
         {
@@ -187,45 +206,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "intake"
+                  "name": "intake down"
                 }
               },
               {
                 "type": "path",
                 "data": {
-                  "pathName": "top to 1st"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "prepare shoot"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "wait for shooter pos"
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "top shoot facing towards"
+                  "pathName": "collect 4th"
                 }
               }
             ]
@@ -234,7 +221,13 @@
         {
           "type": "named",
           "data": {
-            "name": "shoot"
+            "name": "wait for intake note"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "handoff note"
           }
         }
       ]
