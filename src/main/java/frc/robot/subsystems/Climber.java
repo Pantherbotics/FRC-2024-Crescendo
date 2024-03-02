@@ -10,8 +10,10 @@ import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 
 public class Climber extends SubsystemBase {
   /** Creates a new Climbers. */
@@ -21,12 +23,12 @@ public class Climber extends SubsystemBase {
   private Pigeon2 gyro = new Pigeon2(13);
 
   public Climber() {
-    m_voltagePosition = new PositionVoltage(0, 0, true, 0.5, 0, false, false, false);
+    m_voltagePosition = new PositionVoltage(0, 0, true, 0, 0, false, false, false);
     leftClimber.setPosition(0);
     rightClimber.setPosition(0);
 
     TalonFXConfiguration configs = new TalonFXConfiguration();
-    configs.Slot0.kP = 1;
+    configs.Slot0.kP = 1.5;
     configs.Slot0.kD = 0;
     configs.Slot0.kI = 0;
 
@@ -57,9 +59,18 @@ public class Climber extends SubsystemBase {
     return gyro.getRotation3d();
   }
 
+  public double getLeftHeight(){
+    return leftClimber.getPosition().getValueAsDouble();
+  }
+  public double getRightHeight(){
+    return rightClimber.getPosition().getValueAsDouble();
+  }
+
 
   @Override
   public void periodic() {
+    SmartDashboard.putNumber("left climber", getLeftHeight());
+    SmartDashboard.putNumber("right climer", getRightHeight());
     // This method will be called once per scheduler ru
     }
   

@@ -65,7 +65,7 @@ public class Shooter extends SubsystemBase {
     
     leftWrist.setPosition(0);
     this.controller.setGoal(0);
-    this.controller.setTolerance(1);
+    this.controller.setTolerance(0.5);
   }
 
 
@@ -99,7 +99,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public double radiansToWristAngle(double radians){
-    System.out.println("radians = " + radians);
+    System.out.println(Units.radiansToRotations(radians) * (1/ 25) * (12/37));
     return Units.radiansToRotations(radians) * (1/ 25) * (12/37);
   }
 
@@ -122,10 +122,12 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-
+    
+    sensorValue = mydistanceSensor.getAverageValue();
+    SmartDashboard.putNumber("shooter distance sensor", sensorValue);
     SmartDashboard.putBoolean("Shooter Note", hasNote());
     SmartDashboard.putNumber("wrist", shooterAngle());
-    sensorValue = mydistanceSensor.getAverageValue();
+
 
     double acceleration = (controller.getSetpoint().velocity - lastSpeed) / (Timer.getFPGATimestamp() - lastTime);
     

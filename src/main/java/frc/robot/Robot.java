@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.calibrateIntake;
 import frc.robot.commands.calibrateShooter;
 import frc.robot.commands.cancelAll;
+import frc.robot.subsystems.Climber;
 
 
 
@@ -87,7 +88,10 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     SmartDashboard.putString("state", RobotContainer.RobotState);
     SmartDashboard.putBoolean("manual aiming", RobotContainer.manualShooting);
+    SmartDashboard.putNumber("Shooter threshold", Constants.kShooterDistanceSensorTreshold);
+    SmartDashboard.putNumber("Intake threshold", Constants.kIntakeDistanceSensorThreshold);
   }
+  
 
   @Override
   public void teleopExit() {

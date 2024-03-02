@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.time.Instant;
+
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
@@ -39,10 +41,11 @@ public class RobotContainer {
   public static final Intake intake = new Intake();
   public static final Shooter shooter = new Shooter();
 
-  private final Climber climber = new Climber();
+  public static final Climber climber = new Climber();
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain;
-  public final Vision vision = new Vision(drivetrain);
+  //public final Vision vision = new Vision(drivetrain);
   private final CommandXboxController joystick = new CommandXboxController(0);
+  private final CommandXboxController second = new CommandXboxController(1);
 
 
   //states (very scuffed)
@@ -53,11 +56,11 @@ public class RobotContainer {
   // buttons and triggers
   private Trigger intakeButton = joystick.leftBumper().and(()->RobotState == "Available").and(()->!shooter.hasNote());//.and(()->!intake.hasNote());//.and(()->!shooter.hasNote());
   private Trigger ampButton = joystick.x().and(()->RobotState == "Available");//joystick.leftBumper().and(shooter::hasNote).and(joystick.rightBumper().negate());
-  private Trigger climbButton = joystick.y().and(()->RobotState == "Available");
+  private Trigger climbButton = second.y().and(()->RobotState == "Available");
   private Trigger shootButton = joystick.rightBumper().and(shooter::hasNote);
   private Trigger zeroButton = joystick.b().and(()->RobotState == "Available");
-  private Trigger tacoBell = joystick.povDown().and(()->RobotState == "Available");
-  private Trigger cancelButton = joystick.povUp();
+  private Trigger tacoBell = joystick.povDown().or(second.a()).and(()->RobotState == "Available");
+  private Trigger cancelButton = joystick.povUp().or(second.x());
 
   //swerve settings
   private double MaxSpeed = 3; // 6 meters per second desired top speed
@@ -76,7 +79,7 @@ public class RobotContainer {
 
 
   private void configureBindings() {
-
+    
     // setup swerve
     drivetrain.setDefaultCommand(
       drivetrain.applyRequest(
@@ -91,18 +94,22 @@ public class RobotContainer {
 
     // cancel all commands and return components to zero position
     cancelButton.onTrue(
-      new cancelAll(shooter, intake)
+      new SequentialCommandGroup(
+        new InstantCommand(()->ampReady = false),
+        new cancelAll(shooter, intake)
+      )
     );
 
     // eject note from shooter and intake
     tacoBell.onTrue(
       new SequentialCommandGroup(
+        new InstantCommand(()->ampReady = false),
         new setShooterAngle(shooter, Constants.kShooterHandoffPosition),
         new WaitUntilCommand(shooter::isAtGoal),
         new setShooterIntakeSpeed(shooter, 0.4),
         new setIntakeSpeed(intake, -0.4),
         new ParallelRaceGroup(
-          new WaitUntilCommand(shooter::hasNote),
+          new WaitUntilCommand(()->!shooter.hasNote()),
           new WaitCommand(0.7)
         ),
         new WaitCommand(0.2),
@@ -126,6 +133,17 @@ public class RobotContainer {
       new InstantCommand(()-> manualShooting = !manualShooting)
     );
 
+    joystick.povLeft().onTrue(
+      new InstantCommand(()->{
+        if (MaxSpeed == Constants.kSlowDriveSpeed){
+          MaxSpeed = Constants.kNormalDriveSpeed;
+        } else {
+          MaxSpeed = Constants.kSlowDriveSpeed;
+
+        }
+      })
+    );
+
     // zero the shooter wrist
     zeroButton.onTrue(
       new ParallelCommandGroup(
@@ -143,7 +161,6 @@ public class RobotContainer {
     ampButton.onTrue(
       new ConditionalCommand(
         new SequentialCommandGroup(
-          new InstantCommand(()->MaxSpeed = Constants.kSlowDriveSpeed),
           new setShooterIntakeSpeed(shooter, -0.3),
           new setShooterAngle(shooter, Constants.kShooterAmpPosition),
           new WaitCommand(0.3),
@@ -154,13 +171,13 @@ public class RobotContainer {
         ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Preparing Amp"), 
         new SequentialCommandGroup(
           new InstantCommand(()->ampReady=false),
-          drivetrain.applyRequest(()->brake),
+          new InstantCommand(()-> drivetrain.applyRequest(()->brake)),
           new setShooterIntakeSpeed(shooter, Constants.kShooterAmpSpeed),
           new WaitUntilCommand(()->!shooter.hasNote()),
           new WaitCommand(0.1),
           new setShooterIntakeSpeed(shooter, 0),
-          new setShooterAngle(shooter, Constants.kShooterHandoffPosition),
-          new InstantCommand(()->MaxSpeed = Constants.kNormalDriveSpeed)
+          new setShooterAngle(shooter, Constants.kShooterHandoffPosition)
+
         ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Scoring Amp"),
       ()->!ampReady 
       )
@@ -169,7 +186,6 @@ public class RobotContainer {
     // shoot and auto aim speaker
     shootButton.and(()->RobotState == "Available").onTrue(
       new SequentialCommandGroup(
-        new InstantCommand(()->MaxSpeed = Constants.kSlowDriveSpeed),
         new setShooterAngle(shooter, Constants.kShooterSpeakerAngle),
         new setShooterIntakeSpeed(shooter, 0.2),
         new WaitCommand(0.3),
@@ -177,27 +193,31 @@ public class RobotContainer {
         new setShooterSpeed(shooter, 1),
         new WaitUntilCommand(shootButton.negate()),
         new ConditionalCommand(
-          new RunCommand(()->new instantAutoAim(shooter, drivetrain, facing, joystick)).until(shootButton),
-          new RunCommand(()->shooter.setWristAngle(Constants.kShooterSpeakerAngle + (joystick.getRightTriggerAxis() - joystick.getLeftTriggerAxis())*10)).until(shootButton), 
+          //new RunCommand(()->new instantAutoAim(shooter, drivetrain, facing, joystick)).until(shootButton),
+          new InstantCommand(),
+          new RunCommand(()->shooter.setWristAngle(Constants.kShooterSpeakerAngle + (joystick.getRightTriggerAxis() - joystick.getLeftTriggerAxis()*10))).until(shootButton), 
         ()->!manualShooting),
         new setShooterIntakeSpeed(shooter, -1),
         new WaitUntilCommand(()->!shooter.hasNote()),
         new WaitCommand(0.3),
         new setShooterSpeed(shooter, 0),
-        new setShooterIntakeSpeed(shooter, 0),
-        new InstantCommand(()->MaxSpeed = Constants.kNormalDriveSpeed)
+        new setShooterIntakeSpeed(shooter, 0)
       ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Preparing Speaker")
     );
       
     // climb chain
     climbButton.onTrue(
       //new setClimberHeight(climber, Constants.kClimberDownPosition),
+      new SequentialCommandGroup(
+      new WaitUntilCommand(second.y().negate()),
       new RunCommand(
         ()->climber.setIndividualHeights(
-          Math.max(climber.leftClimber.getPosition().getValueAsDouble() - joystick.getLeftTriggerAxis()*14, Constants.kClimberDownPosition), 
-          Math.max(climber.rightClimber.getPosition().getValueAsDouble() + joystick.getRightTriggerAxis()*14, Constants.kClimberDownPosition)
+          Math.max(climber.leftClimber.getPosition().getValueAsDouble() - second.getLeftTriggerAxis()*14, Constants.kClimberDownPosition), 
+          Math.min(climber.rightClimber.getPosition().getValueAsDouble() + second.getRightTriggerAxis()*14, -Constants.kClimberDownPosition)
         )
-      ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Climbing").until(joystick.rightStick())
+      ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Climbing").until(second.y()),
+      new InstantCommand(()->climber.setHeight(0))
+      )
     );
 
     // climbers back to zero
@@ -211,9 +231,16 @@ public class RobotContainer {
 
   public void setupPathPlanner(){
 
+    NamedCommands.registerCommand("prepare far shoot", new SequentialCommandGroup(
+      new setShooterAngle(shooter, -6.5),
+      new setShooterIntakeSpeed(shooter, 0.2),
+      new WaitCommand(0.2),
+      new setShooterSpeed(shooter, 1)
+    ));
     NamedCommands.registerCommand("wait for shooter pos", new WaitUntilCommand(shooter::isAtGoal));
     NamedCommands.registerCommand("wait for intake pos", new WaitUntilCommand(intake::isAtGoal));
     NamedCommands.registerCommand("wait for intake note", new WaitUntilCommand(intake::hasNote));
+    NamedCommands.registerCommand("wait for intake pos", new WaitUntilCommand(intake::isAtGoal));
     NamedCommands.registerCommand("zero shooter", new calibrateShooter(shooter));
     NamedCommands.registerCommand("intake", new intakeHandoff(shooter, intake));
     NamedCommands.registerCommand("intake down", new SequentialCommandGroup(

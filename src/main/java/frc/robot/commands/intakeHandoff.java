@@ -31,7 +31,7 @@ public class intakeHandoff extends SequentialCommandGroup {
           new setIntakeAngle(intake, Constants.kIntakeDownPosition),
           new setIntakeSpeed(intake, Constants.kIntakeInSpeed),
           new WaitUntilCommand(intake::hasNote),
-          new WaitCommand(0.2),
+          new WaitCommand(0.15),
           new setIntakeSpeed(intake, 0),
           new setIntakeAngle(intake, Constants.kIntakeHandoffPosition)
         ),
@@ -44,7 +44,7 @@ public class intakeHandoff extends SequentialCommandGroup {
         new WaitCommand(1),
         new WaitUntilCommand(shooter::hasNote)
       ),
-      new WaitCommand(0.8),
+      new WaitCommand(0.3),
       new setShooterIntakeSpeed(shooter, 0),
       new setIntakeSpeed(intake, 0)
     );

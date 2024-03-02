@@ -94,7 +94,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void setZeroPoint(double zero){
-    intakeRoller.setPosition(zero);
+    intakePivot.setPosition(zero);
   }
   
 
@@ -104,11 +104,12 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-
+    sensorValue = distanceSensor.getAverageValue();
+    SmartDashboard.putNumber("intake distance sensor", sensorValue);
     SmartDashboard.putBoolean("Intake Note", hasNote());
     SmartDashboard.putNumber("Intake Angle", intakeAngle());
 
-    sensorValue = distanceSensor.getAverageValue();
+
     double acceleration = (controller.getSetpoint().velocity - lastSpeed) / (Timer.getFPGATimestamp() - lastTime);
 
     if (!openLoop){

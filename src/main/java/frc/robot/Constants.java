@@ -34,11 +34,11 @@ public class Constants {
     public static final int kRightShooterIntakeID = 22;
 
     public static final int kShooterDistanceSensorID = 3;
-    public static final double kShooterDistanceSensorTreshold = 600.0;
+    public static double kShooterDistanceSensorTreshold = 600.0;
     public static final int kShooterLimitSwitchID = 9;
 
     public static final int kLeftWristID = 30; //
-    public static final double kShooterHandoffPosition = -1.3; //
+    public static final double kShooterHandoffPosition = -2.2; //
     public static final double kShooterAmpPosition = 6.35; // not tuned yet
     public static final double kShooterSpeakerAngle = -3.15;
     public static final double kReverseShootAngle = 5.5;
@@ -53,7 +53,7 @@ public class Constants {
     public static final int kIntakePivotID = 25;
 
     public static final int kIntakeDistanceSensorID = 0;
-    public static final double kIntakeDistanceSensorThreshold = 650.0;
+    public static double kIntakeDistanceSensorThreshold = 650.0;
 
     public static final double kIntakeDownPosition = 8.7;
     public static final double kIntakeHandoffPosition = 0.0;
@@ -67,7 +67,7 @@ public class Constants {
     public static final int kLeftClimberMotorID = 26;
     public static final int kRightClimberMotorID = 27;
 
-    public static final double kClimberDownPosition = -710;
+    public static final double kClimberDownPosition = -720;
 
     // vision
     public static final String kMainCameraName = "MainCam";
@@ -82,13 +82,17 @@ public class Constants {
     public static Pose2d kSpeakerPose;
     public static Pose2d kAmpPose;
     public static Pose2d kSourcePose;
+    public static boolean isRedAllience = false; 
     public Constants(){
         if (ally.isPresent()){
+
             if (ally.get() == Alliance.Red){
+                isRedAllience = true;
                 kSpeakerPose = new Pose2d(16.3, 5.5, Rotation2d.fromDegrees(180));
                 kAmpPose = new Pose2d(14.26, 7, Rotation2d.fromDegrees(90));
                 kSourcePose = new Pose2d(2.06,1.4,Rotation2d.fromDegrees(-30));
             } else {
+                
                 kSpeakerPose = new Pose2d(0.25, 5.5, Rotation2d.fromDegrees(180));
                 kAmpPose = new Pose2d(2.3, 7, Rotation2d.fromDegrees(90));
                 kSourcePose = new Pose2d(14.5,1.4,Rotation2d.fromDegrees(-30));
