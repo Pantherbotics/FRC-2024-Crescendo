@@ -285,23 +285,23 @@ public class RobotContainer {
       new setShooterIntakeSpeed(shooter, 0),
       new setIntakeSpeed(intake, 0)
     ));
-    NamedCommands.registerCommand("prepare reverse shoot", new SequentialCommandGroup(
-      new setShooterAngle(shooter, Constants.kReverseShootAngle),
-      new setIntakeSpeed(intake, 0.5),
-      new WaitCommand(0.3),
-      new setShooterIntakeSpeed(shooter, 0.3),
-      new WaitCommand(0.3),
-      new setShooterIntakeSpeed(shooter, 0),
-      new setShooterSpeed(shooter, 1),
-      new setIntakeSpeed(intake, 0)
-    ));
-    NamedCommands.registerCommand("prepare shoot", new SequentialCommandGroup(
-      new setShooterAngle(shooter, Constants.kShooterSpeakerAngle),
-      new setShooterIntakeSpeed(shooter, 0.3),
-      new WaitCommand(0.3),
-      new setShooterIntakeSpeed(shooter, 0),
-      new setShooterSpeed(shooter, 1)
-    ));
+    // NamedCommands.registerCommand("prepare reverse shoot", new SequentialCommandGroup(
+    //   new setShooterAngle(shooter, Constants.kReverseShootAngle),
+    //   new setIntakeSpeed(intake, 0.5),
+    //   new WaitCommand(0.3),
+    //   new setShooterIntakeSpeed(shooter, 0.3),
+      // new WaitCommand(0.3),
+      // new setShooterIntakeSpeed(shooter, 0),
+      // new setShooterSpeed(shooter, 1),
+      // new setIntakeSpeed(intake, 0)
+    // ));
+    // NamedCommands.registerCommand("prepare shoot", new SequentialCommandGroup(
+    //   new setShooterAngle(shooter, Constants.kShooterSpeakerAngle),
+    //   new setShooterIntakeSpeed(shooter, 0.3),
+    //   new WaitCommand(0.3),
+    //   new setShooterIntakeSpeed(shooter, 0),
+    //   new setShooterSpeed(shooter, 1)
+    // ));
     NamedCommands.registerCommand("shoot", new SequentialCommandGroup(
       new setShooterIntakeSpeed(shooter, -1),
       new WaitCommand(0.2),
@@ -313,14 +313,14 @@ public class RobotContainer {
 
 
     this.autoChooser = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("Auto Chooser", autoChooser);
+    SmartDashboard.putData("Auto Chooser", this.autoChooser);
   }
 
   public RobotContainer() {
 
     configureBindings();
 
-    setupPathPlanner();
+    //setupPathPlanner();
 
     // Invert swerve encoders  DO NOT REMOVE
     for (int i = 0; i < 4; ++i)
@@ -351,6 +351,6 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     /* First put the drivetrain into auto run mode, then run the auto */
-    return autoChooser.getSelected();
+    return this.autoChooser.getSelected();
   }
 }
