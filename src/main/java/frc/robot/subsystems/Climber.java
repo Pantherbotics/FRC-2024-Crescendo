@@ -8,6 +8,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,6 +24,8 @@ public class Climber extends SubsystemBase {
   private Pigeon2 gyro = new Pigeon2(13);
 
   public Climber() {
+    leftClimber.setNeutralMode(NeutralModeValue.Brake);
+    rightClimber.setNeutralMode(NeutralModeValue.Brake);
     m_voltagePosition = new PositionVoltage(0, 0, true, 0, 0, false, false, false);
     leftClimber.setPosition(0);
     rightClimber.setPosition(0);

@@ -2,45 +2,31 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.5740411480822979,
-      "y": 2.12139270432387
+      "x": 0.7401886415755699,
+      "y": 4.391563704668065
     },
-    "rotation": 0
+    "rotation": -59.676393137449985
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "parallel",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "prepare far shoot"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "wait for shooter pos"
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "source side to far shoot"
-                }
-              }
-            ]
+            "name": "prepare reverse shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "wait for shooter pos"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
           }
         },
         {
@@ -53,6 +39,12 @@
           "type": "parallel",
           "data": {
             "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "red side down"
+                }
+              },
               {
                 "type": "sequential",
                 "data": {
@@ -71,12 +63,6 @@
                     }
                   ]
                 }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "collect 4th"
-                }
               }
             ]
           }
@@ -86,21 +72,9 @@
           "data": {
             "commands": [
               {
-                "type": "path",
-                "data": {
-                  "pathName": "shoot bottom facing towards"
-                }
-              },
-              {
                 "type": "sequential",
                 "data": {
                   "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "handoff note"
-                      }
-                    },
                     {
                       "type": "named",
                       "data": {
@@ -115,6 +89,12 @@
                     }
                   ]
                 }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "BLUE move down"
+                }
               }
             ]
           }
@@ -126,9 +106,71 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "intake down"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "wait for intake pos"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "bottom note"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "wait for intake note"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "handoff note"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "prepare reverse shoot"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "collect 4th"
+            "pathName": "BLUE shoot bottom"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "wait for shooter pos"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot"
           }
         }
       ]

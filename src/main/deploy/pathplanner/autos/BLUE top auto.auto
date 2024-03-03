@@ -2,45 +2,15 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.6431097477579587,
-      "y": 7.212735194701159
+      "x": 0.6825775190011933,
+      "y": 6.739121939782341
     },
-    "rotation": 0
+    "rotation": 59.74356283647074
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
-        {
-          "type": "path",
-          "data": {
-            "pathName": "BLUE shoot top"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "prepare reverse shoot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "wait for shooter pos"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.1
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "shoot"
-          }
-        },
         {
           "type": "parallel",
           "data": {
@@ -49,6 +19,37 @@
                 "type": "sequential",
                 "data": {
                   "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "prepare reverse shoot"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "wait for shooter pos"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "shoot"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.0
+                      }
+                    },
                     {
                       "type": "named",
                       "data": {
@@ -58,31 +59,32 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "wait for intake note"
+                        "name": "wait for intake pos"
                       }
                     }
                   ]
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "BLUE get top"
                 }
               }
             ]
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "prepare reverse shoot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "wait for shooter pos"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "BLUE get top"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "wait for intake note"
+                }
+              }
+            ]
           }
         },
         {
@@ -93,6 +95,12 @@
                 "type": "sequential",
                 "data": {
                   "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "handoff note"
+                      }
+                    },
                     {
                       "type": "named",
                       "data": {
@@ -128,66 +136,22 @@
           "data": {
             "commands": [
               {
-                "type": "named",
-                "data": {
-                  "name": "intake"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "BLUE get 2nd"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
                 "type": "sequential",
                 "data": {
                   "commands": [
                     {
                       "type": "named",
                       "data": {
-                        "name": "prepare shoot"
+                        "name": "intake down"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "wait for shooter pos"
+                        "name": "wait for intake note"
                       }
                     }
                   ]
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "BLUE top shoot forwards"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "shoot"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "intake"
                 }
               },
               {
@@ -210,7 +174,13 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "prepare shoot"
+                        "name": "handoff note"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "prepare reverse shoot"
                       }
                     },
                     {
@@ -225,7 +195,83 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "BLUE top shoot forwards"
+                  "pathName": "BLUE shoot top"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "intake down"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "wait for intake note"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "BLUE get 2nd"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "handoff note"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "prepare reverse shoot"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "wait for shooter pos"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "BLUE shoot top"
                 }
               }
             ]

@@ -54,11 +54,11 @@ public class RobotContainer {
   public static String RobotState = "Available"; // very janky but whatever
 
   // buttons and triggers
-  private Trigger intakeButton = joystick.leftBumper().and(()->RobotState == "Available").and(()->!shooter.hasNote());//.and(()->!intake.hasNote());//.and(()->!shooter.hasNote());
+  private Trigger intakeButton = joystick.leftBumper().or(second.leftBumper()).and(()->RobotState == "Available").and(()->!shooter.hasNote());//.and(()->!intake.hasNote());//.and(()->!shooter.hasNote());
   private Trigger ampButton = joystick.x().and(()->RobotState == "Available");//joystick.leftBumper().and(shooter::hasNote).and(joystick.rightBumper().negate());
   private Trigger climbButton = second.y().and(()->RobotState == "Available");
   private Trigger shootButton = joystick.rightBumper().and(shooter::hasNote);
-  private Trigger zeroButton = joystick.b().and(()->RobotState == "Available");
+  private Trigger zeroButton = joystick.b().or(second.b()).and(()->RobotState == "Available");
   private Trigger tacoBell = joystick.povDown().or(second.a()).and(()->RobotState == "Available");
   private Trigger cancelButton = joystick.povUp().or(second.x());
 
@@ -209,21 +209,44 @@ public class RobotContainer {
     climbButton.onTrue(
       //new setClimberHeight(climber, Constants.kClimberDownPosition),
       new SequentialCommandGroup(
+      new setShooterAngle(shooter, 10),
       new WaitUntilCommand(second.y().negate()),
       new RunCommand(
         ()->climber.setIndividualHeights(
-          Math.max(climber.leftClimber.getPosition().getValueAsDouble() - second.getLeftTriggerAxis()*14, Constants.kClimberDownPosition), 
-          Math.min(climber.rightClimber.getPosition().getValueAsDouble() + second.getRightTriggerAxis()*14, -Constants.kClimberDownPosition)
+          climber.leftClimber.getPosition().getValueAsDouble() - second.getLeftTriggerAxis()*14,
+          climber.rightClimber.getPosition().getValueAsDouble() + second.getRightTriggerAxis()*14
         )
       ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Climbing").until(second.y()),
       new InstantCommand(()->climber.setHeight(0))
       )
     );
-
-    // climbers back to zero
-    joystick.rightStick().onTrue(
-      new InstantCommand(()->climber.setHeight(0))
+    
+    second.povUp().onTrue(
+      new SequentialCommandGroup(
+        new setShooterIntakeSpeed(shooter, -0.2),
+        new setIntakeSpeed(intake, 0.2)
+      )
+    ).onFalse(
+      new SequentialCommandGroup(
+        new setShooterIntakeSpeed(shooter, 0),
+        new setIntakeSpeed(intake, 0)
+      )
     );
+
+    
+    second.povDown().onTrue(
+      new SequentialCommandGroup(
+
+        new setShooterIntakeSpeed(shooter, 0.2),
+        new setIntakeSpeed(intake, -0.2)
+      )
+    ).onFalse(
+      new SequentialCommandGroup(
+        new setShooterIntakeSpeed(shooter, 0),
+        new setIntakeSpeed(intake, 0)
+      )
+    ); 
+
   }
 
   // auto chooser
@@ -237,42 +260,46 @@ public class RobotContainer {
       new WaitCommand(0.2),
       new setShooterSpeed(shooter, 1)
     ));
-    NamedCommands.registerCommand("wait for shooter pos", new WaitUntilCommand(shooter::isAtGoal));
+    NamedCommands.registerCommand("wait for shooter pos", new SequentialCommandGroup(new WaitUntilCommand(shooter::isAtGoal), new WaitCommand(0.6)));
     NamedCommands.registerCommand("wait for intake pos", new WaitUntilCommand(intake::isAtGoal));
-    NamedCommands.registerCommand("wait for intake note", new WaitUntilCommand(intake::hasNote));
+    NamedCommands.registerCommand("wait for intake note", new SequentialCommandGroup(new WaitUntilCommand(intake::hasNote), new setIntakeSpeed(intake, 0)));
     NamedCommands.registerCommand("wait for intake pos", new WaitUntilCommand(intake::isAtGoal));
     NamedCommands.registerCommand("zero shooter", new calibrateShooter(shooter));
     NamedCommands.registerCommand("intake", new intakeHandoff(shooter, intake));
     NamedCommands.registerCommand("intake down", new SequentialCommandGroup(
       new setIntakeAngle(intake, Constants.kIntakeDownPosition),
-      new setIntakeSpeed(intake, Constants.kIntakeInSpeed)
+      new setIntakeSpeed(intake, -0.4)
     ));
     NamedCommands.registerCommand("handoff note", new SequentialCommandGroup(
       new setShooterAngle(shooter, Constants.kShooterHandoffPosition),
       new setIntakeAngle(intake, Constants.kIntakeHandoffPosition),
-      new setShooterIntakeSpeed(shooter, Constants.kShooterIntakeSpeed),
+      new setShooterIntakeSpeed(shooter, -0.75),
       new WaitUntilCommand(shooter::isAtGoal),
       new WaitUntilCommand(intake::isAtGoal),
-      new setIntakeSpeed(intake, Constants.kIntakeHandoffSpeed),
+      new setIntakeSpeed(intake, 0.75),
       new ParallelRaceGroup(
         new WaitCommand(1),
         new WaitUntilCommand(shooter::hasNote)
       ),
-      new WaitCommand(0.3),
+      new WaitCommand(1),
       new setShooterIntakeSpeed(shooter, 0),
       new setIntakeSpeed(intake, 0)
     ));
     NamedCommands.registerCommand("prepare reverse shoot", new SequentialCommandGroup(
       new setShooterAngle(shooter, Constants.kReverseShootAngle),
-      new setShooterIntakeSpeed(shooter, 0.2),
-      new WaitCommand(0.2),
+      new setIntakeSpeed(intake, 0.5),
+      new WaitCommand(0.3),
+      new setShooterIntakeSpeed(shooter, 0.3),
+      new WaitCommand(0.3),
       new setShooterIntakeSpeed(shooter, 0),
-      new setShooterSpeed(shooter, 1)
+      new setShooterSpeed(shooter, 1),
+      new setIntakeSpeed(intake, 0)
     ));
     NamedCommands.registerCommand("prepare shoot", new SequentialCommandGroup(
       new setShooterAngle(shooter, Constants.kShooterSpeakerAngle),
-      new setShooterIntakeSpeed(shooter, 0.2),
-      new WaitCommand(0.2),
+      new setShooterIntakeSpeed(shooter, 0.3),
+      new WaitCommand(0.3),
+      new setShooterIntakeSpeed(shooter, 0),
       new setShooterSpeed(shooter, 1)
     ));
     NamedCommands.registerCommand("shoot", new SequentialCommandGroup(
@@ -285,7 +312,7 @@ public class RobotContainer {
 
 
 
-    autoChooser = AutoBuilder.buildAutoChooser();
+    this.autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
 

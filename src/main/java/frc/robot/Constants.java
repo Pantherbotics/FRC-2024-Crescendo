@@ -38,10 +38,10 @@ public class Constants {
     public static final int kShooterLimitSwitchID = 9;
 
     public static final int kLeftWristID = 30; //
-    public static final double kShooterHandoffPosition = -2.2; //
+    public static final double kShooterHandoffPosition = -2.0; //
     public static final double kShooterAmpPosition = 6.35; // not tuned yet
     public static final double kShooterSpeakerAngle = -3.15;
-    public static final double kReverseShootAngle = 5.5;
+    public static final double kReverseShootAngle = 4.9;
     public static final double kSpeakerHeight = 2.0431125;
 
     public static final double kShooterSpinSpeed = 1; // speed that flywheels shoot at

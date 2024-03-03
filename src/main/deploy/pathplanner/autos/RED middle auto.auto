@@ -2,32 +2,25 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.4951056055958282,
-      "y": 4.055313495242375
+      "x": 15.17711650807917,
+      "y": 5.545221859674489
     },
-    "rotation": 0
+    "rotation": -178.93908830973567
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "parallel",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "prepare reverse shoot"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "shoot bottom"
-                }
-              }
-            ]
+            "name": "prepare reverse shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "wait for shooter pos"
           }
         },
         {
@@ -37,9 +30,15 @@
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 0.2
+            "name": "intake down"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "wait for intake pos"
           }
         },
         {
@@ -47,30 +46,30 @@
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "intake down"
+                  "pathName": "RED get middle"
                 }
               },
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "bottom"
+                  "name": "wait for intake note"
                 }
               }
             ]
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "wait for intake note"
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "RED shoot middle-m"
+                }
+              },
               {
                 "type": "sequential",
                 "data": {
@@ -94,24 +93,12 @@
                       }
                     },
                     {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.1
-                      }
-                    },
-                    {
                       "type": "named",
                       "data": {
                         "name": "shoot"
                       }
                     }
                   ]
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "shoot bottom"
                 }
               }
             ]
@@ -121,6 +108,12 @@
           "type": "parallel",
           "data": {
             "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "RED get 2nd"
+                }
+              },
               {
                 "type": "sequential",
                 "data": {
@@ -139,12 +132,6 @@
                     }
                   ]
                 }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "collect 5th"
-                }
               }
             ]
           }
@@ -160,7 +147,7 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "handoff"
+                        "name": "handoff note"
                       }
                     },
                     {
@@ -174,6 +161,12 @@
                       "data": {
                         "name": "wait for shooter pos"
                       }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "shoot"
+                      }
                     }
                   ]
                 }
@@ -181,7 +174,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "shoot bottom facing towards"
+                  "pathName": "RED move over"
                 }
               }
             ]
@@ -190,44 +183,7 @@
         {
           "type": "named",
           "data": {
-            "name": "shoot"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.1
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "intake down"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "collect 4th"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "wait for intake note"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "handoff note"
+            "name": "zero shooter"
           }
         }
       ]

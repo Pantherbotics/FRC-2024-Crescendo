@@ -44,7 +44,7 @@ public class intakeHandoff extends SequentialCommandGroup {
         new WaitCommand(1),
         new WaitUntilCommand(shooter::hasNote)
       ),
-      new WaitCommand(0.3),
+      new WaitCommand(0.4),
       new setShooterIntakeSpeed(shooter, 0),
       new setIntakeSpeed(intake, 0)
     );

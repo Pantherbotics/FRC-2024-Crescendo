@@ -67,7 +67,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "middle"
+                  "pathName": "BLUE get middle"
                 }
               }
             ]
@@ -80,13 +80,19 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "shoot middle"
+                  "pathName": "BLUE shoot middle"
                 }
               },
               {
                 "type": "named",
                 "data": {
                   "name": "prepare reverse shoot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake down"
                 }
               }
             ]

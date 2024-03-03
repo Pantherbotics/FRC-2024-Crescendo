@@ -43,8 +43,9 @@ public class Shooter extends SubsystemBase {
 
   /** Creates a new shooter. */
   public Shooter() {
-    leftShooterWheel.setNeutralMode(NeutralModeValue.Coast);
-    rightShooterWheel.setNeutralMode(NeutralModeValue.Coast);
+    
+    leftShooterWheel.setNeutralMode(NeutralModeValue.Brake);
+    rightShooterWheel.setNeutralMode(NeutralModeValue.Brake);
     rightShooterIntake.setIdleMode(IdleMode.kBrake);
     leftShooterIntake.setIdleMode(IdleMode.kBrake);
     mydistanceSensor.setAverageBits(4);
@@ -59,8 +60,8 @@ public class Shooter extends SubsystemBase {
     feedforward = new SimpleMotorFeedforward(0, 0, 0);
 
     this.controller = new ProfiledPIDController(
-      0.34, 0, 0.001,
-      new TrapezoidProfile.Constraints(10, 23)
+      0.54, 0, 0.001,
+      new TrapezoidProfile.Constraints(10, 25)
     );
     
     leftWrist.setPosition(0);
@@ -124,6 +125,8 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     
     sensorValue = mydistanceSensor.getAverageValue();
+    SmartDashboard.putBoolean("shooter switch", limitSwitch());
+    SmartDashboard.putBoolean("direct switch", limitSwitch.get());
     SmartDashboard.putNumber("shooter distance sensor", sensorValue);
     SmartDashboard.putBoolean("Shooter Note", hasNote());
     SmartDashboard.putNumber("wrist", shooterAngle());
