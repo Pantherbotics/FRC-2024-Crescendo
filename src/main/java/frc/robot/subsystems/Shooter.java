@@ -17,6 +17,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -31,7 +32,8 @@ public class Shooter extends SubsystemBase {
 
   CANSparkMax rightShooterIntake = new CANSparkMax(Constants.kRightShooterIntakeID, MotorType.kBrushless);
   CANSparkMax leftShooterIntake = new CANSparkMax(Constants.kLeftShooterIntakeID, MotorType.kBrushless);
-  
+
+  DutyCycleEncoder encoder = new DutyCycleEncoder(Constants.kShooterEncoderID);
   AnalogInput mydistanceSensor = new AnalogInput(Constants.kShooterDistanceSensorID);
   DigitalInput limitSwitch = new DigitalInput(Constants.kShooterLimitSwitchID);
   double lastSpeed;
@@ -43,7 +45,8 @@ public class Shooter extends SubsystemBase {
 
   /** Creates a new shooter. */
   public Shooter() {
-    
+
+    encoder.setDistancePerRotation(63.34);
     leftShooterWheel.setNeutralMode(NeutralModeValue.Brake);
     rightShooterWheel.setNeutralMode(NeutralModeValue.Brake);
     rightShooterIntake.setIdleMode(IdleMode.kBrake);
