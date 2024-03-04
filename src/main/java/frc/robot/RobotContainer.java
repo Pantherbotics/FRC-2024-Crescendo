@@ -285,23 +285,23 @@ public class RobotContainer {
       new setShooterIntakeSpeed(shooter, 0),
       new setIntakeSpeed(intake, 0)
     ));
-    // NamedCommands.registerCommand("prepare reverse shoot", new SequentialCommandGroup(
-    //   new setShooterAngle(shooter, Constants.kReverseShootAngle),
-    //   new setIntakeSpeed(intake, 0.5),
-    //   new WaitCommand(0.3),
-    //   new setShooterIntakeSpeed(shooter, 0.3),
-      // new WaitCommand(0.3),
-      // new setShooterIntakeSpeed(shooter, 0),
-      // new setShooterSpeed(shooter, 1),
-      // new setIntakeSpeed(intake, 0)
-    // ));
-    // NamedCommands.registerCommand("prepare shoot", new SequentialCommandGroup(
-    //   new setShooterAngle(shooter, Constants.kShooterSpeakerAngle),
-    //   new setShooterIntakeSpeed(shooter, 0.3),
-    //   new WaitCommand(0.3),
-    //   new setShooterIntakeSpeed(shooter, 0),
-    //   new setShooterSpeed(shooter, 1)
-    // ));
+     NamedCommands.registerCommand("prepare reverse shoot", new SequentialCommandGroup(
+       new setShooterAngle(shooter, Constants.kReverseShootAngle),
+       new setIntakeSpeed(intake, 0.5),
+       new WaitCommand(0.3),
+       new setShooterIntakeSpeed(shooter, 0.3),
+       new WaitCommand(0.3),
+       new setShooterIntakeSpeed(shooter, 0),
+       new setShooterSpeed(shooter, 1),
+       new setIntakeSpeed(intake, 0)
+     ));
+     NamedCommands.registerCommand("prepare shoot", new SequentialCommandGroup(
+       new setShooterAngle(shooter, Constants.kShooterSpeakerAngle),
+       new setShooterIntakeSpeed(shooter, 0.3),
+       new WaitCommand(0.3),
+       new setShooterIntakeSpeed(shooter, 0),
+       new setShooterSpeed(shooter, 1)
+     ));
     NamedCommands.registerCommand("shoot", new SequentialCommandGroup(
       new setShooterIntakeSpeed(shooter, -1),
       new WaitCommand(0.2),
