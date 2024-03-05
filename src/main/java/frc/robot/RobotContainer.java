@@ -263,7 +263,6 @@ public class RobotContainer {
     NamedCommands.registerCommand("wait for intake note", new SequentialCommandGroup(new WaitUntilCommand(intake::hasNote), new setIntakeSpeed(intake, 0)));
     NamedCommands.registerCommand("wait for intake pos", new WaitUntilCommand(intake::isAtGoal));
     NamedCommands.registerCommand("zero shooter", new calibrateShooter(shooter));
-    NamedCommands.registerCommand("intake", new intakeHandoff(shooter, intake));
     NamedCommands.registerCommand("intake down", new SequentialCommandGroup(
       new setIntakeAngle(intake, Constants.kIntakeDownPosition),
       new setIntakeSpeed(intake, -0.4)
@@ -318,7 +317,7 @@ public class RobotContainer {
 
     configureBindings();
 
-    //setupPathPlanner();
+    setupPathPlanner();
 
     // Invert swerve encoders  DO NOT REMOVE
     for (int i = 0; i < 4; ++i)
@@ -349,6 +348,6 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     /* First put the drivetrain into auto run mode, then run the auto */
-    return this.autoChooser.getSelected();
+    return autoChooser.getSelected();
   }
 }
