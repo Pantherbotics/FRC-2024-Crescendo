@@ -127,16 +127,9 @@
                 }
               },
               {
-                "type": "sequential",
+                "type": "named",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "wait for intake note"
-                      }
-                    }
-                  ]
+                  "name": "wait for intake note"
                 }
               }
             ]

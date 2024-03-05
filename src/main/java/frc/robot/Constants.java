@@ -33,7 +33,7 @@ public class Constants {
     public static final int kLeftShooterIntakeID = 23;
     public static final int kRightShooterIntakeID = 22;
 
-    public static final int kShooterEncoderID = 2;
+    public static final int kShooterEncoderID = 1;
     public static final double kShooterEncoderOffset = 0;
     public static final int kShooterDistanceSensorID = 3;
     public static final double kShooterDistanceSensorTreshold = 600.0;

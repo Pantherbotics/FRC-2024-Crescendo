@@ -284,13 +284,11 @@ public class RobotContainer {
     ));
      NamedCommands.registerCommand("prepare reverse shoot", new SequentialCommandGroup(
        new setShooterAngle(shooter, Constants.kReverseShootAngle),
-       new setIntakeSpeed(intake, 0.5),
        new WaitCommand(0.3),
        new setShooterIntakeSpeed(shooter, 0.3),
        new WaitCommand(0.3),
        new setShooterIntakeSpeed(shooter, 0),
-       new setShooterSpeed(shooter, 1),
-       new setIntakeSpeed(intake, 0)
+       new setShooterSpeed(shooter, 1)
      ));
      NamedCommands.registerCommand("prepare shoot", new SequentialCommandGroup(
        new setShooterAngle(shooter, Constants.kShooterSpeakerAngle),
@@ -309,7 +307,7 @@ public class RobotContainer {
 
 
 
-    this.autoChooser = AutoBuilder.buildAutoChooser();
+    autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", this.autoChooser);
   }
 

@@ -33,7 +33,7 @@ public class Shooter extends SubsystemBase {
   CANSparkMax rightShooterIntake = new CANSparkMax(Constants.kRightShooterIntakeID, MotorType.kBrushless);
   CANSparkMax leftShooterIntake = new CANSparkMax(Constants.kLeftShooterIntakeID, MotorType.kBrushless);
 
-  public DutyCycleEncoder encoder = new DutyCycleEncoder(Constants.kShooterEncoderID);
+  DutyCycleEncoder encoder = new DutyCycleEncoder(Constants.kShooterEncoderID);
   AnalogInput mydistanceSensor = new AnalogInput(Constants.kShooterDistanceSensorID);
   DigitalInput limitSwitch = new DigitalInput(Constants.kShooterLimitSwitchID);
   double lastSpeed;
@@ -68,7 +68,8 @@ public class Shooter extends SubsystemBase {
     );
     
     if (encoder.isConnected()){
-      leftWrist.setPosition(encoder.getAbsolutePosition() + Constants.kShooterEncoderOffset);
+      leftWrist.setPosition(0);
+      //leftWrist.setPosition(encoder.getAbsolutePosition() + Constants.kShooterEncoderOffset);
     } else {
       System.out.println("ENCODER NOT CONNETED");
       leftWrist.setPosition(0);
@@ -139,7 +140,8 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putBoolean("Shooter Note", hasNote());
     SmartDashboard.putNumber("wrist", shooterAngle());
     SmartDashboard.putBoolean("encoder Connected", encoder.isConnected());
-    SmartDashboard.putNumber("encoder value", encoder.getAbsolutePosition());
+    SmartDashboard.putNumber("encoder value", encoder.get());
+    SmartDashboard.putNumber("distance", encoder.getDistance());
 
 
     double acceleration = (controller.getSetpoint().velocity - lastSpeed) / (Timer.getFPGATimestamp() - lastTime);
