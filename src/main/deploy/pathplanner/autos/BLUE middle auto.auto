@@ -14,6 +14,12 @@
         {
           "type": "named",
           "data": {
+            "name": "intake down"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "prepare reverse shoot"
           }
         },
@@ -30,18 +36,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "intake down"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "wait for intake pos"
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
@@ -53,12 +47,6 @@
                       "type": "named",
                       "data": {
                         "name": "wait for intake note"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "handoff note"
                       }
                     }
                   ]
@@ -84,15 +72,22 @@
                 }
               },
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "prepare reverse shoot"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "intake down"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "handoff note"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "prepare reverse shoot"
+                      }
+                    }
+                  ]
                 }
               }
             ]

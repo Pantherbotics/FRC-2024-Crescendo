@@ -67,13 +67,6 @@ public class Shooter extends SubsystemBase {
       new TrapezoidProfile.Constraints(10, 25)
     );
     
-    if (encoder.isConnected()){
-      leftWrist.setPosition(0);
-      //leftWrist.setPosition(encoder.getAbsolutePosition() + Constants.kShooterEncoderOffset);
-    } else {
-      System.out.println("ENCODER NOT CONNETED");
-      leftWrist.setPosition(0);
-    }
     this.controller.setGoal(0);
     this.controller.setTolerance(0.5);
   }
@@ -109,8 +102,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public double radiansToWristAngle(double radians){
-    System.out.println(Units.radiansToRotations(radians) * (1/ 25) * (12/37));
-    return Units.radiansToRotations(radians) * (1/ 25) * (12/37);
+    return Units.radiansToRotations(radians) * Constants.kShooterRatio;
   }
 
   public double shooterAngle(){
@@ -128,6 +120,19 @@ public class Shooter extends SubsystemBase {
   public void setZero(double position){
     leftWrist.setPosition(position);
   }
+
+  public void resetEncoder(){
+    encoder.reset();
+  }
+
+  public void setShooterPosition(){
+    if (encoder.isConnected()){
+      leftWrist.setPosition(-(encoder.getDistance() + Constants.kShooterEncoderOffset));
+    } else {
+      System.out.println("ENCODER NOT CONNETED");
+      leftWrist.setPosition(0);
+    }
+  }
   
 
   @Override
@@ -140,8 +145,7 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putBoolean("Shooter Note", hasNote());
     SmartDashboard.putNumber("wrist", shooterAngle());
     SmartDashboard.putBoolean("encoder Connected", encoder.isConnected());
-    SmartDashboard.putNumber("encoder value", encoder.get());
-    SmartDashboard.putNumber("distance", encoder.getDistance());
+    SmartDashboard.putNumber("distance", encoder.getDistance() + Constants.kShooterEncoderOffset);
 
 
     double acceleration = (controller.getSetpoint().velocity - lastSpeed) / (Timer.getFPGATimestamp() - lastTime);

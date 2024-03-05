@@ -20,7 +20,7 @@ public class cancelAll extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
   addCommands(
-      new setShooterAngle(shooter, Constants.kShooterHandoffPosition),
+      new setShooterAngle(shooter, 0),
       new setShooterIntakeSpeed(shooter, 0),
       new setShooterSpeed(shooter, 0),
       new setIntakeAngle(intake, 0),

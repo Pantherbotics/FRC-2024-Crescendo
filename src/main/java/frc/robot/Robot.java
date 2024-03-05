@@ -28,10 +28,14 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+
     m_robotContainer = new RobotContainer();
 
     m_robotContainer.drivetrain.getDaqThread().setThreadPriority(99);
     
+    m_robotContainer.shooter.setShooterPosition();
+
+
   }
   @Override
   public void robotPeriodic() {
@@ -67,15 +71,17 @@ public class Robot extends TimedRobot {
   
   @Override
   public void teleopInit() {
+
     CommandScheduler.getInstance().cancelAll();
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    m_robotContainer.shooter.setShooterPosition();
+
 
     CommandScheduler.getInstance().schedule(
       new SequentialCommandGroup(
         new cancelAll(RobotContainer.shooter, RobotContainer.intake),
-        new calibrateShooter(RobotContainer.shooter),
         new calibrateIntake(RobotContainer.intake)
       )
     );

@@ -34,17 +34,18 @@ public class Constants {
     public static final int kRightShooterIntakeID = 22;
 
     public static final int kShooterEncoderID = 1;
-    public static final double kShooterEncoderOffset = 0;
     public static final int kShooterDistanceSensorID = 3;
     public static final double kShooterDistanceSensorTreshold = 600.0;
     public static final int kShooterLimitSwitchID = 9;
 
     public static final int kLeftWristID = 30; //
-    public static final double kShooterRatio = (25/1) * (38/13);
-    public static final double kShooterHandoffPosition = -2.0; //
+    public static final double kShooterRatio = (20/1) * (38.0/16.0);
+    public static final double kShooterEncoderOffset = -11;
+
+    public static final double kShooterHandoffPosition = -2; //
     public static final double kShooterAmpPosition = 6.35; // not tuned yet
     public static final double kShooterSpeakerAngle = -3.15;
-    public static final double kReverseShootAngle = 4.9;
+    public static final double kReverseShootAngle = 4.4;
     public static final double kSpeakerHeight = 2.0431125;
 
     public static final double kShooterSpinSpeed = 1; // speed that flywheels shoot at
@@ -87,6 +88,7 @@ public class Constants {
     public static Pose2d kSourcePose;
     public static boolean isRedAllience = false; 
     public Constants(){
+
         if (ally.isPresent()){
 
             if (ally.get() == Alliance.Red){
