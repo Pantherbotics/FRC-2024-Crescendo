@@ -23,7 +23,7 @@ public class Constants {
 
     // drive constants
     public static final double kSlowDriveSpeed = 1;
-    public static final double kNormalDriveSpeed = 3;
+    public static final double kNormalDriveSpeed = 5;
 
     // shooter constants
 
@@ -42,8 +42,8 @@ public class Constants {
     public static final double kShooterRatio = (20/1) * (38.0/16.0);
     public static final double kShooterEncoderOffset = -11;
 
-    public static final double kShooterHandoffPosition = -2; //
-    public static final double kShooterAmpPosition = 6.35; // not tuned yet
+    public static final double kShooterHandoffPosition = -2.2; //
+    public static final double kShooterAmpPosition = 5.5; // not tuned yet
     public static final double kShooterSpeakerAngle = -3.15;
     public static final double kReverseShootAngle = 4.4;
     public static final double kSpeakerHeight = 2.0431125;
