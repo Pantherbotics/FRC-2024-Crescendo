@@ -1,0 +1,138 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.7121783474336195,
+      "y": 6.679920282917489
+    },
+    "rotation": 60.49927537650085
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "prepare reverse"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "BLUE get top"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "get note"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "BLUE shoot top"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "prepare reverse shoot"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "BLUE get 1st"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "get note"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "BLUE shoot top"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "prepare reverse"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "BLUE get 2nd"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "get note"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

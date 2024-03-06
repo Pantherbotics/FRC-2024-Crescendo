@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -255,20 +256,38 @@ public class RobotContainer {
 
   public void setupPathPlanner(){
 
-    NamedCommands.registerCommand("prepare far shoot", new SequentialCommandGroup(
-      new setShooterAngle(shooter, -6.5),
-      new setShooterIntakeSpeed(shooter, 0.2),
+    NamedCommands.registerCommand("reverse shoot", new SequentialCommandGroup(
+      new ConditionalCommand(
+        new SequentialCommandGroup(
+          new setShooterAngle(shooter, Constants.kShooterHandoffPosition),
+          new setIntakeAngle(intake, Constants.kIntakeHandoffPosition),
+          new setShooterIntakeSpeed(shooter, Constants.kShooterIntakeSpeed),
+          new WaitUntilCommand(shooter::isAtGoal),
+          new WaitUntilCommand(intake::isAtGoal),
+          new setIntakeSpeed(intake, Constants.kIntakeHandoffSpeed),
+          new WaitUntilCommand(shooter::hasNote),
+          new WaitCommand(0.3),
+          new setIntakeSpeed(intake, 0),
+          new setShooterIntakeSpeed(shooter, 0)
+        ), 
+        new InstantCommand(), 
+        intake::hasNote
+      ),
+      new setIntakeAngle(intake, Constants.kIntakeDownPosition),
+      new setShooterAngle(shooter, Constants.kReverseShootAngle),
+      new WaitCommand(0.1),
+      new setShooterIntakeSpeed(shooter, 0.1),
       new WaitCommand(0.2),
-      new setShooterSpeed(shooter, 1)
+      new setShooterSpeed(shooter, Constants.kShooterSpinSpeed),
+      new setShooterIntakeSpeed(shooter, 0),
+      new WaitUntilCommand(shooter::isAtGoal),
+      new WaitCommand(0.5)
     ));
-    NamedCommands.registerCommand("wait for shooter pos", new SequentialCommandGroup(new WaitUntilCommand(shooter::isAtGoal), new WaitCommand(0.6)));
-    NamedCommands.registerCommand("wait for intake pos", new SequentialCommandGroup(new setIntakeSpeed(intake, -0.4), new WaitUntilCommand(intake::isAtGoal)));
-    NamedCommands.registerCommand("wait for intake note", new SequentialCommandGroup(new setIntakeSpeed(intake, -0.4), new WaitUntilCommand(intake::hasNote), new setIntakeSpeed(intake, 0)));
-    NamedCommands.registerCommand("wait for intake pos", new WaitUntilCommand(intake::isAtGoal));
-    NamedCommands.registerCommand("zero shooter", new calibrateShooter(shooter));
-    NamedCommands.registerCommand("intake down", new SequentialCommandGroup(
-      new setIntakeAngle(intake, Constants.kIntakeDownPosition)
+    NamedCommands.registerCommand("get note", new SequentialCommandGroup(
+      new setIntakeSpeed(intake, Constants.kIntakeInSpeed),
+      new WaitUntilCommand(intake::hasNote)
     ));
+    /*
     NamedCommands.registerCommand("handoff note", new SequentialCommandGroup(
       new setShooterAngle(shooter, Constants.kShooterHandoffPosition),
       new setIntakeAngle(intake, Constants.kIntakeHandoffPosition),
@@ -300,9 +319,10 @@ public class RobotContainer {
        new setShooterIntakeSpeed(shooter, 0),
        new setShooterSpeed(shooter, 1)
      ));
+     */
     NamedCommands.registerCommand("shoot", new SequentialCommandGroup(
       new setShooterIntakeSpeed(shooter, -1),
-      new WaitCommand(0.2),
+      new WaitUntilCommand(()->!shooter.hasNote()),
       new setShooterIntakeSpeed(shooter, 0),
       new setShooterSpeed(shooter, 0),
       new setShooterAngle(shooter, Constants.kShooterHandoffPosition)
