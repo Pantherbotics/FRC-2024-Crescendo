@@ -76,10 +76,8 @@ public class Constants {
 
     // vision
     public static final String kMainCameraName = "MainCam";
-    public static final String kSideCameraName = "SideCam";
     public static final String kBackCameraName = "BackCam";
     public static final Transform3d kRobotToMainCam = new Transform3d(0,0.4,1.2,new Rotation3d(0,0,0)); // these are just estimated
-    public static final Transform3d kRobotToSideCam = new Transform3d(0,-0.4,1.2, new Rotation3d(0,0,0));
     public static final Transform3d kRobotToBackCam = new Transform3d(-0.2,-0.35,0.4, new Rotation3d(0, -35,180));
 
     // pathfinding
@@ -88,6 +86,7 @@ public class Constants {
     public static Pose2d kAmpPose;
     public static Pose2d kSourcePose;
     public static boolean isRedAllience = false; 
+    
     public Constants(){
 
         if (ally.isPresent()){
