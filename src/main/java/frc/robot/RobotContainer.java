@@ -128,7 +128,7 @@ public class RobotContainer {
       ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Ejecting")
     );
 
-    // reset the field-centric heading
+    // Robot centric drive
     joystick.leftStick().whileTrue(
       drivetrain.applyRequest(
         () -> robotCentric.withVelocityX(-joystick.getLeftY() * Math.abs(joystick.getLeftY()) * MaxSpeed)
@@ -141,6 +141,7 @@ public class RobotContainer {
       new InstantCommand(()->MaxSpeed = Constants.kNormalDriveSpeed)
     );
 
+    // reset heading
     joystick.a().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative(new Pose2d(0,0,new Rotation2d(0)))));
 
     // toggle manual shooting
@@ -163,7 +164,6 @@ public class RobotContainer {
     zeroButton.onTrue(
       new ParallelCommandGroup(
         new InstantCommand(()->shooter.setShooterPosition()),
-        //new calibrateShooter(shooter),
         new calibrateIntake(intake)
       ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Zeroing")
     );
