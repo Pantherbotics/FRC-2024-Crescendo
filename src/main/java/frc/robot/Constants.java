@@ -26,6 +26,7 @@ public class Constants {
     public static final double kNormalDriveSpeed = 5;
 
     // shooter constants
+    public static final double kShooterHeight = 1.1; // estimated
 
     public static final int kLeftShooterID = 31;
     public static final int kRightShooterID = 32;
