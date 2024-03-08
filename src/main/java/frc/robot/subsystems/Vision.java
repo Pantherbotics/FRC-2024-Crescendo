@@ -14,6 +14,7 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -35,8 +36,10 @@ public class Vision extends SubsystemBase {
     backCam = new PhotonCamera(Constants.kBackCameraName);
     this.swerve = swerve;
     tagLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
-    mainPoseEstimator = new PhotonPoseEstimator(tagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, mainCam, Constants.kRobotToMainCam);
-    backPoseEstimator = new PhotonPoseEstimator(tagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, backCam, Constants.kRobotToBackCam);
+    mainPoseEstimator = new PhotonPoseEstimator(tagLayout, PoseStrategy.LOWEST_AMBIGUITY, mainCam, Constants.kRobotToMainCam);
+    backPoseEstimator = new PhotonPoseEstimator(tagLayout, PoseStrategy.LOWEST_AMBIGUITY, backCam, Constants.kRobotToBackCam);
+
+    PortForwarder.add(5800, "photonvision.local", 5800);
 
   }
 
@@ -48,10 +51,12 @@ public class Vision extends SubsystemBase {
   }
 
   public void updatePose(){
-    mainEstimated = mainPoseEstimator.update();
-    backEstimated = backPoseEstimator.update();
-
+    mainEstimated = mainPoseEstimator.update(mainCam.getLatestResult());
+    backEstimated = backPoseEstimator.update(backCam.getLatestResult());
+  
+    
     if (mainEstimated.isPresent()){
+      System.out.println(mainEstimated.get().estimatedPose.toPose2d());
       swerve.addVisionMeasurement(mainEstimated.get().estimatedPose.toPose2d(), mainEstimated.get().timestampSeconds);
     }
     if (backEstimated.isPresent()){

@@ -44,7 +44,7 @@ public class RobotContainer {
 
   public static final Climber climber = new Climber();
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain;
-  //public final Vision vision = new Vision(drivetrain);
+  public final Vision vision = new Vision(drivetrain);
   private final CommandXboxController joystick = new CommandXboxController(0);
   private final CommandXboxController second = new CommandXboxController(1);
 
@@ -170,7 +170,8 @@ public class RobotContainer {
 
     // intake and handoff
     intakeButton.onTrue(
-      new intakeHandoff(shooter, intake).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Intaking")
+
+      new intakeHandoff(shooter, intake).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Intaking").beforeStarting(new InstantCommand(()->shooter.setShooterPosition()))
     );
 
     // prepare and score amp
@@ -202,9 +203,10 @@ public class RobotContainer {
     // shoot and auto aim speaker
     shootButton.and(()->RobotState == "Available").onTrue(
       new SequentialCommandGroup(
+        new setIntakeAngle(intake, 3),
         new setShooterAngle(shooter, Constants.kShooterSpeakerAngle),
-        new setShooterIntakeSpeed(shooter, 0.2),
-        new WaitCommand(0.3),
+        new setShooterIntakeSpeed(shooter, 0.3),
+        new WaitCommand(0.2),
         new setShooterIntakeSpeed(shooter, 0),
         new setShooterSpeed(shooter, 1),
         new WaitUntilCommand(shootButton.negate()),
@@ -217,7 +219,8 @@ public class RobotContainer {
         new WaitUntilCommand(()->!shooter.hasNote()),
         new WaitCommand(0.5),
         new setShooterSpeed(shooter, 0),
-        new setShooterIntakeSpeed(shooter, 0)
+        new setShooterIntakeSpeed(shooter, 0),
+        new setIntakeAngle(intake, 0)
       ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Preparing Speaker")
     );
       

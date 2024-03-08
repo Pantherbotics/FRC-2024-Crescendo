@@ -51,8 +51,8 @@ public class Intake extends SubsystemBase {
     feedforward = new ArmFeedforward(0, 0, 0);
 
     this.controller = new ProfiledPIDController(
-      1.1, 0, 0,
-      new TrapezoidProfile.Constraints(15, 25)
+      1.5, 0, 0,
+      new TrapezoidProfile.Constraints(20, 30)
     );
 
     this.controller.setGoal(0);
@@ -108,6 +108,7 @@ public class Intake extends SubsystemBase {
     SmartDashboard.putNumber("intake distance sensor", sensorValue);
     SmartDashboard.putBoolean("Intake Note", hasNote());
     SmartDashboard.putNumber("Intake Angle", intakeAngle());
+    SmartDashboard.putBoolean("Intake switch", limitSwitch());
 
 
     double acceleration = (controller.getSetpoint().velocity - lastSpeed) / (Timer.getFPGATimestamp() - lastTime);

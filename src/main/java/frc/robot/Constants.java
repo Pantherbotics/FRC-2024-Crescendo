@@ -43,9 +43,9 @@ public class Constants {
     public static final double kShooterRatio = (20/1) * (38.0/16.0);
     public static final double kShooterEncoderOffset = -11;
 
-    public static final double kShooterHandoffPosition = -2.2; //
+    public static final double kShooterHandoffPosition = -2.1; //
     public static final double kShooterAmpPosition = 5.5; // not tuned yet
-    public static final double kShooterSpeakerAngle = -3.15;
+    public static final double kShooterSpeakerAngle = -4;
     public static final double kReverseShootAngle = 4.4;
     public static final double kSpeakerHeight = 2.0431125;
 
@@ -86,7 +86,7 @@ public class Constants {
     public static Pose2d kAmpPose;
     public static Pose2d kSourcePose;
     public static boolean isRedAllience = false; 
-    
+
     public Constants(){
 
         if (ally.isPresent()){
