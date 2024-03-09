@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -24,7 +25,6 @@ public class intakeHandoff extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new setShooterAngle(shooter, Constants.kShooterHandoffPosition),
-
       new ConditionalCommand(
         new setIntakeAngle(intake, Constants.kIntakeHandoffPosition),
         new SequentialCommandGroup(
@@ -39,12 +39,13 @@ public class intakeHandoff extends SequentialCommandGroup {
       new WaitUntilCommand(intake::isAtGoal),
       new WaitUntilCommand(shooter::isAtGoal),
       new setShooterIntakeSpeed(shooter, Constants.kShooterIntakeSpeed),
+      new WaitCommand(0.3),
       new setIntakeSpeed(intake, Constants.kIntakeHandoffSpeed),
       new ParallelRaceGroup(
         new WaitCommand(1),
         new WaitUntilCommand(shooter::hasNote)
       ),
-      new WaitCommand(0.4),
+      new WaitCommand(0.6),
       new setShooterIntakeSpeed(shooter, 0),
       new setIntakeSpeed(intake, 0)
     );

@@ -43,10 +43,10 @@ public class Constants {
     public static final double kShooterRatio = (20/1) * (38.0/16.0);
     public static final double kShooterEncoderOffset = -11;
 
-    public static final double kShooterHandoffPosition = -2.2; //
-    public static final double kShooterAmpPosition = 5.5; // not tuned yet
-    public static final double kShooterSpeakerAngle = -3.15;
-    public static final double kReverseShootAngle = 4.4;
+    public static final double kShooterHandoffPosition = -2.25; //
+    public static final double kShooterAmpPosition = 5.9; // not tuned yet
+    public static final double kShooterSpeakerAngle = -4.4;
+    public static final double kReverseShootAngle = 4.6;
     public static final double kSpeakerHeight = 2.0431125;
 
     public static final double kShooterSpinSpeed = 1; // speed that flywheels shoot at
@@ -76,11 +76,9 @@ public class Constants {
 
     // vision
     public static final String kMainCameraName = "MainCam";
-    public static final String kSideCameraName = "SideCam";
     public static final String kBackCameraName = "BackCam";
-    public static final Transform3d kRobotToMainCam = new Transform3d(0,0.4,1.2,new Rotation3d(0,0,0)); // these are just estimated
-    public static final Transform3d kRobotToSideCam = new Transform3d(0,-0.4,1.2, new Rotation3d(0,0,0));
-    public static final Transform3d kRobotToBackCam = new Transform3d(-0.2,-0.35,0.4, new Rotation3d(0, -35,180));
+    public static final Transform3d kRobotToMainCam = new Transform3d(0,Units.inchesToMeters(9),Units.inchesToMeters(46),new Rotation3d(0,0,0)); // these are just estimated
+    public static final Transform3d kRobotToBackCam = new Transform3d(-0.17,-0.35,0.4, new Rotation3d(0, -35,0));
 
     // pathfinding
     private Optional<Alliance> ally = DriverStation.getAlliance();
@@ -88,6 +86,7 @@ public class Constants {
     public static Pose2d kAmpPose;
     public static Pose2d kSourcePose;
     public static boolean isRedAllience = false; 
+
     public Constants(){
 
         if (ally.isPresent()){

@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.343662687325376,
-      "y": 5.535354916863679
+      "x": 15.800324439450591,
+      "y": 4.438407050851191
     },
-    "rotation": 0
+    "rotation": -120.66892664971493
   },
   "command": {
     "type": "sequential",
@@ -14,7 +14,7 @@
         {
           "type": "named",
           "data": {
-            "name": "reverse shoot"
+            "name": "prepare reverse"
           }
         },
         {
@@ -30,7 +30,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "BLUE get middle"
+                  "pathName": "RED get bottom"
                 }
               },
               {
@@ -49,7 +49,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "BLUE shoot middle"
+                  "pathName": "BLUE get top"
                 }
               },
               {

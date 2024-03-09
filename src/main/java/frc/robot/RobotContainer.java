@@ -44,6 +44,7 @@ public class RobotContainer {
 
   public static final Climber climber = new Climber();
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain;
+  
   //public final Vision vision = new Vision(drivetrain);
   private final CommandXboxController joystick = new CommandXboxController(0);
   private final CommandXboxController second = new CommandXboxController(1);
@@ -65,7 +66,7 @@ public class RobotContainer {
 
   //swerve settings
   public static double MaxSpeed = Constants.kNormalDriveSpeed; // 6 meters per second desired top speed
-  public static double MaxAngularRate = 1.25 * Math.PI; // 3/4 of a rotation per second max angular velocity
+  public static double MaxAngularRate = 1.77 * Math.PI; // 3/4 of a rotation per second max angular velocity
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric() // main drive type
       .withDeadband(MaxSpeed * 0.05).withRotationalDeadband(MaxAngularRate * 0.05)
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
@@ -99,6 +100,7 @@ public class RobotContainer {
     cancelButton.onTrue(
       new SequentialCommandGroup(
         new InstantCommand(()->ampReady = false),
+        new InstantCommand(()->RobotState = "Available"),
         new cancelAll(shooter, intake)
       )
     );
@@ -128,19 +130,23 @@ public class RobotContainer {
       ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Ejecting")
     );
 
-    // reset the field-centric heading
-    joystick.leftStick().whileTrue(
-      drivetrain.applyRequest(
-        () -> robotCentric.withVelocityX(-joystick.getLeftY() * Math.abs(joystick.getLeftY()) * MaxSpeed)
-        .withVelocityY(-joystick.getLeftX() * Math.abs(joystick.getLeftX()) * MaxSpeed) 
-        .withRotationalRate(-joystick.getRightX() * MaxAngularRate)
-      )
-    ).onTrue(
-      new InstantCommand(()->MaxSpeed = 2)
-    ).onFalse(
-      new InstantCommand(()->MaxSpeed = Constants.kNormalDriveSpeed)
+    // Robot centric drive
+    joystick.y().onTrue(
+      new SequentialCommandGroup(
+        new WaitUntilCommand(joystick.y().negate()),
+        new InstantCommand(()->MaxSpeed = 2),
+        drivetrain.applyRequest(
+          () -> robotCentric.withVelocityX(-joystick.getLeftY() * Math.abs(joystick.getLeftY()) * MaxSpeed)
+          .withVelocityY(-joystick.getLeftX() * Math.abs(joystick.getLeftX()) * MaxSpeed) 
+          .withRotationalRate(-joystick.getRightX() * MaxAngularRate)
+        ).repeatedly().until(joystick.y()),
+        new InstantCommand(()->MaxSpeed = Constants.kNormalDriveSpeed)
+        )
+      
+
     );
 
+    // reset heading
     joystick.a().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative(new Pose2d(0,0,new Rotation2d(0)))));
 
     // toggle manual shooting
@@ -163,14 +169,14 @@ public class RobotContainer {
     zeroButton.onTrue(
       new ParallelCommandGroup(
         new InstantCommand(()->shooter.setShooterPosition()),
-        //new calibrateShooter(shooter),
         new calibrateIntake(intake)
       ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Zeroing")
     );
 
     // intake and handoff
     intakeButton.onTrue(
-      new intakeHandoff(shooter, intake).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Intaking")
+
+      new intakeHandoff(shooter, intake).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Intaking").beforeStarting(new InstantCommand(()->shooter.setShooterPosition()))
     );
 
     // prepare and score amp
@@ -202,9 +208,10 @@ public class RobotContainer {
     // shoot and auto aim speaker
     shootButton.and(()->RobotState == "Available").onTrue(
       new SequentialCommandGroup(
+        new setIntakeAngle(intake, 3),
         new setShooterAngle(shooter, Constants.kShooterSpeakerAngle),
-        new setShooterIntakeSpeed(shooter, 0.2),
-        new WaitCommand(0.3),
+        new setShooterIntakeSpeed(shooter, 0.3),
+        new WaitCommand(0.2),
         new setShooterIntakeSpeed(shooter, 0),
         new setShooterSpeed(shooter, 1),
         new WaitUntilCommand(shootButton.negate()),
@@ -217,7 +224,8 @@ public class RobotContainer {
         new WaitUntilCommand(()->!shooter.hasNote()),
         new WaitCommand(0.5),
         new setShooterSpeed(shooter, 0),
-        new setShooterIntakeSpeed(shooter, 0)
+        new setShooterIntakeSpeed(shooter, 0),
+        new setIntakeAngle(intake, 0)
       ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Preparing Speaker")
     );
       

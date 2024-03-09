@@ -63,12 +63,12 @@ public class Shooter extends SubsystemBase {
     feedforward = new SimpleMotorFeedforward(0, 0, 0);
 
     this.controller = new ProfiledPIDController(
-      0.54, 0, 0.001,
-      new TrapezoidProfile.Constraints(10, 25)
+      0.65, 0, 0.001,
+      new TrapezoidProfile.Constraints(13, 30)
     );
     
     this.controller.setGoal(0);
-    this.controller.setTolerance(0.5);
+    this.controller.setTolerance(0.3);
   }
 
 
@@ -152,7 +152,7 @@ public class Shooter extends SubsystemBase {
     
     if (!openLoop) {
       leftWrist.setVoltage(
-          controller.calculate(shooterAngle())
+          controller.calculate(-(encoder.getDistance() + Constants.kShooterEncoderOffset))
           + feedforward.calculate(controller.getSetpoint().velocity, acceleration));
     }
 
