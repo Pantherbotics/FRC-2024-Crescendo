@@ -56,7 +56,6 @@ public class Vision extends SubsystemBase {
   
     
     if (mainEstimated.isPresent()){
-      System.out.println(mainEstimated.get().estimatedPose.toPose2d());
       swerve.addVisionMeasurement(mainEstimated.get().estimatedPose.toPose2d(), mainEstimated.get().timestampSeconds);
     }
     if (backEstimated.isPresent()){

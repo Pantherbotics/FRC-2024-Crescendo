@@ -44,7 +44,8 @@ public class RobotContainer {
 
   public static final Climber climber = new Climber();
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain;
-  public final Vision vision = new Vision(drivetrain);
+  
+  //public final Vision vision = new Vision(drivetrain);
   private final CommandXboxController joystick = new CommandXboxController(0);
   private final CommandXboxController second = new CommandXboxController(1);
 
@@ -65,7 +66,7 @@ public class RobotContainer {
 
   //swerve settings
   public static double MaxSpeed = Constants.kNormalDriveSpeed; // 6 meters per second desired top speed
-  public static double MaxAngularRate = 1.25 * Math.PI; // 3/4 of a rotation per second max angular velocity
+  public static double MaxAngularRate = 1.77 * Math.PI; // 3/4 of a rotation per second max angular velocity
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric() // main drive type
       .withDeadband(MaxSpeed * 0.05).withRotationalDeadband(MaxAngularRate * 0.05)
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
@@ -99,6 +100,7 @@ public class RobotContainer {
     cancelButton.onTrue(
       new SequentialCommandGroup(
         new InstantCommand(()->ampReady = false),
+        new InstantCommand(()->RobotState = "Available"),
         new cancelAll(shooter, intake)
       )
     );
@@ -129,16 +131,19 @@ public class RobotContainer {
     );
 
     // Robot centric drive
-    joystick.leftStick().whileTrue(
-      drivetrain.applyRequest(
-        () -> robotCentric.withVelocityX(-joystick.getLeftY() * Math.abs(joystick.getLeftY()) * MaxSpeed)
-        .withVelocityY(-joystick.getLeftX() * Math.abs(joystick.getLeftX()) * MaxSpeed) 
-        .withRotationalRate(-joystick.getRightX() * MaxAngularRate)
-      )
-    ).onTrue(
-      new InstantCommand(()->MaxSpeed = 2)
-    ).onFalse(
-      new InstantCommand(()->MaxSpeed = Constants.kNormalDriveSpeed)
+    joystick.y().onTrue(
+      new SequentialCommandGroup(
+        new WaitUntilCommand(joystick.y().negate()),
+        new InstantCommand(()->MaxSpeed = 2),
+        drivetrain.applyRequest(
+          () -> robotCentric.withVelocityX(-joystick.getLeftY() * Math.abs(joystick.getLeftY()) * MaxSpeed)
+          .withVelocityY(-joystick.getLeftX() * Math.abs(joystick.getLeftX()) * MaxSpeed) 
+          .withRotationalRate(-joystick.getRightX() * MaxAngularRate)
+        ).repeatedly().until(joystick.y()),
+        new InstantCommand(()->MaxSpeed = Constants.kNormalDriveSpeed)
+        )
+      
+
     );
 
     // reset heading

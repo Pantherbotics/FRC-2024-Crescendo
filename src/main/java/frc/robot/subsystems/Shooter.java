@@ -64,11 +64,11 @@ public class Shooter extends SubsystemBase {
 
     this.controller = new ProfiledPIDController(
       0.65, 0, 0.001,
-      new TrapezoidProfile.Constraints(13, 27)
+      new TrapezoidProfile.Constraints(13, 30)
     );
     
     this.controller.setGoal(0);
-    this.controller.setTolerance(0.2);
+    this.controller.setTolerance(0.3);
   }
 
 
