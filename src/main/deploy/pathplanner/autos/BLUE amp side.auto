@@ -72,15 +72,15 @@
           "data": {
             "commands": [
               {
-                "type": "named",
-                "data": {
-                  "name": "get note"
-                }
-              },
-              {
                 "type": "path",
                 "data": {
                   "pathName": "BLUE get 1st"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "get note"
                 }
               }
             ]
@@ -133,6 +133,6 @@
       ]
     }
   },
-  "folder": null,
+  "folder": "BLUE ",
   "choreoAuto": false
 }

@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7380751338065961,
-      "y": 4.436053854695874
+      "x": 15.800324439450591,
+      "y": 4.438407050851191
     },
-    "rotation": -60.25511870305776
+    "rotation": -120.66892664971493
   },
   "command": {
     "type": "sequential",
@@ -24,9 +24,47 @@
           }
         },
         {
-          "type": "wait",
+          "type": "parallel",
           "data": {
-            "waitTime": 0.0
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "RED get bottom"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "get note"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "RED shoot bottom"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "reverse shoot"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shoot"
           }
         },
         {
@@ -40,13 +78,13 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "BLUE move bottom out"
+                        "pathName": "RED move bottom out"
                       }
                     },
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "BLUE get 5th"
+                        "pathName": "RED get 4th"
                       }
                     }
                   ]
@@ -72,13 +110,13 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "BLUE move bottom in"
+                        "pathName": "RED move bottom in"
                       }
                     },
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "BLUE shoot bottom"
+                        "pathName": "RED shoot bottom"
                       }
                     }
                   ]
@@ -100,78 +138,14 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "get note"
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "BLUE move bottom out"
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "BLUE get 4th"
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "BLUE move bottom in"
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "BLUE shoot bottom"
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "reverse shoot"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "shoot"
+            "pathName": "RED move bottom out"
           }
         }
       ]
     }
   },
-  "folder": "BLUE ",
+  "folder": "RED",
   "choreoAuto": false
 }
