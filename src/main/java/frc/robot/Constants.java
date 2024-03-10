@@ -44,9 +44,9 @@ public class Constants {
     public static final double kShooterEncoderOffset = -11;
 
     public static final double kShooterHandoffPosition = -2.25; //
-    public static final double kShooterAmpPosition = 5.9; // not tuned yet
+    public static final double kShooterAmpPosition = 6.3; // not tuned yet
     public static final double kShooterSpeakerAngle = -4.4;
-    public static final double kReverseShootAngle = 4.6;
+    public static final double kReverseShootAngle = 5;
     public static final double kSpeakerHeight = 2.0431125;
 
     public static final double kShooterSpinSpeed = 1; // speed that flywheels shoot at
@@ -58,7 +58,7 @@ public class Constants {
     public static final int kIntakePivotID = 25;
 
     public static final int kIntakeDistanceSensorID = 0;
-    public static final double kIntakeDistanceSensorThreshold = 650.0;
+    public static final double kIntakeDistanceSensorThreshold = 800.0;
 
     public static final double kIntakeDownPosition = 8.7;
     public static final double kIntakeHandoffPosition = 0.0;

@@ -46,8 +46,8 @@ public class RobotContainer {
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain;
   
   //public final Vision vision = new Vision(drivetrain);
-  private final CommandXboxController joystick = new CommandXboxController(0);
-  private final CommandXboxController second = new CommandXboxController(1);
+  public static final CommandXboxController joystick = new CommandXboxController(0);
+  public static final CommandXboxController second = new CommandXboxController(1);
 
 
   //states (very scuffed)
@@ -105,7 +105,29 @@ public class RobotContainer {
       )
     );
 
+    second.rightBumper().onTrue(
+      new SequentialCommandGroup(
+        new setShooterAngle(shooter, Constants.kShooterHandoffPosition),
+        new setIntakeAngle(intake, Constants.kIntakeHandoffPosition),
+        new setShooterIntakeSpeed(shooter, -0.5),
+        new setIntakeSpeed(intake, 0.5),
+        new WaitCommand(0.3),
+        new WaitUntilCommand(shooter::isAtGoal),
+        new setShooterIntakeSpeed(shooter, 0.5),
+        new setIntakeSpeed(intake, -0.5),
+        new WaitUntilCommand(intake::hasNote),
+        new WaitCommand(0.2),
+        new setIntakeSpeed(intake, Constants.kIntakeHandoffSpeed),
+        new setShooterIntakeSpeed(shooter, Constants.kShooterIntakeSpeed),
+        new WaitUntilCommand(shooter::hasNote),
+        new WaitCommand(0.4),
+        new setIntakeSpeed(intake, 0),
+        new setShooterIntakeSpeed(shooter, 0)
+      )
+    );
+
     // eject note from shooter and intake
+
     tacoBell.onTrue(
       new SequentialCommandGroup(
         new InstantCommand(()->ampReady = false),
@@ -142,8 +164,6 @@ public class RobotContainer {
         ).repeatedly().until(joystick.y()),
         new InstantCommand(()->MaxSpeed = Constants.kNormalDriveSpeed)
         )
-      
-
     );
 
     // reset heading
@@ -151,7 +171,7 @@ public class RobotContainer {
 
     // toggle manual shooting
     joystick.povRight().onTrue(
-      new InstantCommand(()-> manualShooting = !manualShooting)
+      new InstantCommand()//()-> manualShooting = !manualShooting)
     );
 
     joystick.povLeft().onTrue(

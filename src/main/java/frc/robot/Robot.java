@@ -6,10 +6,12 @@ package frc.robot;
 
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.commands.calibrateIntake;
 import frc.robot.commands.calibrateShooter;
 import frc.robot.commands.cancelAll;
@@ -92,7 +94,7 @@ public class Robot extends TimedRobot {
   
   }
 
-  
+  boolean climbTime = false;
   @Override
   public void teleopPeriodic() {
     SmartDashboard.putNumber("max speed", RobotContainer.MaxSpeed);
