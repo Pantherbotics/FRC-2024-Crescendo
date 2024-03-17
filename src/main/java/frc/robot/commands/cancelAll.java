@@ -7,7 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 
@@ -20,6 +20,8 @@ public class cancelAll extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
   addCommands(
+      new InstantCommand(()->RobotContainer.ampReady = false),
+      new InstantCommand(()->RobotContainer.RobotState = "Available"),
       new setShooterAngle(shooter, 0),
       new setShooterIntakeSpeed(shooter, 0),
       new setShooterSpeed(shooter, 0),
