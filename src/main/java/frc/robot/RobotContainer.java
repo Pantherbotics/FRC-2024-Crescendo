@@ -120,7 +120,7 @@ public class RobotContainer {
         new setIntakeSpeed(intake, Constants.kIntakeHandoffSpeed),
         new setShooterIntakeSpeed(shooter, Constants.kShooterIntakeSpeed),
         new WaitUntilCommand(shooter::hasNote),
-        new WaitCommand(0.4),
+        new WaitCommand(0.6),
         new setIntakeSpeed(intake, 0),
         new setShooterIntakeSpeed(shooter, 0)
       )

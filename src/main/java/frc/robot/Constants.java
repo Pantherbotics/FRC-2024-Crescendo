@@ -43,7 +43,7 @@ public class Constants {
     public static final double kShooterRatio = (20/1) * (38.0/16.0);
     public static final double kShooterEncoderOffset = -11;
 
-    public static final double kShooterHandoffPosition = -2.25; //
+    public static final double kShooterHandoffPosition = -2.35; //
     public static final double kShooterAmpPosition = 6.3; // not tuned yet
     public static final double kShooterSpeakerAngle = -4.4;
     public static final double kReverseShootAngle = 5;
