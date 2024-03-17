@@ -82,7 +82,7 @@ public class RobotContainer {
 
 
   private void configureBindings() {
-    
+
     // setup swerve
     drivetrain.setDefaultCommand(
       drivetrain.applyRequest(
@@ -92,69 +92,29 @@ public class RobotContainer {
         .withCenterOfRotation(new Translation2d(Math.round(-joystick.getRightY())*0.75, 0))
       ).ignoringDisable(true));
 
+
     //register telemetry
     drivetrain.registerTelemetry(logger::telemeterize);
 
-    // cancel all commands and return components to zero position
-    cancelButton.onTrue(
-      new cancelAll(shooter, intake)
-    );
 
-    // reset heading
-    joystick.a().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative(new Pose2d(0,0,new Rotation2d(0)))));
+    /* !!!!!!!!!!!!!!!
+     * MAIN CONTROLS
+    !!!!!!!!!!!!!!!!*/
 
-    // eject note from shooter and intake
-    tacoBell.onTrue(
-      new tacoBellCommand(shooter, intake)
-      .finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Ejecting")
-    );
-
-    // Robot centric drive
-    joystick.y().onTrue(
-      new SequentialCommandGroup(
-        new WaitUntilCommand(joystick.y().negate()),
-        new InstantCommand(()->MaxSpeed = 2),
-        drivetrain.applyRequest(
-          () -> robotCentric.withVelocityX(-joystick.getLeftY() * Math.abs(joystick.getLeftY()) * MaxSpeed)
-          .withVelocityY(-joystick.getLeftX() * Math.abs(joystick.getLeftX()) * MaxSpeed) 
-          .withRotationalRate(-joystick.getRightX() * MaxAngularRate)
-        ).repeatedly().until(joystick.y().or(intake::hasNote)),
-        new InstantCommand(()->MaxSpeed = Constants.kNormalDriveSpeed)
-        )
-    );
-
-
-
-
-    // toggle manual shooting
-    joystick.povRight().onTrue(
-      new InstantCommand()//()-> manualShooting = !manualShooting)
-    );
-
-    joystick.povLeft().onTrue(
-      new InstantCommand(()->{
-        if (MaxSpeed == Constants.kSlowDriveSpeed){
-          MaxSpeed = Constants.kNormalDriveSpeed;
-        } else {
-          MaxSpeed = Constants.kSlowDriveSpeed;
-
-        }
-      })
-    );
-
-    // zero the shooter wrist
-    zeroButton.onTrue(
-      new ParallelCommandGroup(
-        new InstantCommand(()->shooter.setShooterPosition()),
-        new calibrateIntake(intake)
-      ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Zeroing")
-    );
 
     // intake and handoff
     intakeButton.onTrue(
       new intakeHandoff(shooter, intake).
       finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Intaking")
     );
+
+
+    // shoot and auto aim speaker
+    shootButton.and(()->RobotState == "Available").onTrue(
+      new shootNote(shooter, intake, drivetrain, facing, joystick)
+      .finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Preparing Speaker")
+    );
+
 
     // prepare and score amp
     ampButton.onTrue(
@@ -182,11 +142,67 @@ public class RobotContainer {
       )
     );
     
-    // shoot and auto aim speaker
-    shootButton.and(()->RobotState == "Available").onTrue(
-      new shootNote(shooter, intake, drivetrain, facing, joystick)
-      .finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Preparing Speaker")
+
+    // eject note from shooter and intake
+    tacoBell.onTrue(
+      new tacoBellCommand(shooter, intake)
+      .finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Ejecting")
     );
+
+
+    // cancel all commands and return components to zero position
+    cancelButton.onTrue(
+      new cancelAll(shooter, intake)
+    );
+
+
+    // zero the shooter wrist
+    zeroButton.onTrue(
+      new ParallelCommandGroup(
+        new InstantCommand(()->shooter.setShooterPosition()),
+        new calibrateIntake(intake)
+      ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Zeroing")
+    );
+
+
+    // reset heading
+    joystick.a().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative(new Pose2d(0,0,new Rotation2d(0)))));
+
+
+    // Robot centric drive
+    joystick.y().onTrue(
+      new SequentialCommandGroup(
+        new WaitUntilCommand(joystick.y().negate()),
+        new InstantCommand(()->MaxSpeed = 2),
+        drivetrain.applyRequest(
+          () -> robotCentric.withVelocityX(-joystick.getLeftY() * Math.abs(joystick.getLeftY()) * MaxSpeed)
+          .withVelocityY(-joystick.getLeftX() * Math.abs(joystick.getLeftX()) * MaxSpeed) 
+          .withRotationalRate(-joystick.getRightX() * MaxAngularRate)
+        ).repeatedly().until(joystick.y().or(intake::hasNote)),
+        new InstantCommand(()->MaxSpeed = Constants.kNormalDriveSpeed)
+        )
+    );
+
+
+    // toggle manual shooting
+    joystick.povRight().onTrue(
+      new InstantCommand(()-> manualShooting = !manualShooting)
+    );
+
+    
+    // toggle slow/fast speed
+    joystick.povLeft().onTrue(
+      new InstantCommand(()->{
+        if (MaxSpeed == Constants.kSlowDriveSpeed){
+          MaxSpeed = Constants.kNormalDriveSpeed;
+        } else {
+          MaxSpeed = Constants.kSlowDriveSpeed;
+
+        }
+      })
+    );
+
+
       
 
     /* !!!!!!!!!!!!!!!!!!!!!
