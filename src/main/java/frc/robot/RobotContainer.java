@@ -44,7 +44,7 @@ public class RobotContainer {
   public static final Climber climber = new Climber();
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain;
   
-  //public final Vision vision = new Vision(drivetrain);
+  public final Vision vision = new Vision(drivetrain);
   public static final CommandXboxController joystick = new CommandXboxController(0);
   public static final CommandXboxController second = new CommandXboxController(1);
 
@@ -100,16 +100,13 @@ public class RobotContainer {
       new cancelAll(shooter, intake)
     );
 
-
     // reset heading
     joystick.a().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative(new Pose2d(0,0,new Rotation2d(0)))));
 
     // eject note from shooter and intake
-
     tacoBell.onTrue(
-      new SequentialCommandGroup(
-        new tacoBellCommand(shooter, intake)
-      ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Ejecting")
+      new tacoBellCommand(shooter, intake)
+      .finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Ejecting")
     );
 
     // Robot centric drive
@@ -155,8 +152,8 @@ public class RobotContainer {
 
     // intake and handoff
     intakeButton.onTrue(
-
-      new intakeHandoff(shooter, intake).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Intaking").beforeStarting(new InstantCommand(()->shooter.setShooterPosition()))
+      new intakeHandoff(shooter, intake).
+      finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Intaking")
     );
 
     // prepare and score amp
@@ -283,39 +280,6 @@ public class RobotContainer {
       new WaitCommand(0.2),
       new setIntakeSpeed(intake, 0)
     ));
-    /*
-    NamedCommands.registerCommand("handoff note", new SequentialCommandGroup(
-      new setShooterAngle(shooter, Constants.kShooterHandoffPosition),
-      new setIntakeAngle(intake, Constants.kIntakeHandoffPosition),
-      new setShooterIntakeSpeed(shooter, -0.75),
-      new WaitUntilCommand(shooter::isAtGoal),
-      new WaitUntilCommand(intake::isAtGoal),
-      new WaitCommand(0.1),
-      new setIntakeSpeed(intake, 0.75),
-      new ParallelRaceGroup(
-        new WaitCommand(1),
-        new WaitUntilCommand(shooter::hasNote)
-      ),
-      new WaitCommand(1),
-      new setShooterIntakeSpeed(shooter, 0),
-      new setIntakeSpeed(intake, 0)
-    ));
-     NamedCommands.registerCommand("prepare reverse shoot", new SequentialCommandGroup(
-       new setShooterAngle(shooter, Constants.kReverseShootAngle),
-       new setShooterIntakeSpeed(shooter, 0.3),
-       new WaitCommand(0.2),
-       new setShooterIntakeSpeed(shooter, 0),
-       new setShooterSpeed(shooter, 1),
-       new WaitCommand(0.5)
-     ));
-     NamedCommands.registerCommand("prepare shoot", new SequentialCommandGroup(
-       new setShooterAngle(shooter, Constants.kShooterSpeakerAngle),
-       new setShooterIntakeSpeed(shooter, 0.3),
-       new WaitCommand(0.3),
-       new setShooterIntakeSpeed(shooter, 0),
-       new setShooterSpeed(shooter, 1)
-     ));
-     */
     NamedCommands.registerCommand("shoot", new SequentialCommandGroup(
       new setShooterIntakeSpeed(shooter, -1),
       new WaitUntilCommand(()->!shooter.hasNote()),
