@@ -7,6 +7,7 @@ package frc.robot;
 import java.util.Optional;
 
 import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.util.GeometryUtil;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -22,8 +23,8 @@ public class Constants {
 
 
     // drive constants
-    public static final double kSlowDriveSpeed = 1;
-    public static final double kNormalDriveSpeed = 5;
+    public static final double kSlowDriveSpeed = 2.3;
+    public static final double kNormalDriveSpeed = 6;
 
     // shooter constants
     public static final double kShooterHeight = 1.1; // estimated
@@ -82,10 +83,11 @@ public class Constants {
 
     // pathfinding
     private Optional<Alliance> ally = DriverStation.getAlliance();
-    public static Pose2d kSpeakerPose;
-    public static Pose2d kAmpPose;
-    public static Pose2d kSourcePose;
+    public static Pose2d kSpeakerPose = new Pose2d(0.25, 5.5, Rotation2d.fromDegrees(180));
+    public static Pose2d kAmpPose = new Pose2d(2.3, 7, Rotation2d.fromDegrees(90));
+    public static Pose2d kSourcePose = new Pose2d(14.5,1.4,Rotation2d.fromDegrees(-30));
     public static boolean isRedAllience = false; 
+
 
     public Constants(){
 
@@ -93,17 +95,11 @@ public class Constants {
 
             if (ally.get() == Alliance.Red){
                 isRedAllience = true;
-                kSpeakerPose = new Pose2d(16.3, 5.5, Rotation2d.fromDegrees(180));
-                kAmpPose = new Pose2d(14.26, 7, Rotation2d.fromDegrees(90));
-                kSourcePose = new Pose2d(2.06,1.4,Rotation2d.fromDegrees(-30));
-            } else {
-                
-                kSpeakerPose = new Pose2d(0.25, 5.5, Rotation2d.fromDegrees(180));
-                kAmpPose = new Pose2d(2.3, 7, Rotation2d.fromDegrees(90));
-                kSourcePose = new Pose2d(14.5,1.4,Rotation2d.fromDegrees(-30));
+                kAmpPose = GeometryUtil.flipFieldPose(kAmpPose);
+                kSpeakerPose = GeometryUtil.flipFieldPose(kSpeakerPose);
+                kAmpPose = GeometryUtil.flipFieldPose(kAmpPose);
+                kSourcePose = GeometryUtil.flipFieldPose(kSourcePose);
             }
-        } else {
-            kSpeakerPose = new Pose2d(16.3, 5.5, Rotation2d.fromDegrees(180));
         }
     }
 
