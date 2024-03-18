@@ -56,7 +56,7 @@ public class RobotContainer {
 
   // buttons and triggers
   private Trigger intakeButton = joystick.leftBumper().or(second.leftBumper()).and(()->RobotState == "Available").and(()->!shooter.hasNote());//.and(()->!intake.hasNote());//.and(()->!shooter.hasNote());
-  private Trigger ampButton = joystick.x().and(()->RobotState == "Available");//joystick.leftBumper().and(shooter::hasNote).and(joystick.rightBumper().negate());
+  public static Trigger ampButton = joystick.x().and(()->RobotState == "Available");//joystick.leftBumper().and(shooter::hasNote).and(joystick.rightBumper().negate());
   private Trigger climbButton = second.y().and(()->RobotState == "Available");
   public static Trigger shootButton = joystick.rightBumper().and(shooter::hasNote);
   private Trigger zeroButton = joystick.b().or(second.b()).and(()->RobotState == "Available");
@@ -118,28 +118,8 @@ public class RobotContainer {
 
     // prepare and score amp
     ampButton.onTrue(
-      new ConditionalCommand(
-        new SequentialCommandGroup(
-          new setShooterIntakeSpeed(shooter, -0.3),
-          new setShooterAngle(shooter, Constants.kShooterAmpPosition),
-          new WaitCommand(0.3),
-          new setShooterIntakeSpeed(shooter, 0),
-          new WaitUntilCommand(shooter::isAtGoal),
-          new InstantCommand(()->ampReady = true)
-          //drivetrain.pathfindToPosition(Constants.kAmpPose)
-        ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Preparing Amp"), 
-        new SequentialCommandGroup(
-          new InstantCommand(()->ampReady=false),
-          new InstantCommand(()-> drivetrain.applyRequest(()->brake)),
-          new setShooterIntakeSpeed(shooter, Constants.kShooterAmpSpeed),
-          new WaitUntilCommand(()->!shooter.hasNote()),
-          new WaitCommand(0.1),
-          new setShooterIntakeSpeed(shooter, 0),
-          new setShooterAngle(shooter, Constants.kShooterHandoffPosition)
-
-        ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Scoring Amp"),
-      ()->!ampReady 
-      )
+      new scoreAmp(shooter, intake)
+      .finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Scoring Amp")
     );
     
 
