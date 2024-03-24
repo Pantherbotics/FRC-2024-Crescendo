@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Intake;
@@ -14,11 +16,13 @@ public class autoTargetNote extends Command {
   private CommandSwerveDrivetrain drivetrain;
   private Vision vision;
   private Intake intake;
-  public autoTargetNote(CommandSwerveDrivetrain drivetrain, Vision vision, Intake intake) {
+  private SwerveRequest.RobotCentric robotCentric;
+  public autoTargetNote(CommandSwerveDrivetrain drivetrain, Vision vision, Intake intake, SwerveRequest.RobotCentric robotCentric) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.vision = vision;
     this.drivetrain = drivetrain;
     this.intake = intake;
+    this.robotCentric = robotCentric;
     addRequirements(drivetrain, vision, intake);
   }
 
