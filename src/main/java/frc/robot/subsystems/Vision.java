@@ -12,6 +12,7 @@ import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -31,7 +32,7 @@ public class Vision extends SubsystemBase {
   private Optional<EstimatedRobotPose> mainEstimated;
   private Optional<EstimatedRobotPose> backEstimated;
   private CommandSwerveDrivetrain swerve;
-  public List<PhotonTrackedTarget> targets;
+  public PhotonPipelineResult notePipelineResult;
 
 
 
@@ -50,10 +51,7 @@ public class Vision extends SubsystemBase {
 
 
   public void updateNoteDetector(){
-    var result = noteCam.getLatestResult();
-    if (result.hasTargets()){
-      targets = result.getTargets();
-    }
+    notePipelineResult = noteCam.getLatestResult();
   }
 
   public void updatePose(){
@@ -75,6 +73,6 @@ public class Vision extends SubsystemBase {
   @Override
   public void periodic() {
     updatePose();
-
+    updateNoteDetector();
   }
 }
