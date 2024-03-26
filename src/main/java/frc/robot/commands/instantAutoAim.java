@@ -43,7 +43,7 @@ public class instantAutoAim extends InstantCommand {
     
     robotPose = swerve.getState().Pose;
     shooterAngle = shooter.radiansToWristAngle(Math.atan((Constants.kSpeakerHeight - Constants.kShooterHeight )/robotPose.getTranslation().getDistance(Constants.kSpeakerPose.getTranslation())));
-    //rotationToGoal = new Rotation2d(robotPose.getX() - Constants.kSpeakerPose.getX(), robotPose.getY() - Constants.kSpeakerPose.getY());
+    rotationToGoal = new Rotation2d(robotPose.getX() - Constants.kSpeakerPose.getX(), robotPose.getY() - Constants.kSpeakerPose.getY());
     
     //System.out.println(rotationToGoal);
 
@@ -59,7 +59,13 @@ public class instantAutoAim extends InstantCommand {
 
     );
     */
-
+    
+    swerve.setControl(   
+      facing.withVelocityX(-joystick.getLeftY() * 6) // Drive forward with negative Y (forward)
+          .withVelocityY(-joystick.getLeftX() * 6) // Drive left with negative X (left)
+          .withTargetDirection(rotationToGoal)
+    );
+    
     shooter.setWristAngle(shooterAngle);
 
   }

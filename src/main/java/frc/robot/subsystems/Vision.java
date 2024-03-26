@@ -5,12 +5,15 @@
 
 package frc.robot.subsystems;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -22,16 +25,19 @@ public class Vision extends SubsystemBase {
   /** Creates a new Vision. */
   public final PhotonCamera mainCam;
   public final PhotonCamera backCam;
+  public final PhotonCamera noteCam;
   public AprilTagFieldLayout tagLayout;
   public PhotonPoseEstimator mainPoseEstimator;
   public PhotonPoseEstimator backPoseEstimator;
   private Optional<EstimatedRobotPose> mainEstimated;
   private Optional<EstimatedRobotPose> backEstimated;
   private CommandSwerveDrivetrain swerve;
+  public PhotonPipelineResult notePipelineResult;
 
 
 
   public Vision(CommandSwerveDrivetrain swerve) {
+    noteCam = new PhotonCamera(Constants.kNoteCameraName);
     mainCam = new PhotonCamera(Constants.kMainCameraName);
     backCam = new PhotonCamera(Constants.kBackCameraName);
     this.swerve = swerve;
@@ -43,11 +49,9 @@ public class Vision extends SubsystemBase {
 
   }
 
-  public boolean hasTarget(PhotonCamera cam){
 
-    var result = cam.getLatestResult();
-    return result.hasTargets();
-
+  public void updateNoteDetector(){
+    notePipelineResult = noteCam.getLatestResult();
   }
 
   public void updatePose(){
@@ -61,10 +65,14 @@ public class Vision extends SubsystemBase {
     if (backEstimated.isPresent()){
       swerve.addVisionMeasurement(backEstimated.get().estimatedPose.toPose2d(), backEstimated.get().timestampSeconds);
     }
+
+
+
   }
 
   @Override
   public void periodic() {
     updatePose();
+    updateNoteDetector();
   }
 }
