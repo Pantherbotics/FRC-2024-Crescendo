@@ -35,10 +35,10 @@ public class Constants {
     public static final int kLeftShooterIntakeID = 23;
     public static final int kRightShooterIntakeID = 22;
 
-    public static final int kShooterEncoderID = 1;
-    public static final int kShooterDistanceSensorID = 3;
+    public static final int kShooterEncoderID = 2;
+    public static final int kShooterDistanceSensorID = 2;
     public static final double kShooterDistanceSensorTreshold = 600.0;
-    public static final int kShooterLimitSwitchID = 9;
+    public static final int kShooterLimitSwitchID = 7;
 
     public static final int kLeftWristID = 30; //
     public static final double kShooterRatio = (20/1) * (38.0/16.0);
@@ -58,7 +58,8 @@ public class Constants {
     public static final int kIntakeRollerID = 24; 
     public static final int kIntakePivotID = 25;
 
-    public static final int kIntakeDistanceSensorID = 0;
+    public static final int kIntakeDistanceSensorID = 3
+    ;
     public static final double kIntakeDistanceSensorThreshold = 800.0;
 
     public static final double kIntakeDownPosition = 8.7;
@@ -67,11 +68,14 @@ public class Constants {
     public static final double kIntakeInSpeed = -0.3;
     public static final double kIntakeHandoffSpeed = 0.4;
 
-    public static final int kIntakeLimitSwitchID = 8;
+    public static final int kIntakeLimitSwitchID = 1;
 
     // climbers
     public static final int kLeftClimberMotorID = 26;
     public static final int kRightClimberMotorID = 27;
+
+    public static final int kLeftClimberSwitchID = 0;
+    public static final int kRightClimberSwitchID = 9;
 
     public static final double kClimberDownPosition = -720;
 

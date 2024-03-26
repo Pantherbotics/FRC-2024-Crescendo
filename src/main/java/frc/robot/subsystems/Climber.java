@@ -11,7 +11,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -19,6 +21,8 @@ public class Climber extends SubsystemBase {
   /** Creates a new Climbers. */
   public TalonFX leftClimber = new TalonFX(Constants.kLeftClimberMotorID);
   public TalonFX rightClimber = new TalonFX(Constants.kRightClimberMotorID);
+  DigitalInput leftSwitch = new DigitalInput(Constants.kLeftClimberSwitchID);
+  DigitalInput rightSwitch = new DigitalInput(Constants.kRightClimberSwitchID);
   private final PositionVoltage m_voltagePosition;
   private Pigeon2 gyro = new Pigeon2(13);
 
@@ -66,6 +70,10 @@ public class Climber extends SubsystemBase {
   }
   public double getRightHeight(){
     return rightClimber.getPosition().getValueAsDouble();
+  }
+
+  public void climbMaxHeight(){
+     
   }
 
 

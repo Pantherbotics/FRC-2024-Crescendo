@@ -44,7 +44,7 @@ public class RobotContainer {
   public static final Climber climber = new Climber();
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain;
   
-  public final Vision vision = new Vision(drivetrain);
+  //public final Vision vision = new Vision(drivetrain);
   public static final CommandXboxController joystick = new CommandXboxController(0);
   public static final CommandXboxController second = new CommandXboxController(1);
 
@@ -118,7 +118,7 @@ public class RobotContainer {
 
     // prepare and score amp
     ampButton.onTrue(
-      new scoreAmp(shooter, intake)
+      new scoreAmp(shooter, intake, joystick)
       .finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Scoring Amp")
     );
     

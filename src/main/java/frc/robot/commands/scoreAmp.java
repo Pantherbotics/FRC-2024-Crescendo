@@ -4,9 +4,11 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Intake;
@@ -17,7 +19,7 @@ import frc.robot.subsystems.Shooter;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class scoreAmp extends SequentialCommandGroup {
   /** Creates a new scoreAmp. */
-  public scoreAmp(Shooter shooter, Intake intake) {
+  public scoreAmp(Shooter shooter, Intake intake, CommandXboxController joystick) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
@@ -26,8 +28,8 @@ public class scoreAmp extends SequentialCommandGroup {
         new WaitCommand(0.3),
         new setShooterIntakeSpeed(shooter, 0),
         new WaitUntilCommand(shooter::isAtGoal),
-        new WaitUntilCommand(RobotContainer.ampButton.negate()),
-        new WaitUntilCommand(RobotContainer.ampButton),
+        new WaitUntilCommand(joystick.x().negate()),
+        new WaitUntilCommand(joystick.x()),
         //drivetrain.pathfindToPosition(Constants.kAmpPose)
         new setShooterIntakeSpeed(shooter, Constants.kShooterAmpSpeed),
         new WaitUntilCommand(()->!shooter.hasNote()),

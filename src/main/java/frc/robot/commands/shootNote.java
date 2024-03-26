@@ -34,11 +34,11 @@ public class shootNote extends SequentialCommandGroup {
         new WaitCommand(0.2),
         new setShooterIntakeSpeed(shooter, 0),
         new setShooterSpeed(shooter, 1),
-        new WaitUntilCommand(RobotContainer.shootButton.negate()),
+        new WaitUntilCommand(joystick.rightBumper().negate()),
         new ConditionalCommand(
           //new RunCommand(()->new instantAutoAim(shooter, drivetrain, facing, joystick)).until(shootButton),
           new instantAutoAim(shooter, swerve, facing, joystick),
-          new RunCommand(()->shooter.setWristAngle(Constants.kShooterSpeakerAngle + (joystick.getRightTriggerAxis() - joystick.getLeftTriggerAxis()*10))).until(RobotContainer.shootButton), 
+          new RunCommand(()->shooter.setWristAngle(Constants.kShooterSpeakerAngle + (joystick.getRightTriggerAxis() - joystick.getLeftTriggerAxis()*10))).until(joystick.rightBumper()), 
         ()->!RobotContainer.manualShooting),
         new setShooterIntakeSpeed(shooter, -1),
         new WaitUntilCommand(()->!shooter.hasNote()),
