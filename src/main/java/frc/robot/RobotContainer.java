@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import edu.wpi.first.wpilibj2.command.WrapperCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.generated.TunerConstants;
@@ -56,12 +57,13 @@ public class RobotContainer {
 
   // buttons and triggers
   private Trigger intakeButton = joystick.leftBumper().or(second.leftBumper()).and(()->RobotState == "Available").and(()->!shooter.hasNote());//.and(()->!intake.hasNote());//.and(()->!shooter.hasNote());
-  public static Trigger ampButton = joystick.x().and(()->RobotState == "Available");//joystick.leftBumper().and(shooter::hasNote).and(joystick.rightBumper().negate());
+  private Trigger ampButton = joystick.x().and(()->RobotState == "Available");//joystick.leftBumper().and(shooter::hasNote).and(joystick.rightBumper().negate());
   private Trigger climbButton = second.y().and(()->RobotState == "Available");
-  public static Trigger shootButton = joystick.rightBumper().and(shooter::hasNote);
+  private Trigger shootButton = joystick.rightBumper().and(shooter::hasNote);
   private Trigger zeroButton = joystick.b().or(second.b()).and(()->RobotState == "Available");
   private Trigger tacoBell = joystick.povDown().or(second.a()).and(()->RobotState == "Available");
   private Trigger cancelButton = joystick.povUp().or(second.x());
+
 
   //swerve settings
   public static double MaxSpeed = Constants.kNormalDriveSpeed; // 6 meters per second desired top speed
@@ -111,14 +113,14 @@ public class RobotContainer {
 
     // shoot and auto aim speaker
     shootButton.and(()->RobotState == "Available").onTrue(
-      new shootNote(shooter, intake, drivetrain, facing, joystick)
+      new shootNote(shooter, intake, drivetrain, facing, joystick, shootButton)
       .finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Preparing Speaker")
     );
 
 
     // prepare and score amp
     ampButton.onTrue(
-      new scoreAmp(shooter, intake, joystick)
+      new scoreAmp(shooter, intake, joystick, ampButton)
       .finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Scoring Amp")
     );
     
@@ -139,7 +141,6 @@ public class RobotContainer {
     // zero the shooter wrist
     zeroButton.onTrue(
       new ParallelCommandGroup(
-        new InstantCommand(()->shooter.setShooterPosition()),
         new calibrateIntake(intake)
       ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Zeroing")
     );

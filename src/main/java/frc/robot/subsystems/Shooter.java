@@ -35,7 +35,6 @@ public class Shooter extends SubsystemBase {
 
   DutyCycleEncoder encoder = new DutyCycleEncoder(Constants.kShooterEncoderID);
   AnalogInput mydistanceSensor = new AnalogInput(Constants.kShooterDistanceSensorID);
-  DigitalInput limitSwitch = new DigitalInput(Constants.kShooterLimitSwitchID);
   double lastSpeed;
   double lastTime;
   ProfiledPIDController controller;
@@ -113,9 +112,6 @@ public class Shooter extends SubsystemBase {
     return(sensorValue > Constants.kShooterDistanceSensorTreshold);
   }
 
-  public boolean limitSwitch(){
-    return(limitSwitch.get());
-  }
 
   public void setZero(double position){
     leftWrist.setPosition(position);
@@ -124,23 +120,12 @@ public class Shooter extends SubsystemBase {
   public void resetEncoder(){
     encoder.reset();
   }
-
-  public void setShooterPosition(){
-    if (encoder.isConnected()){
-      leftWrist.setPosition(-(encoder.getDistance() + Constants.kShooterEncoderOffset));
-    } else {
-      System.out.println("ENCODER NOT CONNETED");
-      leftWrist.setPosition(0);
-    }
-  }
   
 
   @Override
   public void periodic() {
     
     sensorValue = mydistanceSensor.getAverageValue();
-    SmartDashboard.putBoolean("shooter switch", limitSwitch());
-    SmartDashboard.putBoolean("direct switch", limitSwitch.get());
     SmartDashboard.putNumber("shooter distance sensor", sensorValue);
     SmartDashboard.putBoolean("Shooter Note", hasNote());
     SmartDashboard.putNumber("wrist", shooterAngle());

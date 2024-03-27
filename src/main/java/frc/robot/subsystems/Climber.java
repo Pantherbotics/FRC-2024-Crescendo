@@ -58,6 +58,8 @@ public class Climber extends SubsystemBase {
     return gyro.getRotation3d();
   }
 
+
+  //getters
   public double getLeftHeight(){
     return leftClimber.getPosition().getValueAsDouble();
   }
@@ -71,6 +73,7 @@ public class Climber extends SubsystemBase {
     return rightSwitch.get();
   }
 
+  // climb both sides until limit switches are triggered
   public Command climbMaxHeight(){
     return
     new ParallelCommandGroup(
@@ -92,9 +95,11 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // put values to smartDashboard
     SmartDashboard.putNumber("left climber", getLeftHeight());
     SmartDashboard.putNumber("right climer", -getRightHeight());
-    // This method will be called once per scheduler ru
+    SmartDashboard.putBoolean("left swtich", getLeftSwitch());
+    SmartDashboard.putBoolean("right swtich", getRightSwitch());
     }
   
 }

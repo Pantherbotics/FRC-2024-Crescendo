@@ -38,7 +38,6 @@ public class Constants {
     public static final int kShooterEncoderID = 2;
     public static final int kShooterDistanceSensorID = 2;
     public static final double kShooterDistanceSensorTreshold = 600.0;
-    public static final int kShooterLimitSwitchID = 7;
 
     public static final int kLeftWristID = 30; //
     public static final double kShooterRatio = (20/1) * (38.0/16.0);

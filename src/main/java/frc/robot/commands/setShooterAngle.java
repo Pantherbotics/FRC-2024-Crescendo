@@ -22,7 +22,6 @@ public class setShooterAngle extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    shooter.setShooterPosition();
   }
 
   // Called every time the scheduler runs while the command is scheduled.

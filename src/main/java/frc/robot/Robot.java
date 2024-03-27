@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.commands.calibrateIntake;
-import frc.robot.commands.calibrateShooter;
 import frc.robot.commands.cancelAll;
 
 
@@ -34,9 +33,6 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
 
     m_robotContainer.drivetrain.getDaqThread().setThreadPriority(99);
-    
-    m_robotContainer.shooter.setShooterPosition();
-
 
   }
   @Override
@@ -82,8 +78,6 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    m_robotContainer.shooter.setShooterPosition();
-
 
     CommandScheduler.getInstance().schedule(
       new SequentialCommandGroup(
