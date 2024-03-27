@@ -45,7 +45,7 @@ public class RobotContainer {
   public static final Climber climber = new Climber();
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain;
   
-  //public final Vision vision = new Vision(drivetrain);
+  public final Vision vision = new Vision(drivetrain);
   public static final CommandXboxController joystick = new CommandXboxController(0);
   public static final CommandXboxController second = new CommandXboxController(1);
 
@@ -232,58 +232,22 @@ public class RobotContainer {
 
   }
 
+
   // auto chooser
   public SendableChooser <Command> autoChooser;
 
+
+  // SETUP PATHPLANNER
   public void setupPathPlanner(){
 
-    NamedCommands.registerCommand("reverse shoot", new SequentialCommandGroup(
-      new ConditionalCommand(
-        new SequentialCommandGroup(
-          new setShooterAngle(shooter, Constants.kShooterHandoffPosition),
-          new setIntakeAngle(intake, Constants.kIntakeHandoffPosition),
-          new setShooterIntakeSpeed(shooter, Constants.kShooterIntakeSpeed),
-          new WaitUntilCommand(shooter::isAtGoal),
-          new WaitUntilCommand(intake::isAtGoal),
-          new setIntakeSpeed(intake, Constants.kIntakeHandoffSpeed),
-          new WaitUntilCommand(shooter::hasNote),
-          new WaitCommand(0.3),
-          new setIntakeSpeed(intake, 0),
-          new setShooterIntakeSpeed(shooter, 0)
-        ), 
-        new InstantCommand(), 
-        intake::hasNote
-      ),
-      new setIntakeAngle(intake, Constants.kIntakeDownPosition),
-      new setShooterAngle(shooter, Constants.kReverseShootAngle),
-      new WaitCommand(0.1),
-      new setShooterIntakeSpeed(shooter, 0.2),
-      new WaitCommand(0.2),
-      new setShooterSpeed(shooter, Constants.kShooterSpinSpeed),
-      new setShooterIntakeSpeed(shooter, 0),
-      new WaitUntilCommand(shooter::isAtGoal),
-      new WaitCommand(1)
-    ));
-    NamedCommands.registerCommand("get note", new SequentialCommandGroup(
-      new setIntakeSpeed(intake, Constants.kIntakeInSpeed),
-      new WaitUntilCommand(intake::hasNote),
-      new WaitCommand(0.2),
-      new setIntakeSpeed(intake, 0)
-    ));
-    NamedCommands.registerCommand("shoot", new SequentialCommandGroup(
-      new setShooterIntakeSpeed(shooter, -1),
-      new WaitUntilCommand(()->!shooter.hasNote()),
-      new setShooterIntakeSpeed(shooter, 0),
-      new setShooterSpeed(shooter, 0),
-      new setShooterAngle(shooter, Constants.kShooterHandoffPosition)
-    ));
-
-
+    NamedCommands.registerCommand("Intake Note", new autoTargetNote(drivetrain, vision, intake, shooter,  robotCentric, false));
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", this.autoChooser);
   }
 
+
+  
   public RobotContainer() {
 
     configureBindings();
