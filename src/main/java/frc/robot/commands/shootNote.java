@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -24,7 +25,7 @@ import frc.robot.subsystems.Shooter;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class shootNote extends SequentialCommandGroup {
   /** Creates a new shootNote. */
-  public shootNote(Shooter shooter, Intake intake, CommandSwerveDrivetrain swerve, FieldCentricFacingAngle facing, CommandXboxController joystick) {
+  public shootNote(Shooter shooter, Intake intake, CommandSwerveDrivetrain swerve, FieldCentricFacingAngle facing, CommandXboxController joystick, Trigger shootButton) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
@@ -34,11 +35,11 @@ public class shootNote extends SequentialCommandGroup {
         new WaitCommand(0.2),
         new setShooterIntakeSpeed(shooter, 0),
         new setShooterSpeed(shooter, 1),
-        new WaitUntilCommand(joystick.rightBumper().negate()),
+        new WaitUntilCommand(shootButton.negate()),
         new ConditionalCommand(
           //new RunCommand(()->new instantAutoAim(shooter, drivetrain, facing, joystick)).until(shootButton),
           new instantAutoAim(shooter, swerve, facing, joystick),
-          new RunCommand(()->shooter.setWristAngle(Constants.kShooterSpeakerAngle + (joystick.getRightTriggerAxis() - joystick.getLeftTriggerAxis()*10))).until(joystick.rightBumper()), 
+          new RunCommand(()->shooter.setWristAngle(Constants.kShooterSpeakerAngle + (joystick.getRightTriggerAxis() - joystick.getLeftTriggerAxis()*10))).until(shootButton), 
         ()->!RobotContainer.manualShooting),
         new setShooterIntakeSpeed(shooter, -1),
         new WaitUntilCommand(()->!shooter.hasNote()),
