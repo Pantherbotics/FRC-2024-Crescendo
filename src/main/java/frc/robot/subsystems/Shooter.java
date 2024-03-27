@@ -72,7 +72,7 @@ public class Shooter extends SubsystemBase {
 
 
   public void setShooterFlywheelSpeed(double speed){
-    leftShooterWheel.set(-speed);
+    leftShooterWheel.set(-speed*0.20);
     rightShooterWheel.set(speed);
   }
 

@@ -43,7 +43,7 @@ public class autoAim extends Command {
   @Override
   public void execute() {
     robotPose = swerve.getState().Pose;
-    shooterAngle = shooter.radiansToWristAngle(Math.atan((Constants.kSpeakerHeight - Constants.kShooterHeight )/robotPose.getTranslation().getDistance(Constants.kSpeakerPose.getTranslation())));
+    shooterAngle = shooter.radiansToWristAngle( Math.atan((Constants.kSpeakerHeight - Constants.kShooterHeight )/robotPose.getTranslation().getDistance(Constants.kSpeakerPose.getTranslation())));
     rotationToGoal = new Rotation2d(robotPose.getX() - Constants.kSpeakerPose.getX(), robotPose.getY() - Constants.kSpeakerPose.getY());
 
     swerve.setControl(   

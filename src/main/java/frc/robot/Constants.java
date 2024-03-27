@@ -67,13 +67,13 @@ public class Constants {
     public static final double kIntakeInSpeed = -0.3;
     public static final double kIntakeHandoffSpeed = 0.4;
 
-    public static final int kIntakeLimitSwitchID = 1;
+    public static final int kIntakeLimitSwitchID = 0;
 
     // climbers
     public static final int kLeftClimberMotorID = 26;
     public static final int kRightClimberMotorID = 27;
 
-    public static final int kLeftClimberSwitchID = 0;
+    public static final int kLeftClimberSwitchID = 1;
     public static final int kRightClimberSwitchID = 9;
 
     public static final double kClimberDownPosition = -720;
@@ -87,7 +87,7 @@ public class Constants {
 
     // pathfinding
     private Optional<Alliance> ally = DriverStation.getAlliance();
-    public static Pose2d kSpeakerPose = new Pose2d(0.25, 5.5, Rotation2d.fromDegrees(180));
+    public static Pose2d kSpeakerPose = GeometryUtil.flipFieldPose(new Pose2d(0.25, 5.5, Rotation2d.fromDegrees(180)));
     public static Pose2d kAmpPose = new Pose2d(2.3, 7, Rotation2d.fromDegrees(90));
     public static Pose2d kSourcePose = new Pose2d(14.5,1.4,Rotation2d.fromDegrees(-30));
     public static boolean isRedAllience = false;
