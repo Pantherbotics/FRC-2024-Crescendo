@@ -113,7 +113,11 @@ public class RobotContainer {
 
     // shoot and auto aim speaker
     shootButton.and(()->RobotState == "Available").onTrue(
-      new shootNote(shooter, intake, drivetrain, facing, joystick, shootButton)
+      new ConditionalCommand(
+        new shootNote(shooter, intake, joystick, shootButton),
+        new autoAim(shooter, drivetrain, facing, joystick, shootButton),
+        ()->manualShooting
+      )
       .finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Preparing Speaker")
     );
 
@@ -247,7 +251,7 @@ public class RobotContainer {
   }
 
 
-  
+
   public RobotContainer() {
 
     configureBindings();

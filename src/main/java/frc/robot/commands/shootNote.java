@@ -4,10 +4,6 @@
 
 package frc.robot.commands;
 
-import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.FieldCentricFacingAngle;
-
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -15,8 +11,6 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
-import frc.robot.RobotContainer;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 
@@ -25,28 +19,23 @@ import frc.robot.subsystems.Shooter;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class shootNote extends SequentialCommandGroup {
   /** Creates a new shootNote. */
-  public shootNote(Shooter shooter, Intake intake, CommandSwerveDrivetrain swerve, FieldCentricFacingAngle facing, CommandXboxController joystick, Trigger shootButton) {
+  public shootNote(Shooter shooter, Intake intake, CommandXboxController joystick, Trigger shootButton) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
         new setIntakeAngle(intake, 3),
+        new setIntakeSpeed(intake, 0.05),
         new setShooterAngle(shooter, Constants.kShooterSpeakerAngle),
-        new setShooterIntakeSpeed(shooter, 0.3),
-        new WaitCommand(0.2),
-        new setShooterIntakeSpeed(shooter, 0),
-        new setShooterSpeed(shooter, 1),
         new WaitUntilCommand(shootButton.negate()),
-        new ConditionalCommand(
-          //new RunCommand(()->new instantAutoAim(shooter, drivetrain, facing, joystick)).until(shootButton),
-          new instantAutoAim(shooter, swerve, facing, joystick),
-          new RunCommand(()->shooter.setWristAngle(Constants.kShooterSpeakerAngle + (joystick.getRightTriggerAxis() - joystick.getLeftTriggerAxis()*10))).until(shootButton), 
-        ()->!RobotContainer.manualShooting),
+        new setShooterSpeed(shooter, 1),
+        new RunCommand(()->shooter.setWristAngle(Constants.kShooterSpeakerAngle + (joystick.getRightTriggerAxis() - joystick.getLeftTriggerAxis()*10))).until(shootButton),
         new setShooterIntakeSpeed(shooter, -1),
         new WaitUntilCommand(()->!shooter.hasNote()),
         new WaitCommand(0.5),
         new setShooterSpeed(shooter, 0),
         new setShooterIntakeSpeed(shooter, 0),
-        new setIntakeAngle(intake, 0)
+        new setIntakeAngle(intake, 0),
+        new setIntakeSpeed(intake, 0)
     );
   }
 }

@@ -31,23 +31,24 @@ public class intakeHandoff extends SequentialCommandGroup {
           new setIntakeAngle(intake, Constants.kIntakeDownPosition),
           new setIntakeSpeed(intake, Constants.kIntakeInSpeed),
           new WaitUntilCommand(intake::hasNote),
+          new setIntakeAngle(intake, Constants.kIntakeHandoffPosition),
           new WaitCommand(0.15),
-          new setIntakeSpeed(intake, 0),
-          new setIntakeAngle(intake, Constants.kIntakeHandoffPosition)
+          new setIntakeSpeed(intake, 0)
         ),
         intake::hasNote),
       new WaitUntilCommand(intake::isAtGoal),
       new WaitUntilCommand(shooter::isAtGoal),
       new setShooterIntakeSpeed(shooter, Constants.kShooterIntakeSpeed),
-      new WaitCommand(0.3),
       new setIntakeSpeed(intake, Constants.kIntakeHandoffSpeed),
       new ParallelRaceGroup(
         new WaitCommand(1),
         new WaitUntilCommand(shooter::hasNote)
       ),
       new WaitCommand(0.6),
-      new setShooterIntakeSpeed(shooter, 0),
-      new setIntakeSpeed(intake, 0)
+      new setIntakeSpeed(intake, 0),
+      new setShooterIntakeSpeed(shooter, 0.2),
+      new WaitCommand(0.2),
+      new setShooterIntakeSpeed(shooter, 0)
     );
   }
 }
