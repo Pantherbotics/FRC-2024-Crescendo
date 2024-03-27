@@ -33,6 +33,7 @@ public class shootNote extends SequentialCommandGroup {
         new WaitUntilCommand(()->!shooter.hasNote()),
         new WaitCommand(0.5),
         new setShooterSpeed(shooter, 0),
+        new setShooterAngle(shooter, Constants.kShooterHandoffPosition),
         new setShooterIntakeSpeed(shooter, 0),
         new setIntakeAngle(intake, 0),
         new setIntakeSpeed(intake, 0)
