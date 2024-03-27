@@ -13,6 +13,8 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -42,23 +44,14 @@ public class Climber extends SubsystemBase {
     rightClimber.getConfigurator().apply(configs);
   }
 
-  public void setHeight(double height){
-    leftClimber.setControl(m_voltagePosition.withPosition(height));
-    rightClimber.setControl(m_voltagePosition.withPosition(-height));
-  }
-
-  public void setIndividualHeights(double leftHeight, double rightHeight){
-    leftClimber.setControl(m_voltagePosition.withPosition(leftHeight));
-    rightClimber.setControl(m_voltagePosition.withPosition(rightHeight));
-  }
-
-  public void changeIndividualHeights(double leftChange, double rightChange){
-    setIndividualHeights(leftClimber.getPosition().getValueAsDouble() + leftChange, rightClimber.getPosition().getValueAsDouble() + rightChange);
-  }
-
   public void setIndividualSpeeds(double leftSpeed, double rightSpeed){
     leftClimber.set(leftSpeed);
     rightClimber.set(rightSpeed);
+  }
+
+  public void setSpeeds(double speed){
+    rightClimber.set(speed);
+    leftClimber.set(-speed);
   }
 
   public Rotation3d getGyroRotation3d(){
@@ -71,9 +64,29 @@ public class Climber extends SubsystemBase {
   public double getRightHeight(){
     return rightClimber.getPosition().getValueAsDouble();
   }
+  public boolean getLeftSwitch(){
+    return leftSwitch.get();
+  }
+  public boolean getRightSwitch(){
+    return rightSwitch.get();
+  }
 
-  public void climbMaxHeight(){
-     
+  public Command climbMaxHeight(){
+    return
+    new ParallelCommandGroup(
+      new RunCommand(
+        ()->{
+          leftClimber.set(-1);
+        }
+      ).until(()->getLeftSwitch())      
+      .finallyDo(()->leftClimber.set(0)),
+      new RunCommand(
+        ()->{
+          rightClimber.set(1);
+        }
+      ).until(()->getRightSwitch())
+      .finallyDo(()->rightClimber.set(0))
+    );
   }
 
 

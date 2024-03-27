@@ -200,14 +200,7 @@ public class RobotContainer {
     climbButton.onTrue(
       new SequentialCommandGroup(
       new setShooterAngle(shooter, 10),
-      new WaitUntilCommand(second.y().negate()),
-      new RunCommand(
-        ()->climber.setIndividualHeights(
-          climber.leftClimber.getPosition().getValueAsDouble() - second.getLeftTriggerAxis()*14,
-          climber.rightClimber.getPosition().getValueAsDouble() + second.getRightTriggerAxis()*14
-        )
-      ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Climbing").until(second.y()),
-      new InstantCommand(()->climber.setHeight(0))
+      climber.climbMaxHeight()
       )
     );
     
