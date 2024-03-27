@@ -8,16 +8,16 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Shooter;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class instantAutoAim extends InstantCommand {
+public class autoAim extends Command {
+  /** Creates a new autoAim. */
+
   private final Shooter shooter;
   private final CommandSwerveDrivetrain swerve;
   private double shooterAngle;
@@ -26,38 +26,26 @@ public class instantAutoAim extends InstantCommand {
   private CommandXboxController joystick;
   private Rotation2d rotationToGoal;
 
-  public instantAutoAim(Shooter shooter, CommandSwerveDrivetrain swerve, SwerveRequest.FieldCentricFacingAngle facing, CommandXboxController joystick) {
+  public autoAim(Shooter shooter, CommandSwerveDrivetrain swerve, SwerveRequest.FieldCentricFacingAngle facing, CommandXboxController joystick, Trigger shootButton) {
     this.shooter = shooter;
     this.swerve = swerve;
     this.facing = facing;
     this.joystick = joystick;
     addRequirements(shooter, swerve);
-    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    
+  }
+
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() {
     robotPose = swerve.getState().Pose;
     shooterAngle = shooter.radiansToWristAngle(Math.atan((Constants.kSpeakerHeight - Constants.kShooterHeight )/robotPose.getTranslation().getDistance(Constants.kSpeakerPose.getTranslation())));
     rotationToGoal = new Rotation2d(robotPose.getX() - Constants.kSpeakerPose.getX(), robotPose.getY() - Constants.kSpeakerPose.getY());
-    
-    //System.out.println(rotationToGoal);
 
-    /*CommandScheduler.getInstance().schedule(
-      new ParallelCommandGroup(
-        swerve.applyRequest(() ->
-        facing.withVelocityX(-joystick.getLeftY() * 6) // Drive forward with negative Y (forward)
-          .withVelocityY(-joystick.getLeftX() * 6) // Drive left with negative X (left)
-          .withTargetDirection(rotationToGoal)
-        ),
-        new setShooterAngle(shooter, shooterAngle)
-      )
-
-    );
-    */
-    
     swerve.setControl(   
       facing.withVelocityX(-joystick.getLeftY() * 6) // Drive forward with negative Y (forward)
           .withVelocityY(-joystick.getLeftX() * 6) // Drive left with negative X (left)
@@ -66,5 +54,15 @@ public class instantAutoAim extends InstantCommand {
     
     shooter.setWristAngle(shooterAngle);
 
+  }
+
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {}
+
+  // Returns true when the command should end.
+  @Override
+  public boolean isFinished() {
+    return false;
   }
 }
