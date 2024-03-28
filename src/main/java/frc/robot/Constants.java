@@ -97,8 +97,9 @@ public class Constants {
     public Constants(){
 
         if (ally.isPresent()){
-
+            System.out.println("Allience Present");
             if (ally.get() == Alliance.Red){
+                System.out.println("Red Allience & flipped poses");
                 isRedAllience = true;
                 kAmpPose = GeometryUtil.flipFieldPose(kAmpPose);
                 kSpeakerPose = GeometryUtil.flipFieldPose(kSpeakerPose);

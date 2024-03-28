@@ -8,6 +8,7 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -53,6 +54,9 @@ public class autoAim extends Command {
     );
     
     shooter.setWristAngle(shooterAngle);
+
+    SmartDashboard.putNumber("target rotation", rotationToGoal.getDegrees());
+    SmartDashboard.putNumber("shooter target angle", shooterAngle);
 
   }
 
