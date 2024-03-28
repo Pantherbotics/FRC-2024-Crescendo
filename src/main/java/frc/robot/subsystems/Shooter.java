@@ -28,7 +28,7 @@ public class Shooter extends SubsystemBase {
   TalonFX rightShooterWheel = new TalonFX(Constants.kRightShooterID);
   TalonFX leftShooterWheel = new TalonFX(Constants.kLeftShooterID);
 
-  TalonFX leftWrist = new TalonFX(Constants.kLeftWristID);
+  public TalonFX wrist = new TalonFX(Constants.kwristID);
 
   CANSparkMax rightShooterIntake = new CANSparkMax(Constants.kRightShooterIntakeID, MotorType.kBrushless);
   CANSparkMax leftShooterIntake = new CANSparkMax(Constants.kLeftShooterIntakeID, MotorType.kBrushless);
@@ -89,7 +89,7 @@ public class Shooter extends SubsystemBase {
 
   public void setWristOpenLoop(double speed){
     openLoop = true;
-    leftWrist.set(speed);
+    wrist.set(speed);
   }
 
   public void setOpenLoop(boolean open){
@@ -105,7 +105,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public double shooterAngle(){
-    return(leftWrist.getPosition().getValueAsDouble());
+    return(wrist.getPosition().getValueAsDouble());
   }
 
   public boolean hasNote(){
@@ -114,7 +114,7 @@ public class Shooter extends SubsystemBase {
 
 
   public void setZero(double position){
-    leftWrist.setPosition(position);
+    wrist.setPosition(position);
   }
 
   public void resetEncoder(){
@@ -136,7 +136,7 @@ public class Shooter extends SubsystemBase {
     double acceleration = (controller.getSetpoint().velocity - lastSpeed) / (Timer.getFPGATimestamp() - lastTime);
     
     if (!openLoop) {
-      leftWrist.setVoltage(
+      wrist.setVoltage(
           controller.calculate(-(encoder.getDistance() + Constants.kShooterEncoderOffset))
           + feedforward.calculate(controller.getSetpoint().velocity, acceleration));
     }
