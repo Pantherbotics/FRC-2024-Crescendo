@@ -23,7 +23,6 @@ public class tacoBellCommand extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-        new InstantCommand(()->RobotContainer.ampReady = false),
         new setShooterAngle(shooter, Constants.kShooterHandoffPosition),
         new WaitUntilCommand(shooter::isAtGoal),
         new setShooterIntakeSpeed(shooter, 0.4),

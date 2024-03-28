@@ -92,7 +92,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     SmartDashboard.putNumber("max speed", RobotContainer.MaxSpeed);
-    SmartDashboard.putString("state", RobotContainer.RobotState);
+  
     SmartDashboard.putBoolean("manual aiming", RobotContainer.manualShooting);
     SmartDashboard.putNumber("Shooter threshold", Constants.kShooterDistanceSensorTreshold);
     SmartDashboard.putNumber("Intake threshold", Constants.kIntakeDistanceSensorThreshold);

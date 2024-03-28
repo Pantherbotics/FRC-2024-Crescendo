@@ -53,16 +53,14 @@ public class RobotContainer {
 
   //states (very scuffed)
   public static boolean manualShooting = true;
-  public static boolean ampReady = false;
-  public static String RobotState = "Available"; // very janky but whatever
 
   // buttons and triggers
-  private Trigger intakeButton = joystick.leftBumper().or(second.leftBumper()).and(()->RobotState == "Available").and(()->!shooter.hasNote());//.and(()->!intake.hasNote());//.and(()->!shooter.hasNote());
-  private Trigger ampButton = joystick.x().and(()->RobotState == "Available");//joystick.leftBumper().and(shooter::hasNote).and(joystick.rightBumper().negate());
-  private Trigger climbButton = second.y().and(()->RobotState == "Available");
+  private Trigger intakeButton = joystick.leftBumper().or(second.leftBumper()).and(()->!shooter.hasNote());//.and(()->!intake.hasNote());//.and(()->!shooter.hasNote());
+  private Trigger ampButton = joystick.x();//joystick.leftBumper().and(shooter::hasNote).and(joystick.rightBumper().negate());
+  private Trigger climbButton = second.y();
   private Trigger shootButton = joystick.rightBumper().and(shooter::hasNote);
-  private Trigger zeroButton = joystick.b().or(second.b()).and(()->RobotState == "Available");
-  private Trigger tacoBell = joystick.povDown().or(second.a()).and(()->RobotState == "Available");
+  private Trigger zeroButton = joystick.b().or(second.b());
+  private Trigger tacoBell = joystick.povDown().or(second.a());
   private Trigger cancelButton = joystick.povUp().or(second.x());
 
 
@@ -107,34 +105,31 @@ public class RobotContainer {
 
     // intake and handoff
     intakeButton.onTrue(
-      new intakeHandoff(shooter, intake).
-      finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Intaking")
+      new intakeHandoff(shooter, intake)
 
     );
 
 
     // shoot and auto aim speaker
-    shootButton.and(()->RobotState == "Available").onTrue(
+    shootButton.onTrue(
       new ConditionalCommand(
         new shootNote(shooter, intake, joystick, shootButton),
         new autoAim(shooter, drivetrain, facing, joystick, shootButton),
         ()->manualShooting
       )
-      .finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Preparing Speaker")
     );
 
 
     // prepare and score amp
     ampButton.onTrue(
       new scoreAmp(shooter, intake, joystick, ampButton)
-      .finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Scoring Amp")
     );
     
 
     // eject note from shooter and intake
     tacoBell.onTrue(
       new tacoBellCommand(shooter, intake)
-      .finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Ejecting")
+
     );
 
 
@@ -148,7 +143,7 @@ public class RobotContainer {
     zeroButton.onTrue(
       new ParallelCommandGroup(
         new calibrateIntake(intake)
-      ).finallyDo(()->RobotState = "Available").beforeStarting(()->RobotState = "Zeroing")
+      )
     );
 
 
