@@ -26,7 +26,9 @@ public class autoAimShooterOnly extends Command {
   }
 
   @Override
-  public void initialize() {}
+  public void initialize() {
+    
+  }
 
   @Override
   public void execute() {
@@ -35,6 +37,12 @@ public class autoAimShooterOnly extends Command {
     rotationToGoal = new Rotation2d(robotPose.getX() - Constants.kSpeakerPose.getX(), robotPose.getY() - Constants.kSpeakerPose.getY());
     
     shooter.setWristAngle(shooterAngle);
+
+
+    if (shooter.isAtGoal() && shooter.wrist.getAcceleration().getValueAsDouble() < 0.1){
+
+    }
+
   }
 
   @Override
