@@ -24,6 +24,7 @@ public class scoreAmp extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
+        new setShooterSpeed(shooter, 0),
         new setShooterIntakeSpeed(shooter, -0.3),
         new setShooterAngle(shooter, Constants.kShooterAmpPosition),
         new WaitCommand(0.3),
@@ -36,7 +37,8 @@ public class scoreAmp extends SequentialCommandGroup {
         new WaitUntilCommand(()->!shooter.hasNote()),
         new WaitCommand(0.1),
         new setShooterIntakeSpeed(shooter, 0),
-        new setShooterAngle(shooter, Constants.kShooterHandoffPosition)
+        new setShooterAngle(shooter, Constants.kShooterHandoffPosition),
+        new setShooterSpeed(shooter, Constants.kShooterIdleSpeed)
     );
   }
 }

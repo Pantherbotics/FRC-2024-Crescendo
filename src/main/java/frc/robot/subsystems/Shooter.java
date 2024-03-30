@@ -34,12 +34,12 @@ public class Shooter extends SubsystemBase {
   CANSparkMax leftShooterIntake = new CANSparkMax(Constants.kLeftShooterIntakeID, MotorType.kBrushless);
 
   DutyCycleEncoder encoder = new DutyCycleEncoder(Constants.kShooterEncoderID);
-  AnalogInput mydistanceSensor = new AnalogInput(Constants.kShooterDistanceSensorID);
+  AnalogInput sideSensor = new AnalogInput(Constants.kShooterSideSensorID);
+  AnalogInput topSensor = new AnalogInput(Constants.kShooterTopSensorID);
   double lastSpeed;
   double lastTime;
   ProfiledPIDController controller;
   SimpleMotorFeedforward feedforward;
-  int sensorValue = 0;
   boolean openLoop = false;
 
   /** Creates a new shooter. */
@@ -50,7 +50,8 @@ public class Shooter extends SubsystemBase {
     rightShooterWheel.setNeutralMode(NeutralModeValue.Brake);
     rightShooterIntake.setIdleMode(IdleMode.kBrake);
     leftShooterIntake.setIdleMode(IdleMode.kBrake);
-    mydistanceSensor.setAverageBits(4);
+    sideSensor.setAverageBits(4);
+    topSensor.setAverageBits(4);
     leftShooterWheel.set(0);
     rightShooterWheel.set(0);
     leftShooterIntake.set(0);
@@ -109,7 +110,11 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean hasNote(){
-    return(sensorValue > Constants.kShooterDistanceSensorTreshold);
+    return(sideSensor.getAverageValue() > Constants.kShooterSideSensorTreshold);
+  }
+
+  public boolean noteInPosition(){
+    return(topSensor.getAverageValue() < Constants.kShooterTopSensorThreshold);
   }
 
 
@@ -125,8 +130,8 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     
-    sensorValue = mydistanceSensor.getAverageValue();
-    SmartDashboard.putNumber("shooter distance sensor", sensorValue);
+    SmartDashboard.putNumber("top sensor", topSensor.getAverageValue());
+    SmartDashboard.putNumber("side sensor", sideSensor.getAverageValue());
     SmartDashboard.putBoolean("Shooter Note", hasNote());
     SmartDashboard.putNumber("wrist", shooterAngle());
     SmartDashboard.putBoolean("encoder Connected", encoder.isConnected());

@@ -44,13 +44,15 @@ public class autoTargetNote extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (vision.notePipelineResult.hasTargets()){
-      var bestTarget = vision.notePipelineResult.getBestTarget();
+
+    if (intake.isAtGoal()){
       drivetrain.setControl(   
-        robotCentric.withVelocityX(Math.max(-bestTarget.getPitch(), -3)) // Drive forward with negative Y (forward)
-            .withRotationalRate(bestTarget.getYaw())
+        robotCentric.withVelocityX(Math.min((vision.noteY+7)/10, 1)) // Drive forward with negative Y (forward)
+            .withRotationalRate(-vision.noteX/10)
+            .withRotationalDeadband(0)
       );
     }
+    
   }
 
   // Called once the command ends or is interrupted.
@@ -64,6 +66,6 @@ public class autoTargetNote extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return intake.hasNote() || !vision.notePipelineResult.hasTargets();
+    return intake.hasNote();
   }
 }

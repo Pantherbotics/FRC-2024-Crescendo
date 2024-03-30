@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.commands.calibrateIntake;
 import frc.robot.commands.cancelAll;
+import frc.robot.commands.setIntakeAngle;
+import frc.robot.commands.setIntakeSpeed;
 import frc.robot.constants.Constants;
 
 
@@ -92,11 +94,9 @@ public class Robot extends TimedRobot {
   boolean climbTime = false;
   @Override
   public void teleopPeriodic() {
+    //SmartDashboard.putData("clean intake", new SequentialCommandGroup(new setIntakeAngle(RobotContainer.intake, 2), new setIntakeSpeed(RobotContainer.intake, 0.05)).repeatedly().finallyDo(()->{RobotContainer.intake.setAngle(0);RobotContainer.intake.setSpeed(0);}));
     SmartDashboard.putNumber("max speed", RobotContainer.MaxSpeed);
-  
     SmartDashboard.putBoolean("manual aiming", RobotContainer.manualShooting);
-    SmartDashboard.putNumber("Shooter threshold", Constants.kShooterDistanceSensorTreshold);
-    SmartDashboard.putNumber("Intake threshold", Constants.kIntakeDistanceSensorThreshold);
   }
   
 

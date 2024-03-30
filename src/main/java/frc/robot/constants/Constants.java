@@ -34,8 +34,10 @@ public class Constants {
     public static final int kRightShooterIntakeID = 22;
 
     public static final int kShooterEncoderID = 2;
-    public static final int kShooterDistanceSensorID = 2;
-    public static final double kShooterDistanceSensorTreshold = 600.0;
+    public static final int kShooterSideSensorID = 2;
+    public static final int kShooterTopSensorID = 1;
+    public static final double kShooterSideSensorTreshold = 600.0;
+    public static final double kShooterTopSensorThreshold = 1950.0;
 
     public static final int kwristID = 30; //
     public static final double kShooterRatio = (20 / 1) * (38.0 / 16.0);
@@ -48,6 +50,7 @@ public class Constants {
     public static final double kSpeakerHeight = Units.inchesToMeters(80);
 
     public static final double kShooterSpinSpeed = 1; // speed that flywheels shoot at
+    public static final double kShooterIdleSpeed = 0.3;
     public static final double kShooterIntakeSpeed = -0.7; // speed that shooter intake wheels spin at
     public static final double kShooterAmpSpeed = 1; // intake wheels on the shooter speed
 

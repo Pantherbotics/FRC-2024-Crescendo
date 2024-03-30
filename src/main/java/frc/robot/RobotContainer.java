@@ -114,6 +114,8 @@ public class RobotContainer {
 
     // shoot and auto aim speaker
     shootButton.onTrue(
+      new shootNote(shooter, intake, joystick, shootButton)
+      /*
       new InstantCommand(
         ()->{
           if (manualShooting){
@@ -127,6 +129,7 @@ public class RobotContainer {
           }
         }
       )
+      */
     );
 
 
@@ -135,6 +138,10 @@ public class RobotContainer {
       new scoreAmp(shooter, intake, joystick, ampButton)
     );
     
+
+    second.povLeft().onTrue(
+      new autoTargetNote(drivetrain, vision, intake, shooter, robotCentric, true)
+    );
 
     // eject note from shooter and intake
     tacoBell.onTrue(

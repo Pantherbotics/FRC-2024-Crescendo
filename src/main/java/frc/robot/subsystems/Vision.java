@@ -5,7 +5,6 @@
 
 package frc.robot.subsystems;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.photonvision.EstimatedRobotPose;
@@ -13,11 +12,13 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
-import org.photonvision.targeting.PhotonTrackedTarget;
-
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.net.PortForwarder;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 
@@ -33,7 +34,13 @@ public class Vision extends SubsystemBase {
   private Optional<EstimatedRobotPose> backEstimated;
   private CommandSwerveDrivetrain swerve;
   public PhotonPipelineResult notePipelineResult;
-
+  NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+  NetworkTableEntry tx = table.getEntry("tx");
+  NetworkTableEntry ty = table.getEntry("ty");
+  NetworkTableEntry ta = table.getEntry("ta");
+  public static double noteX;
+  public static double noteY;
+  public static double noteA;
 
 
   public Vision(CommandSwerveDrivetrain swerve) {
@@ -66,6 +73,14 @@ public class Vision extends SubsystemBase {
       swerve.addVisionMeasurement(backEstimated.get().estimatedPose.toPose2d(), backEstimated.get().timestampSeconds);
     }
 
+    //read values periodically
+    noteX = tx.getDouble(0.0);
+    noteY = ty.getDouble(0.0);
+    noteA = ta.getDouble(0.0);
+
+    SmartDashboard.putNumber("LimelightX", noteX);
+    SmartDashboard.putNumber("LimelightY", noteY);
+    SmartDashboard.putNumber("LimelightArea", noteA);
 
 
   }
