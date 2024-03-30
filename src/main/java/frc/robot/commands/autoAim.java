@@ -8,11 +8,12 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants;
+import frc.robot.constants.Constants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Shooter;
 
@@ -26,9 +27,12 @@ public class autoAim extends Command {
   private Pose2d robotPose;
   private CommandXboxController joystick;
   private Rotation2d rotationToGoal;
+  private Trigger shootButton;
+  Boolean readyToShoot = false;
 
   public autoAim(Shooter shooter, CommandSwerveDrivetrain swerve, SwerveRequest.FieldCentricFacingAngle facing, CommandXboxController joystick, Trigger shootButton) {
     this.shooter = shooter;
+    this.shootButton = shootButton;
     this.swerve = swerve;
     this.facing = facing;
     this.joystick = joystick;
@@ -38,11 +42,16 @@ public class autoAim extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    readyToShoot = false;
+    shooter.setShooterFlywheelSpeed(1);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    if (!shootButton.getAsBoolean()){
+      readyToShoot = true;
+    }
     robotPose = swerve.getState().Pose;
     shooterAngle = shooter.radiansToWristAngle( Math.atan((Constants.kSpeakerHeight - Constants.kShooterHeight )/robotPose.getTranslation().getDistance(Constants.kSpeakerPose.getTranslation())));
     rotationToGoal = new Rotation2d(robotPose.getX() - Constants.kSpeakerPose.getX(), robotPose.getY() - Constants.kSpeakerPose.getY());
@@ -52,21 +61,26 @@ public class autoAim extends Command {
           .withVelocityY(-joystick.getLeftX() * 6) // Drive left with negative X (left)
           .withTargetDirection(rotationToGoal)
     );
-    
-    shooter.setWristAngle(shooterAngle);
+    shooter.setWristAngle(Constants.kShooterSpeakerAngle + shooter.radiansToWristAngle(Units.rotationsToRadians((joystick.getRightTriggerAxis() - joystick.getLeftTriggerAxis())/4)));
+    //shooter.setWristAngle(shooterAngle-10);
 
+    SmartDashboard.putNumber("speakerDistance", robotPose.getTranslation().getDistance(Constants.kSpeakerPose.getTranslation()));
     SmartDashboard.putNumber("target rotation", rotationToGoal.getDegrees());
     SmartDashboard.putNumber("shooter target angle", shooterAngle);
+
+    
 
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    shooter.setIntakeSpeed(-1);
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return shootButton.getAsBoolean() && readyToShoot;
   }
 }

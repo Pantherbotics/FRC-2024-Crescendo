@@ -1,4 +1,4 @@
-package frc.robot.generated;
+package frc.robot.constants;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrainConstants;
@@ -88,7 +88,7 @@ public class TunerConstants {
 
 
     // Front Left
-    private static final int kFrontLeftDriveMotorId = 1;
+    private static final int kFrontLeftDriveMotorId = 13;
     private static final int kFrontLeftSteerMotorId = 2;
     private static final int kFrontLeftEncoderId = 3;
     private static final double kFrontLeftEncoderOffset = 0.026123046875;

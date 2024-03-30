@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot;
+package frc.robot.constants;
 
 import java.util.Optional;
 
@@ -25,7 +25,7 @@ public class Constants {
     public static final double kNormalDriveSpeed = 6;
 
     // shooter constants
-    public static final double kShooterHeight = 1.1; // estimated
+    public static final double kShooterHeight = Units.inchesToMeters(32); // estimated
 
     public static final int kLeftShooterID = 31;
     public static final int kRightShooterID = 32;
@@ -45,7 +45,7 @@ public class Constants {
     public static final double kShooterAmpPosition = 6.3; // not tuned yet
     public static final double kShooterSpeakerAngle = -4.4;
     public static final double kReverseShootAngle = 5;
-    public static final double kSpeakerHeight = 2.0431125;
+    public static final double kSpeakerHeight = Units.inchesToMeters(80);
 
     public static final double kShooterSpinSpeed = 1; // speed that flywheels shoot at
     public static final double kShooterIntakeSpeed = -0.7; // speed that shooter intake wheels spin at
@@ -79,7 +79,7 @@ public class Constants {
     public static final String kMainCameraName = "MainCam";
     public static final String kBackCameraName = "BackCam";
     public static final String kNoteCameraName = "NoteCam";
-    public static final Transform3d kRobotToMainCam = new Transform3d(0, Units.inchesToMeters(9),
+    public static final Transform3d kRobotToMainCam = new Transform3d(0, Units.inchesToMeters(-9),
             Units.inchesToMeters(46), new Rotation3d(0, 0, 0)); // these are just estimated
     public static final Transform3d kRobotToBackCam = new Transform3d(-0.17, -0.35, 0.4, new Rotation3d(0, -35, 0));
 

@@ -20,6 +20,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -32,9 +33,10 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.WrapperCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
+import frc.robot.constants.Constants;
+import frc.robot.constants.TunerConstants;
 
 
 public class RobotContainer {
@@ -112,10 +114,18 @@ public class RobotContainer {
 
     // shoot and auto aim speaker
     shootButton.onTrue(
-      new ConditionalCommand(
-        new shootNote(shooter, intake, joystick, shootButton),
-        new autoAim(shooter, drivetrain, facing, joystick, shootButton),
-        ()->manualShooting
+      new InstantCommand(
+        ()->{
+          if (manualShooting){
+            CommandScheduler.getInstance().schedule(        
+              new shootNote(shooter, intake, joystick, shootButton)
+            );
+          } else {
+            CommandScheduler.getInstance().schedule(        
+              new autoAim(shooter, drivetrain, facing, joystick, shootButton)
+            );
+          }
+        }
       )
     );
 
