@@ -17,21 +17,18 @@ import frc.robot.subsystems.Vision;
 public class autoTargetNote extends Command {
   /** Creates a new autoTargetNote. */
   private CommandSwerveDrivetrain drivetrain;
-  private Vision vision;
   private Intake intake;
   private Shooter shooter;
   private SwerveRequest.RobotCentric robotCentric;
   private boolean handoffAtEnd;
 
-  public autoTargetNote(CommandSwerveDrivetrain drivetrain, Vision vision, Intake intake, Shooter shooter, SwerveRequest.RobotCentric robotCentric, boolean handoffAtEnd ) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    this.vision = vision;
+  public autoTargetNote(CommandSwerveDrivetrain drivetrain, Intake intake, Shooter shooter, SwerveRequest.RobotCentric robotCentric, boolean handoffAtEnd ) {
     this.drivetrain = drivetrain;
     this.intake = intake;
     this.robotCentric = robotCentric;
     this.shooter = shooter;
     this.handoffAtEnd = handoffAtEnd;
-    addRequirements(drivetrain, vision, intake, shooter);
+    addRequirements(drivetrain, intake, shooter);
   }
 
   // Called when the command is initially scheduled.
@@ -47,8 +44,8 @@ public class autoTargetNote extends Command {
 
     if (intake.intakeAngle() > Constants.kIntakeDownPosition - 5){
       drivetrain.setControl(   
-        robotCentric.withVelocityX(Math.min((vision.noteY+7)/10, 1)) // Drive forward with negative Y (forward)
-            .withRotationalRate(-vision.noteX/10)
+        robotCentric.withVelocityX(Math.min((Vision.noteY+7)/10, 1)) // Drive forward with negative Y (forward)
+            .withRotationalRate(-Vision.noteX/10)
             .withRotationalDeadband(0)
       );
     }

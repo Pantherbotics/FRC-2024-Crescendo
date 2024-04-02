@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import java.time.Instant;
-
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
@@ -21,17 +19,11 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import edu.wpi.first.wpilibj2.command.WrapperCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.*;
@@ -73,12 +65,10 @@ public class RobotContainer {
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric() // main drive type
       .withDeadband(MaxSpeed * 0.01).withRotationalDeadband(MaxAngularRate * 0.01)
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-  private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake(); // swerve braking
   private final SwerveRequest.FieldCentricFacingAngle facing = new SwerveRequest.FieldCentricFacingAngle() // facing angle for auto aiming
   .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
   private final SwerveRequest.RobotCentric robotCentric = new SwerveRequest.RobotCentric()
     .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-  private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt(); // point wheels
 
   //logger
   private final Telemetry logger = new Telemetry(MaxSpeed);
@@ -142,7 +132,7 @@ public class RobotContainer {
     
 
     second.povLeft().onTrue(
-      new autoTargetNote(drivetrain, vision, intake, shooter, robotCentric, true)
+      new autoTargetNote(drivetrain, intake, shooter, robotCentric, true)
     );
 
     second.povRight().onTrue(
@@ -287,7 +277,7 @@ public class RobotContainer {
   // SETUP PATHPLANNER
   public void setupPathPlanner(){
 
-    NamedCommands.registerCommand("auto intake note", new autoTargetNote(drivetrain, vision, intake, shooter,  robotCentric, false));
+    NamedCommands.registerCommand("auto intake note", new autoTargetNote(drivetrain, intake, shooter,  robotCentric, false));
     NamedCommands.registerCommand("intake and handoff", new ScheduleCommand(new intakeHandoff(shooter, intake)));
     NamedCommands.registerCommand("auto shoot", new InstantCommand());
 
