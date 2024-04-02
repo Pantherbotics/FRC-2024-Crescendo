@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.SteerRequestType;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -23,18 +24,18 @@ public class autoAim extends Command {
   private final Shooter shooter;
   private final CommandSwerveDrivetrain swerve;
   private double shooterAngle;
-  private SwerveRequest.FieldCentricFacingAngle facing;
+  private SwerveRequest.FieldCentric fieldCentric;
   private Pose2d robotPose;
   private CommandXboxController joystick;
   private Rotation2d rotationToGoal;
   private Trigger shootButton;
   Boolean readyToShoot = false;
 
-  public autoAim(Shooter shooter, CommandSwerveDrivetrain swerve, SwerveRequest.FieldCentricFacingAngle facing, CommandXboxController joystick, Trigger shootButton) {
+  public autoAim(Shooter shooter, CommandSwerveDrivetrain swerve, SwerveRequest.FieldCentric fieldCentric, CommandXboxController joystick, Trigger shootButton) {
     this.shooter = shooter;
     this.shootButton = shootButton;
     this.swerve = swerve;
-    this.facing = facing;
+    this.fieldCentric = fieldCentric;
     this.joystick = joystick;
     addRequirements(shooter, swerve);
   }
@@ -53,16 +54,20 @@ public class autoAim extends Command {
       readyToShoot = true;
     }
     robotPose = swerve.getState().Pose;
-    shooterAngle = shooter.radiansToWristAngle( Math.atan((Constants.kSpeakerHeight - Constants.kShooterHeight )/robotPose.getTranslation().getDistance(Constants.kSpeakerPose.getTranslation())));
+    //shooterAngle = shooter.radiansToWristAngle( Math.atan((Constants.kSpeakerHeight - Constants.kShooterHeight )/1));//robotPose.getTranslation().getDistance(Constants.kSpeakerPose.getTranslation())));
+    //shooterAngle = shooter.radiansToWristAngle(new Rotation2d(Constants.kSpeakerHeight - Constants.kShooterHeight, robotPose.getTranslation().getDistance(Constants.kSpeakerPose.getTranslation())).getRadians());
+    shooterAngle = -shooter.radiansToWristAngle(new Rotation2d(Units.inchesToMeters(80-32), robotPose.getTranslation().getDistance(Constants.kSpeakerPose.getTranslation())).getRadians());
+    
     rotationToGoal = new Rotation2d(robotPose.getX() - Constants.kSpeakerPose.getX(), robotPose.getY() - Constants.kSpeakerPose.getY());
 
     swerve.setControl(   
-      facing.withVelocityX(-joystick.getLeftY() * 6) // Drive forward with negative Y (forward)
+      fieldCentric.withVelocityX(-joystick.getLeftY() * 6) // Drive forward with negative Y (forward)
           .withVelocityY(-joystick.getLeftX() * 6) // Drive left with negative X (left)
-          .withTargetDirection(rotationToGoal)
+          .withRotationalRate(rotationToGoal.minus(swerve.getState().Pose.getRotation().plus(new Rotation2d(Math.PI))).getRadians()*3)
     );
-    shooter.setWristAngle(Constants.kShooterSpeakerAngle + shooter.radiansToWristAngle(Units.rotationsToRadians((joystick.getRightTriggerAxis() - joystick.getLeftTriggerAxis())/4)));
-    //shooter.setWristAngle(shooterAngle-10);
+
+    //shooter.setWristAngle(Constants.kShooterSpeakerAngle + shooter.radiansToWristAngle(Units.rotationsToRadians((joystick.getRightTriggerAxis() - joystick.getLeftTriggerAxis())/4)));
+    shooter.setWristAngle(shooterAngle);
 
     SmartDashboard.putNumber("speakerDistance", robotPose.getTranslation().getDistance(Constants.kSpeakerPose.getTranslation()));
     SmartDashboard.putNumber("target rotation", rotationToGoal.getDegrees());

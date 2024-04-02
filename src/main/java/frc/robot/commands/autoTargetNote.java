@@ -45,7 +45,7 @@ public class autoTargetNote extends Command {
   @Override
   public void execute() {
 
-    if (intake.isAtGoal()){
+    if (intake.intakeAngle() > Constants.kIntakeDownPosition - 5){
       drivetrain.setControl(   
         robotCentric.withVelocityX(Math.min((vision.noteY+7)/10, 1)) // Drive forward with negative Y (forward)
             .withRotationalRate(-vision.noteX/10)

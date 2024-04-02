@@ -114,7 +114,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean noteInPosition(){
-    return(topSensor.getAverageValue() < Constants.kShooterTopSensorThreshold);
+    return(topSensor.getAverageValue() < 2100 && topSensor.getAverageValue() > 1900);
   }
 
 
@@ -131,6 +131,7 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     
     SmartDashboard.putNumber("top sensor", topSensor.getAverageValue());
+    SmartDashboard.putBoolean("top note", noteInPosition());
     SmartDashboard.putNumber("side sensor", sideSensor.getAverageValue());
     SmartDashboard.putBoolean("Shooter Note", hasNote());
     SmartDashboard.putNumber("wrist", shooterAngle());

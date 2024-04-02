@@ -13,6 +13,7 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.util.GeometryUtil;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -70,7 +71,7 @@ public class RobotContainer {
   public static double MaxSpeed = Constants.kNormalDriveSpeed; // 6 meters per second desired top speed
   public static double MaxAngularRate = 1.77 * Math.PI; // 3/4 of a rotation per second max angular velocity
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric() // main drive type
-      .withDeadband(MaxSpeed * 0.05).withRotationalDeadband(MaxAngularRate * 0.05)
+      .withDeadband(MaxSpeed * 0.01).withRotationalDeadband(MaxAngularRate * 0.01)
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake(); // swerve braking
   private final SwerveRequest.FieldCentricFacingAngle facing = new SwerveRequest.FieldCentricFacingAngle() // facing angle for auto aiming
@@ -114,7 +115,8 @@ public class RobotContainer {
 
     // shoot and auto aim speaker
     shootButton.onTrue(
-      new shootNote(shooter, intake, joystick, shootButton)
+      //new shootNote(shooter, intake, joystick, shootButton)
+      new autoAim(shooter, drivetrain, drive, joystick, shootButton)
       /*
       new InstantCommand(
         ()->{
@@ -135,12 +137,39 @@ public class RobotContainer {
 
     // prepare and score amp
     ampButton.onTrue(
-      new scoreAmp(shooter, intake, joystick, ampButton)
+      new scoreAmp(shooter, intake, ampButton)
     );
     
 
     second.povLeft().onTrue(
       new autoTargetNote(drivetrain, vision, intake, shooter, robotCentric, true)
+    );
+
+    second.povRight().onTrue(
+      new SequentialCommandGroup(
+        new autoTargetNote(drivetrain, vision, intake, shooter, robotCentric, false),
+        new ParallelCommandGroup(
+          drivetrain.pathfindToPosition(Constants.kAmpPose),
+          new SequentialCommandGroup( 
+            new intakeHandoff(shooter, intake),
+            new setShooterSpeed(shooter, 0),
+            new setShooterIntakeSpeed(shooter, -0.3),
+            new setShooterAngle(shooter, Constants.kShooterAmpPosition),
+            new WaitCommand(0.3),
+            new setShooterIntakeSpeed(shooter, 0),
+            new WaitUntilCommand(shooter::isAtGoal)
+          )
+        ),
+        new SequentialCommandGroup(
+          new setShooterIntakeSpeed(shooter, Constants.kShooterAmpSpeed),
+          new WaitUntilCommand(()->!shooter.hasNote()),
+          new WaitCommand(0.5),
+          new setShooterIntakeSpeed(shooter, 0),
+          new setShooterAngle(shooter, Constants.kShooterHandoffPosition)
+        ),
+        drivetrain.pathfindToPosition(GeometryUtil.flipFieldPose(new Pose2d(1.85, 6.5, Rotation2d.fromDegrees(-90))))
+      ).repeatedly()
+
     );
 
     // eject note from shooter and intake

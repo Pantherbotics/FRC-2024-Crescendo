@@ -35,7 +35,7 @@ public class Constants {
 
     public static final int kShooterEncoderID = 2;
     public static final int kShooterSideSensorID = 2;
-    public static final int kShooterTopSensorID = 1;
+    public static final int kShooterTopSensorID = 0;
     public static final double kShooterSideSensorTreshold = 600.0;
     public static final double kShooterTopSensorThreshold = 1950.0;
 
@@ -82,14 +82,14 @@ public class Constants {
     public static final String kMainCameraName = "MainCam";
     public static final String kBackCameraName = "BackCam";
     public static final String kNoteCameraName = "NoteCam";
-    public static final Transform3d kRobotToMainCam = new Transform3d(0, Units.inchesToMeters(-9),
+    public static final Transform3d kRobotToMainCam = new Transform3d(0, Units.inchesToMeters(-4),
             Units.inchesToMeters(46), new Rotation3d(0, 0, 0)); // these are just estimated
     public static final Transform3d kRobotToBackCam = new Transform3d(-0.17, -0.35, 0.4, new Rotation3d(0, -35, 0));
 
     // pathfinding
     private Optional<Alliance> ally = DriverStation.getAlliance();
-    public static Pose2d kSpeakerPose = GeometryUtil.flipFieldPose(new Pose2d(0.25, 5.5, Rotation2d.fromDegrees(180)));
-    public static Pose2d kAmpPose = new Pose2d(2.3, 7, Rotation2d.fromDegrees(90));
+    public static Pose2d kSpeakerPose = GeometryUtil.flipFieldPose(new Pose2d(0.2, 5.5, Rotation2d.fromDegrees(180)));
+    public static Pose2d kAmpPose = GeometryUtil.flipFieldPose(new Pose2d(1.85, 8, Rotation2d.fromDegrees(90)));
     public static Pose2d kSourcePose = new Pose2d(14.5, 1.4, Rotation2d.fromDegrees(-30));
     public static boolean isRedAllience = false;
 
@@ -109,7 +109,7 @@ public class Constants {
     }
 
     public static final PathConstraints kPathfindingConstraints = new PathConstraints(
-            3.0, 4.0,
-            Units.degreesToRadians(540), Units.degreesToRadians(720));
+            1.75, 1.5,
+            Units.degreesToRadians(180), Units.degreesToRadians(180));
 
 }

@@ -95,7 +95,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         return (AutoBuilder.pathfindToPose(
                 targetPose,
                 Constants.kPathfindingConstraints,
-                0.0, // Goal end velocity in meters/sec
+                0, // Goal end velocity in meters/sec
                 0.0 // Rotation delay distance in meters. This is how far the robot should travel before attempting to rotate.
         ));
     }

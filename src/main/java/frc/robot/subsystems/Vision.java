@@ -26,7 +26,6 @@ public class Vision extends SubsystemBase {
   /** Creates a new Vision. */
   public final PhotonCamera mainCam;
   public final PhotonCamera backCam;
-  public final PhotonCamera noteCam;
   public AprilTagFieldLayout tagLayout;
   public PhotonPoseEstimator mainPoseEstimator;
   public PhotonPoseEstimator backPoseEstimator;
@@ -44,7 +43,6 @@ public class Vision extends SubsystemBase {
 
 
   public Vision(CommandSwerveDrivetrain swerve) {
-    noteCam = new PhotonCamera(Constants.kNoteCameraName);
     mainCam = new PhotonCamera(Constants.kMainCameraName);
     backCam = new PhotonCamera(Constants.kBackCameraName);
     this.swerve = swerve;
@@ -56,10 +54,6 @@ public class Vision extends SubsystemBase {
 
   }
 
-
-  public void updateNoteDetector(){
-    notePipelineResult = noteCam.getLatestResult();
-  }
 
   public void updatePose(){
     mainEstimated = mainPoseEstimator.update(mainCam.getLatestResult());
@@ -88,6 +82,5 @@ public class Vision extends SubsystemBase {
   @Override
   public void periodic() {
     updatePose();
-    updateNoteDetector();
   }
 }

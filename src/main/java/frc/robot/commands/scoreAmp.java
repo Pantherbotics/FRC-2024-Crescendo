@@ -20,7 +20,7 @@ import frc.robot.subsystems.Shooter;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class scoreAmp extends SequentialCommandGroup {
   /** Creates a new scoreAmp. */
-  public scoreAmp(Shooter shooter, Intake intake, CommandXboxController joystick, Trigger ampButton) {
+  public scoreAmp(Shooter shooter, Intake intake, Trigger ampButton) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
