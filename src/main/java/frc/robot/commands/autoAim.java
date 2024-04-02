@@ -9,6 +9,7 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.SteerRequestType;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -54,11 +55,14 @@ public class autoAim extends Command {
       readyToShoot = true;
     }
     robotPose = swerve.getState().Pose;
+    Pose2d shooterPose = robotPose.plus(new Transform2d(Units.inchesToMeters(11), 0.0, new Rotation2d(0)));
     //shooterAngle = shooter.radiansToWristAngle( Math.atan((Constants.kSpeakerHeight - Constants.kShooterHeight )/1));//robotPose.getTranslation().getDistance(Constants.kSpeakerPose.getTranslation())));
     //shooterAngle = shooter.radiansToWristAngle(new Rotation2d(Constants.kSpeakerHeight - Constants.kShooterHeight, robotPose.getTranslation().getDistance(Constants.kSpeakerPose.getTranslation())).getRadians());
-    shooterAngle = -shooter.radiansToWristAngle(new Rotation2d(Units.inchesToMeters(80-32), robotPose.getTranslation().getDistance(Constants.kSpeakerPose.getTranslation())).getRadians());
+    shooterAngle = -shooter.radiansToWristAngle(new Rotation2d(Units.inchesToMeters(80-32), shooterPose.getTranslation().getDistance(Constants.kSpeakerPose.getTranslation())).getRadians());
     
     rotationToGoal = new Rotation2d(robotPose.getX() - Constants.kSpeakerPose.getX(), robotPose.getY() - Constants.kSpeakerPose.getY());
+
+
 
     swerve.setControl(   
       fieldCentric.withVelocityX(-joystick.getLeftY() * 6) // Drive forward with negative Y (forward)

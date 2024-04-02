@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -137,7 +138,7 @@ public class RobotContainer {
 
     second.povRight().onTrue(
       new SequentialCommandGroup(
-        new autoTargetNote(drivetrain, vision, intake, shooter, robotCentric, false),
+        new autoTargetNote(drivetrain, intake, shooter, robotCentric, false),
         new ParallelCommandGroup(
           drivetrain.pathfindToPosition(Constants.kAmpPose),
           new SequentialCommandGroup( 
