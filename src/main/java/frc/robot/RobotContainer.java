@@ -148,7 +148,8 @@ public class RobotContainer {
             new setShooterAngle(shooter, Constants.kShooterAmpPosition),
             new WaitCommand(0.3),
             new setShooterIntakeSpeed(shooter, 0),
-            new WaitUntilCommand(shooter::isAtGoal)
+            new WaitUntilCommand(shooter::isAtGoal),
+            new WaitCommand(0.3)
           )
         ),
         new SequentialCommandGroup(

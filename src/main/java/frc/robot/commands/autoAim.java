@@ -13,6 +13,10 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.constants.Constants;
@@ -55,10 +59,10 @@ public class autoAim extends Command {
       readyToShoot = true;
     }
     robotPose = swerve.getState().Pose;
-    Pose2d shooterPose = robotPose.plus(new Transform2d(Units.inchesToMeters(11), 0.0, new Rotation2d(0)));
+    Pose2d shooterPose = robotPose.plus(new Transform2d(Units.inchesToMeters(13), 0.0, new Rotation2d(0)));
     //shooterAngle = shooter.radiansToWristAngle( Math.atan((Constants.kSpeakerHeight - Constants.kShooterHeight )/1));//robotPose.getTranslation().getDistance(Constants.kSpeakerPose.getTranslation())));
     //shooterAngle = shooter.radiansToWristAngle(new Rotation2d(Constants.kSpeakerHeight - Constants.kShooterHeight, robotPose.getTranslation().getDistance(Constants.kSpeakerPose.getTranslation())).getRadians());
-    shooterAngle = -shooter.radiansToWristAngle(new Rotation2d(Units.inchesToMeters(80-32), shooterPose.getTranslation().getDistance(Constants.kSpeakerPose.getTranslation())).getRadians());
+    shooterAngle = -shooter.radiansToWristAngle(new Rotation2d(Units.inchesToMeters(80.5-32.25), shooterPose.getTranslation().getDistance(Constants.kSpeakerPose.getTranslation())).getRadians());
     
     rotationToGoal = new Rotation2d(robotPose.getX() - Constants.kSpeakerPose.getX(), robotPose.getY() - Constants.kSpeakerPose.getY());
 
@@ -73,11 +77,10 @@ public class autoAim extends Command {
     //shooter.setWristAngle(Constants.kShooterSpeakerAngle + shooter.radiansToWristAngle(Units.rotationsToRadians((joystick.getRightTriggerAxis() - joystick.getLeftTriggerAxis())/4)));
     shooter.setWristAngle(shooterAngle);
 
-    SmartDashboard.putNumber("speakerDistance", robotPose.getTranslation().getDistance(Constants.kSpeakerPose.getTranslation()));
+    SmartDashboard.putNumber("speakerDistance", shooterPose.getTranslation().getDistance(Constants.kSpeakerPose.getTranslation()));
     SmartDashboard.putNumber("target rotation", rotationToGoal.getDegrees());
     SmartDashboard.putNumber("shooter target angle", shooterAngle);
 
-    
 
   }
 
@@ -85,6 +88,14 @@ public class autoAim extends Command {
   @Override
   public void end(boolean interrupted) {
     shooter.setIntakeSpeed(-1);
+    CommandScheduler.getInstance().schedule(
+      new SequentialCommandGroup(
+        new WaitUntilCommand(()->!shooter.hasNote()),
+        new WaitCommand(0.5),
+        new setShooterSpeed(shooter, 0),
+        new setShooterIntakeSpeed(shooter, 0)
+      )
+    );
   }
 
   // Returns true when the command should end.

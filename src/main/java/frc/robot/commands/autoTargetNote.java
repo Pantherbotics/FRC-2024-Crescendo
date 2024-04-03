@@ -55,6 +55,7 @@ public class autoTargetNote extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    intake.setSpeed(0);
     if(!interrupted && handoffAtEnd){
       CommandScheduler.getInstance().schedule(new intakeHandoff(shooter, intake));
     }

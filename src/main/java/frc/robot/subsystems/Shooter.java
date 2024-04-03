@@ -114,7 +114,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean noteInPosition(){
-    return(topSensor.getAverageValue() < 2100 && topSensor.getAverageValue() > 1900);
+    return(topSensor.getAverageValue() < 2400 && topSensor.getAverageValue() > 1500);
   }
 
 

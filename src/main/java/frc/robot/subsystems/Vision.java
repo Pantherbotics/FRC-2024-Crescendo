@@ -47,10 +47,8 @@ public class Vision extends SubsystemBase {
     backCam = new PhotonCamera(Constants.kBackCameraName);
     this.swerve = swerve;
     tagLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
-    mainPoseEstimator = new PhotonPoseEstimator(tagLayout, PoseStrategy.LOWEST_AMBIGUITY, mainCam, Constants.kRobotToMainCam);
-    backPoseEstimator = new PhotonPoseEstimator(tagLayout, PoseStrategy.LOWEST_AMBIGUITY, backCam, Constants.kRobotToBackCam);
-
-    PortForwarder.add(5800, "photonvision.local", 5800);
+    mainPoseEstimator = new PhotonPoseEstimator(tagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, mainCam, Constants.kRobotToMainCam);
+    backPoseEstimator = new PhotonPoseEstimator(tagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, backCam, Constants.kRobotToBackCam);
 
   }
 
