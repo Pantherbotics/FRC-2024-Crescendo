@@ -23,7 +23,7 @@ public class autoTargetNote extends Command {
   private Intake intake;
   private Shooter shooter;
   private SwerveRequest.RobotCentric robotCentric;
-  private PIDController pid  = new PIDController(1, 0, 0);
+  private PIDController pid  = new PIDController(.1, 0, 0.006);
   private boolean collectedNote;
 
   public autoTargetNote(CommandSwerveDrivetrain drivetrain, Intake intake, Shooter shooter, SwerveRequest.RobotCentric robotCentric ) {
@@ -49,7 +49,7 @@ public class autoTargetNote extends Command {
 
     if (Vision.noteA > 0.001 && !collectedNote){
       drivetrain.setControl(   
-        robotCentric.withVelocityX(1 - Vision.noteX/20 + Vision.noteY/20) // Drive forward with negative Y (forward)
+        robotCentric.withVelocityX(0)//1 - Vision.noteX/20 + Vision.noteY/20) // Drive forward with negative Y (forward)
             .withRotationalRate(pid.calculate(Vision.noteX, 0))            
             .withRotationalDeadband(0)
       );

@@ -15,10 +15,14 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.net.PortForwarder;
+import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 
@@ -44,7 +48,6 @@ public class Vision extends SubsystemBase {
   public static Pose2d backPose;
 
 
-
   public Vision(CommandSwerveDrivetrain swerve) {
     mainCam = new PhotonCamera(Constants.kMainCameraName);
     backCam = new PhotonCamera(Constants.kBackCameraName);
@@ -59,7 +62,6 @@ public class Vision extends SubsystemBase {
     for (int port = 5800; port <= 5809; port++) {
       PortForwarder.add(port, "limelight.local", port);
     }
-
   }
 
   /**
@@ -71,24 +73,27 @@ public class Vision extends SubsystemBase {
   }
 
 
+
   public void updatePose(){
     mainEstimated = mainPoseEstimator.update(mainCam.getLatestResult());
     backEstimated = backPoseEstimator.update(backCam.getLatestResult());
-  
     
     if (mainEstimated.isPresent()){
       swerve.addVisionMeasurement(mainEstimated.get().estimatedPose.toPose2d(), mainEstimated.get().timestampSeconds);
-      mainPose = mainEstimated.get().estimatedPose.toPose2d();
+      //mainPose = mainEstimated.get().estimatedPose.toPose2d();
     }
     if (backEstimated.isPresent()){
       swerve.addVisionMeasurement(backEstimated.get().estimatedPose.toPose2d(), backEstimated.get().timestampSeconds);
-      backPose = backEstimated.get().estimatedPose.toPose2d();
+      //backPose = mainEstimated.get().estimatedPose.toPose2d();
     }
+
+
 
     //read limelight note cam values
     noteX = tx.getDouble(0.0);
     noteY = ty.getDouble(0.0);
     noteA = ta.getDouble(0.0);
+
 
   }
 

@@ -70,8 +70,8 @@ public class Constants {
     public static final int kIntakeLimitSwitchID = 0;
 
     // climbers
-    public static final int kLeftClimberMotorID = 26;
-    public static final int kRightClimberMotorID = 27;
+    public static final int kLeftClimberMotorID = 27;
+    public static final int kRightClimberMotorID = 26;
 
     public static final int kLeftClimberSwitchID = 1;
     public static final int kRightClimberSwitchID = 9;

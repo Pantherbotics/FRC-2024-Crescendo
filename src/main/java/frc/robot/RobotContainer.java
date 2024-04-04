@@ -38,7 +38,6 @@ public class RobotContainer {
   // Instantiate subsystems
   public static final Intake intake = new Intake();
   public static final Shooter shooter = new Shooter();
-  public static final Haptics haptics = new Haptics(intake);
   Constants constants = new Constants();
   public static final Climber climber = new Climber();
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain;
@@ -57,7 +56,7 @@ public class RobotContainer {
   private Trigger climbButton = second.y();
   private Trigger shootButton = joystick.rightBumper().and(shooter::hasNote);
   private Trigger zeroButton = joystick.b().or(second.b());
-  private Trigger tacoBell = joystick.povDown().or(second.a());
+  private Trigger tacoBell = joystick.povDown();
   private Trigger cancelButton = joystick.povUp().or(second.x());
 
 
@@ -65,10 +64,9 @@ public class RobotContainer {
   public static double MaxSpeed = Constants.kNormalDriveSpeed; // 6 meters per second desired top speed
   public static double MaxAngularRate = 1.77 * Math.PI; // 3/4 of a rotation per second max angular velocity
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric() // main drive type
-      .withDeadband(MaxSpeed * 0.01).withRotationalDeadband(MaxAngularRate * 0.01)
+      .withDeadband(MaxSpeed * 0.05).withRotationalDeadband(MaxAngularRate * 0.05)
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-  private SwerveRequest.FieldCentricFacingAngle facing = new SwerveRequest.FieldCentricFacingAngle()
-      .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+
   private final SwerveRequest.RobotCentric robotCentric = new SwerveRequest.RobotCentric()
     .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
@@ -110,8 +108,8 @@ public class RobotContainer {
     intakeButton.onTrue(
       new ConditionalCommand(    
         new intakeHandoff(shooter, intake),
-        new autoTargetNote(drivetrain, intake, shooter, robotCentric).asProxy(), 
-        ()->manualShooting
+        new autoTargetNote(drivetrain, intake, shooter, robotCentric), 
+        ()->manualShooting || intake.hasNote()
       )
     );
 
@@ -120,7 +118,7 @@ public class RobotContainer {
     shootButton.onTrue(
       new ConditionalCommand(
         new shootNote(shooter, intake, joystick, shootButton),
-        new autoAim(shooter, drivetrain, drive, joystick, shootButton).asProxy(),
+        new autoAim(shooter, drivetrain, drive, joystick, shootButton),
         ()->manualShooting
       )
     );
@@ -154,7 +152,7 @@ public class RobotContainer {
           new WaitCommand(0.5),
           new setShooterIntakeSpeed(shooter, 0),
           new setShooterAngle(shooter, Constants.kShooterHandoffPosition)
-        ).asProxy(),
+        ),
         ampButton)
 
     );
@@ -237,6 +235,10 @@ public class RobotContainer {
       new setShooterAngle(shooter, 10),
       climber.climbMaxHeight()
       )
+    );
+
+    second.a().onTrue(
+      climber.resetHeight()
     );
     
     second.povUp().onTrue(

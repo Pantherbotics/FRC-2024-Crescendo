@@ -14,6 +14,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -79,17 +80,30 @@ public class Climber extends SubsystemBase {
     new ParallelCommandGroup(
       new RunCommand(
         ()->{
-          leftClimber.set(-1);
+          leftClimber.set(1);
         }
       ).until(()->getLeftSwitch())      
-      .finallyDo(()->leftClimber.set(0)),
+      .finallyDo(()->{
+        leftClimber.set(0);
+        leftClimber.setNeutralMode(NeutralModeValue.Brake);
+      }),
       new RunCommand(
         ()->{
-          rightClimber.set(1);
+          rightClimber.set(-1);
         }
       ).until(()->getRightSwitch())
-      .finallyDo(()->rightClimber.set(0))
+      .finallyDo(()->{
+        rightClimber.set(0);
+        rightClimber.setNeutralMode(NeutralModeValue.Brake);
+      })
     );
+  }
+
+  public Command resetHeight(){
+    return new InstantCommand(()->{
+      leftClimber.setControl(m_voltagePosition.withPosition(getLeftHeight() - 450));
+      rightClimber.setControl(m_voltagePosition.withPosition(getRightHeight() + 450));
+    });
   }
 
 
