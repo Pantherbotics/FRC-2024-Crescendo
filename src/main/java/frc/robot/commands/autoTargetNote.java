@@ -9,6 +9,8 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.constants.Constants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Intake;
@@ -22,6 +24,7 @@ public class autoTargetNote extends Command {
   private Shooter shooter;
   private SwerveRequest.RobotCentric robotCentric;
   private PIDController pid  = new PIDController(1, 0, 0);
+  private boolean collectedNote;
 
   public autoTargetNote(CommandSwerveDrivetrain drivetrain, Intake intake, Shooter shooter, SwerveRequest.RobotCentric robotCentric ) {
     this.drivetrain = drivetrain;
@@ -32,9 +35,10 @@ public class autoTargetNote extends Command {
   }
 
   // Called when the command is initially scheduled.
+
   @Override
   public void initialize() {
-
+    boolean collectedNote = false;
     intake.setAngle(Constants.kIntakeDownPosition);
     intake.setSpeed(Constants.kIntakeInSpeed);
   }
@@ -43,11 +47,20 @@ public class autoTargetNote extends Command {
   @Override
   public void execute() {
 
-    if (intake.intakeAngle() > Constants.kIntakeDownPosition - 5){
+    if (Vision.noteA > 0.001 && !collectedNote){
       drivetrain.setControl(   
         robotCentric.withVelocityX(1 - Vision.noteX/20 + Vision.noteY/20) // Drive forward with negative Y (forward)
             .withRotationalRate(pid.calculate(Vision.noteX, 0))            
             .withRotationalDeadband(0)
+      );
+    }
+
+    if (Vision.noteY < 0 && !collectedNote) {
+      collectedNote = true;
+      drivetrain.setControl(
+        robotCentric.withVelocityX(0.5)
+              .withRotationalRate(0)            
+              .withRotationalDeadband(0)
       );
     }
     
@@ -57,7 +70,12 @@ public class autoTargetNote extends Command {
   @Override
   public void end(boolean interrupted) {
     if(!interrupted){
-      CommandScheduler.getInstance().schedule(new intakeHandoff(shooter, intake));
+      CommandScheduler.getInstance().schedule(
+        new SequentialCommandGroup(
+          new WaitCommand(0.5),
+          new intakeHandoff(shooter, intake)
+        )
+      );
     }
 }
 
