@@ -14,10 +14,7 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.net.PortForwarder;
-import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -44,8 +41,7 @@ public class Vision extends SubsystemBase {
   public static double noteX;
   public static double noteY;
   public static double noteA;
-  public static Pose2d mainPose;
-  public static Pose2d backPose;
+  private final Field2d m_field = new Field2d();
 
 
   public Vision(CommandSwerveDrivetrain swerve) {
@@ -55,6 +51,8 @@ public class Vision extends SubsystemBase {
     tagLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
     mainPoseEstimator = new PhotonPoseEstimator(tagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, mainCam, Constants.kRobotToMainCam);
     backPoseEstimator = new PhotonPoseEstimator(tagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, backCam, Constants.kRobotToBackCam);
+
+    SmartDashboard.putData("Field", m_field);
 
     // port forwarding
     PortForwarder.add(5800, "maincam.local", 5800);
@@ -80,11 +78,11 @@ public class Vision extends SubsystemBase {
     
     if (mainEstimated.isPresent()){
       swerve.addVisionMeasurement(mainEstimated.get().estimatedPose.toPose2d(), mainEstimated.get().timestampSeconds);
-      //mainPose = mainEstimated.get().estimatedPose.toPose2d();
+      m_field.setRobotPose(mainEstimated.get().estimatedPose.toPose2d());
     }
     if (backEstimated.isPresent()){
       swerve.addVisionMeasurement(backEstimated.get().estimatedPose.toPose2d(), backEstimated.get().timestampSeconds);
-      //backPose = mainEstimated.get().estimatedPose.toPose2d();
+      m_field.getObject("backCam").setPose(backEstimated.get().estimatedPose.toPose2d());
     }
 
 
