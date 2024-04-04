@@ -59,6 +59,14 @@ public class Vision extends SubsystemBase {
 
   }
 
+  /**
+   * sets the LED mode of the limelight
+   * @param mode 0 -> pipeline default, 1 -> off, 2 -> blink, 3 -> on
+   */
+  public void setLedMode(int mode){
+    table.getEntry("ledMode").setNumber(mode);
+  }
+
 
   public void updatePose(){
     mainEstimated = mainPoseEstimator.update(mainCam.getLatestResult());
