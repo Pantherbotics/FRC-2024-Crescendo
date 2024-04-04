@@ -38,7 +38,7 @@ public class autoTargetNote extends Command {
 
   @Override
   public void initialize() {
-    boolean collectedNote = false;
+    collectedNote = false;
     intake.setAngle(Constants.kIntakeDownPosition);
     intake.setSpeed(Constants.kIntakeInSpeed);
   }
