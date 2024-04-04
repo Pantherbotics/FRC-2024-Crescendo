@@ -103,7 +103,7 @@ public class RobotContainer {
     intakeButton.onTrue(
       new ConditionalCommand(    
         new intakeHandoff(shooter, intake),
-        new autoTargetNote(drivetrain, intake, shooter, robotCentric, true).asProxy(), 
+        new autoTargetNote(drivetrain, intake, shooter, robotCentric).asProxy(), 
         ()->manualShooting
       )
     );
@@ -149,34 +149,6 @@ public class RobotContainer {
           new setShooterAngle(shooter, Constants.kShooterHandoffPosition)
         ).asProxy(),
         ampButton)
-
-    );
-    
-    second.povRight().onTrue(
-      new SequentialCommandGroup(
-        new autoTargetNote(drivetrain, intake, shooter, robotCentric, false),
-        new ParallelCommandGroup(
-          drivetrain.pathfindToPosition(Constants.kAmpPose),
-          new SequentialCommandGroup( 
-            new intakeHandoff(shooter, intake),
-            new setShooterSpeed(shooter, 0),
-            new setShooterIntakeSpeed(shooter, -0.3),
-            new setShooterAngle(shooter, Constants.kShooterAmpPosition),
-            new WaitCommand(0.3),
-            new setShooterIntakeSpeed(shooter, 0),
-            new WaitUntilCommand(shooter::isAtGoal),
-            new WaitCommand(0.3)
-          )
-        ),
-        new SequentialCommandGroup(
-          new setShooterIntakeSpeed(shooter, Constants.kShooterAmpSpeed),
-          new WaitUntilCommand(()->!shooter.hasNote()),
-          new WaitCommand(0.5),
-          new setShooterIntakeSpeed(shooter, 0),
-          new setShooterAngle(shooter, Constants.kShooterHandoffPosition)
-        ),
-        drivetrain.pathfindToPosition(GeometryUtil.flipFieldPose(new Pose2d(1.85, 6.5, Rotation2d.fromDegrees(-90))))
-      ).repeatedly()
 
     );
 
@@ -295,7 +267,7 @@ public class RobotContainer {
   // SETUP PATHPLANNER
   public void setupPathPlanner(){
 
-    NamedCommands.registerCommand("auto intake note", new autoTargetNote(drivetrain, intake, shooter,  robotCentric, false));
+    NamedCommands.registerCommand("auto intake note", new autoTargetNote(drivetrain, intake, shooter,  robotCentric));
     NamedCommands.registerCommand("intake and handoff", new ScheduleCommand(new intakeHandoff(shooter, intake)));
     NamedCommands.registerCommand("auto shoot", new InstantCommand());
 

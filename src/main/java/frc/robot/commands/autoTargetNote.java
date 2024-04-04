@@ -20,14 +20,12 @@ public class autoTargetNote extends Command {
   private Intake intake;
   private Shooter shooter;
   private SwerveRequest.RobotCentric robotCentric;
-  private boolean handoffAtEnd;
 
-  public autoTargetNote(CommandSwerveDrivetrain drivetrain, Intake intake, Shooter shooter, SwerveRequest.RobotCentric robotCentric, boolean handoffAtEnd ) {
+  public autoTargetNote(CommandSwerveDrivetrain drivetrain, Intake intake, Shooter shooter, SwerveRequest.RobotCentric robotCentric ) {
     this.drivetrain = drivetrain;
     this.intake = intake;
     this.robotCentric = robotCentric;
     this.shooter = shooter;
-    this.handoffAtEnd = handoffAtEnd;
     addRequirements(drivetrain, intake, shooter);
   }
 
@@ -55,8 +53,7 @@ public class autoTargetNote extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    intake.setSpeed(0);
-    if(!interrupted && handoffAtEnd){
+    if(!interrupted){
       CommandScheduler.getInstance().schedule(new intakeHandoff(shooter, intake));
     }
 }
