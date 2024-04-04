@@ -38,6 +38,7 @@ public class RobotContainer {
   // Instantiate subsystems
   public static final Intake intake = new Intake();
   public static final Shooter shooter = new Shooter();
+  public static final Haptics haptics = new Haptics(intake);
   Constants constants = new Constants();
   public static final Climber climber = new Climber();
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain;
