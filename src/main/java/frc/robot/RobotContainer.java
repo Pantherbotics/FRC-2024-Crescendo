@@ -11,8 +11,6 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.util.GeometryUtil;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -68,8 +66,6 @@ public class RobotContainer {
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric() // main drive type
       .withDeadband(MaxSpeed * 0.01).withRotationalDeadband(MaxAngularRate * 0.01)
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-  private final SwerveRequest.FieldCentricFacingAngle facing = new SwerveRequest.FieldCentricFacingAngle() // facing angle for auto aiming
-  .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
   private final SwerveRequest.RobotCentric robotCentric = new SwerveRequest.RobotCentric()
     .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
