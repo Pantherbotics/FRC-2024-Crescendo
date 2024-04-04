@@ -68,7 +68,7 @@ public class Shooter extends SubsystemBase {
     );
     
     this.controller.setGoal(0);
-    this.controller.setTolerance(0.3);
+    this.controller.setTolerance(0.15);
   }
 
 
