@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.Constants;
@@ -20,6 +21,7 @@ public class autoTargetNote extends Command {
   private Intake intake;
   private Shooter shooter;
   private SwerveRequest.RobotCentric robotCentric;
+  private PIDController pid  = new PIDController(1, 0, 0);
 
   public autoTargetNote(CommandSwerveDrivetrain drivetrain, Intake intake, Shooter shooter, SwerveRequest.RobotCentric robotCentric ) {
     this.drivetrain = drivetrain;
@@ -32,6 +34,7 @@ public class autoTargetNote extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+
     intake.setAngle(Constants.kIntakeDownPosition);
     intake.setSpeed(Constants.kIntakeInSpeed);
   }
@@ -42,8 +45,8 @@ public class autoTargetNote extends Command {
 
     if (intake.intakeAngle() > Constants.kIntakeDownPosition - 5){
       drivetrain.setControl(   
-        robotCentric.withVelocityX(Math.min((Vision.noteY+7)/10, 1)) // Drive forward with negative Y (forward)
-            .withRotationalRate(-Vision.noteX/10)
+        robotCentric.withVelocityX(1 - Vision.noteX/20 + Vision.noteY/20) // Drive forward with negative Y (forward)
+            .withRotationalRate(pid.calculate(Vision.noteX, 0))            
             .withRotationalDeadband(0)
       );
     }
