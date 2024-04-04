@@ -55,7 +55,7 @@ public class autoTargetNote extends Command {
       );
     }
 
-    if (Vision.noteY < 0 && !collectedNote) {
+    if (Vision.noteY < 0 && Math.abs(Vision.noteX) < 3 && !collectedNote) {
       collectedNote = true;
       drivetrain.setControl(
         robotCentric.withVelocityX(0.5)
