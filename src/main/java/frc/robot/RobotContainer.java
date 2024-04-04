@@ -19,6 +19,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
@@ -99,43 +100,45 @@ public class RobotContainer {
 
     // intake and handoff
     intakeButton.onTrue(
-      new intakeHandoff(shooter, intake)
-
+      new ConditionalCommand(    
+        new intakeHandoff(shooter, intake),
+        new autoTargetNote(drivetrain, intake, shooter, robotCentric, true).asProxy(), 
+        ()->manualShooting
+      )
     );
 
 
     // shoot and auto aim speaker
     shootButton.onTrue(
-      //new shootNote(shooter, intake, joystick, shootButton)
-      new autoAim(shooter, drivetrain, drive, joystick, shootButton)
-      /*
-      new InstantCommand(
-        ()->{
-          if (manualShooting){
-            CommandScheduler.getInstance().schedule(        
-              new shootNote(shooter, intake, joystick, shootButton)
-            );
-          } else {
-            CommandScheduler.getInstance().schedule(        
-              new autoAim(shooter, drivetrain, facing, joystick, shootButton)
-            );
-          }
-        }
+      new ConditionalCommand(
+        new shootNote(shooter, intake, joystick, shootButton),
+        new autoAim(shooter, drivetrain, drive, joystick, shootButton).asProxy(),
+        ()->manualShooting
       )
-      */
     );
 
 
     // prepare and score amp
     ampButton.onTrue(
-      new scoreAmp(shooter, intake, ampButton)
+      new ConditionalCommand(
+        new scoreAmp(shooter, intake, ampButton),
+        new SequentialCommandGroup(
+          new ParallelCommandGroup(
+          drivetrain.pathfindToPosition(Constants.kAmpPose),
+            new SequentialCommandGroup( 
+              new setShooterSpeed(shooter, 0),
+              new setShooterIntakeSpeed(shooter, -0.3),
+              new setShooterAngle(shooter, Constants.kShooterAmpPosition),
+              new WaitCommand(0.3),
+              new setShooterIntakeSpeed(shooter, 0),
+              new WaitUntilCommand(shooter::isAtGoal)
+            )
+          )
+        ),
+        ampButton)
+
     );
     
-
-    second.povLeft().onTrue(
-      new autoTargetNote(drivetrain, intake, shooter, robotCentric, true)
-    );
-
     second.povRight().onTrue(
       new SequentialCommandGroup(
         new autoTargetNote(drivetrain, intake, shooter, robotCentric, false),
