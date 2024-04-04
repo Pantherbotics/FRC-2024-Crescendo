@@ -86,6 +86,8 @@ public class Telemetry {
         Pose2d pose = state.Pose;
         m_field.setRobotPose(pose);
         m_field.getObject("SpeakerPose").setPose(Constants.kSpeakerPose);
+        m_field.getObject("mainPose").setPose(Vision.mainPose);
+        m_field.getObject("backPose").setPose(Vision.backPose);
         fieldTypePub.set("Field2d");
         fieldPub.set(new double[] {
             pose.getX(),

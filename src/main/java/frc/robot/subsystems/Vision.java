@@ -14,6 +14,7 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -39,6 +40,8 @@ public class Vision extends SubsystemBase {
   public static double noteX;
   public static double noteY;
   public static double noteA;
+  public static Pose2d mainPose;
+  public static Pose2d backPose;
 
 
 
@@ -75,9 +78,11 @@ public class Vision extends SubsystemBase {
     
     if (mainEstimated.isPresent()){
       swerve.addVisionMeasurement(mainEstimated.get().estimatedPose.toPose2d(), mainEstimated.get().timestampSeconds);
+      mainPose = mainEstimated.get().estimatedPose.toPose2d();
     }
     if (backEstimated.isPresent()){
       swerve.addVisionMeasurement(backEstimated.get().estimatedPose.toPose2d(), backEstimated.get().timestampSeconds);
+      backPose = backEstimated.get().estimatedPose.toPose2d();
     }
 
     //read limelight note cam values

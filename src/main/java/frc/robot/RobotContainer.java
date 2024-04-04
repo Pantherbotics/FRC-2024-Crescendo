@@ -38,10 +38,10 @@ public class RobotContainer {
   // Instantiate subsystems
   public static final Intake intake = new Intake();
   public static final Shooter shooter = new Shooter();
-
+  Constants constants = new Constants();
   public static final Climber climber = new Climber();
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain;
-  
+
   public final Vision vision = new Vision(drivetrain);
   public static final CommandXboxController joystick = new CommandXboxController(0);
   public static final CommandXboxController second = new CommandXboxController(1);
@@ -66,8 +66,12 @@ public class RobotContainer {
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric() // main drive type
       .withDeadband(MaxSpeed * 0.01).withRotationalDeadband(MaxAngularRate * 0.01)
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+  private SwerveRequest.FieldCentricFacingAngle facing = new SwerveRequest.FieldCentricFacingAngle()
+      .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
   private final SwerveRequest.RobotCentric robotCentric = new SwerveRequest.RobotCentric()
     .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+
+  
 
   //logger
   private final Telemetry logger = new Telemetry(MaxSpeed);
@@ -84,6 +88,12 @@ public class RobotContainer {
         .withRotationalRate(-joystick.getRightX() * MaxAngularRate)
         .withCenterOfRotation(new Translation2d(Math.round(-joystick.getRightY())*0.75, 0))
       ).ignoringDisable(true));
+
+    if (Constants.isRedAllience) { 
+      drivetrain.setOperatorPerspectiveForward(Rotation2d.fromDegrees(180));
+    } else {
+      drivetrain.setOperatorPerspectiveForward(Rotation2d.fromDegrees(0));
+    }
 
 
     //register telemetry
