@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -133,8 +134,20 @@ public class RobotContainer {
               new setShooterIntakeSpeed(shooter, 0),
               new WaitUntilCommand(shooter::isAtGoal)
             )
-          )
-        ),
+          ),
+          new setShooterIntakeSpeed(shooter, Constants.kShooterAmpSpeed),
+          new ParallelRaceGroup(
+            new SequentialCommandGroup(
+              new WaitCommand(0.5),
+              new InstantCommand(()->shooter.setWristOpenLoop(0.1)),
+              new WaitCommand(1)
+            ),
+            new WaitUntilCommand(()->!shooter.hasNote())
+          ),
+          new WaitCommand(0.5),
+          new setShooterIntakeSpeed(shooter, 0),
+          new setShooterAngle(shooter, Constants.kShooterHandoffPosition)
+        ).asProxy(),
         ampButton)
 
     );
