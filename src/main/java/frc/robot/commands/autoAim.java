@@ -58,7 +58,8 @@ public class autoAim extends Command {
     }
     robotPose = swerve.getState().Pose;
     Pose2d shooterPose = robotPose.plus(new Transform2d(Units.inchesToMeters(13), 0.0, new Rotation2d(0)));
-    shooterAngle = -shooter.radiansToWristAngle(new Rotation2d(Units.inchesToMeters(80.5-32.25), shooterPose.getTranslation().getDistance(Constants.kSpeakerPose.getTranslation())).getRadians());
+    double shooterDistance = Math.hypot(shooterPose.getX() - Constants.kSpeakerPose.getX(), shooterPose.getY() - Constants.kSpeakerPose.getY());
+    shooterAngle = -shooter.radiansToWristAngle(new Rotation2d(Units.inchesToMeters(80.5-32.25), shooterDistance).getRadians());
     
     rotationToGoal = new Rotation2d(robotPose.getX() - Constants.kSpeakerPose.getX(), robotPose.getY() - Constants.kSpeakerPose.getY());
 
@@ -73,7 +74,7 @@ public class autoAim extends Command {
     //shooter.setWristAngle(Constants.kShooterSpeakerAngle + shooter.radiansToWristAngle(Units.rotationsToRadians((joystick.getRightTriggerAxis() - joystick.getLeftTriggerAxis())/4)));
     shooter.setWristAngle(shooterAngle);
 
-    SmartDashboard.putNumber("speakerDistance", shooterPose.getTranslation().getDistance(Constants.kSpeakerPose.getTranslation()));
+    SmartDashboard.putNumber("speakerDistance", shooterDistance);
     SmartDashboard.putNumber("target rotation", rotationToGoal.getDegrees());
     SmartDashboard.putNumber("shooter target angle", shooterAngle);
 
