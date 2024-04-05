@@ -93,12 +93,11 @@ public class Constants {
     public static Pose2d kSourcePose = new Pose2d(14.5, 1.4, Rotation2d.fromDegrees(-30));
     public static boolean isRedAllience = false;
 
+    // auto stuff
     public Constants() {
 
         if (ally.isPresent()) {
-            System.out.println("Allience Present");
             if (ally.get() == Alliance.Red) {
-                System.out.println("Red Allience & flipped poses");
                 isRedAllience = true;
                 kAmpPose = GeometryUtil.flipFieldPose(kAmpPose);
                 kSpeakerPose = GeometryUtil.flipFieldPose(kSpeakerPose);

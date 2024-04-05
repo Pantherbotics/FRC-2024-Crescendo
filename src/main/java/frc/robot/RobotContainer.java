@@ -276,12 +276,13 @@ public class RobotContainer {
   // SETUP PATHPLANNER
   public void setupPathPlanner(){
 
-    NamedCommands.registerCommand("auto intake note", new autoTargetNote(drivetrain, intake, shooter,  robotCentric));
-    NamedCommands.registerCommand("intake and handoff", new ScheduleCommand(new intakeHandoff(shooter, intake)));
+    NamedCommands.registerCommand("get note", new autoTargetNote(drivetrain, intake, shooter,  robotCentric));
     NamedCommands.registerCommand("auto shoot", new InstantCommand());
+    NamedCommands.registerCommand("auto reverse shoot", new InstantCommand());
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", this.autoChooser);
+
   }
 
 

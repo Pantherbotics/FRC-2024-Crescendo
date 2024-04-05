@@ -3,6 +3,7 @@
   "robotLength": 0.8763,
   "holonomicMode": true,
   "pathFolders": [
+    "shooting",
     "getting"
   ],
   "autoFolders": [],
