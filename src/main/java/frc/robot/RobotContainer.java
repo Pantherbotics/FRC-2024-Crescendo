@@ -89,7 +89,7 @@ public class RobotContainer {
       ).ignoringDisable(true));
 
     if (Constants.isRedAllience) { 
-      drivetrain.setOperatorPerspectiveForward(Rotation2d.fromDegrees(0));//180));
+      drivetrain.setOperatorPerspectiveForward(Rotation2d.fromDegrees(180));//180));
     } else {
       drivetrain.setOperatorPerspectiveForward(Rotation2d.fromDegrees(0));
     }
@@ -118,7 +118,7 @@ public class RobotContainer {
     shootButton.onTrue(
       new ConditionalCommand(
         new shootNote(shooter, intake, joystick, shootButton),
-        new autoAim(shooter, drivetrain, drive, joystick, shootButton).andThen( 
+        new autoAim(shooter, drivetrain, drive, joystick, shootButton, false).andThen( 
         new SequentialCommandGroup(
           new setShooterIntakeSpeed(shooter, -1),
           new WaitUntilCommand(()->!shooter.hasNote()),

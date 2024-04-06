@@ -84,11 +84,11 @@ public class Constants {
     public static final String kNoteCameraName = "NoteCam";
     public static final Transform3d kRobotToMainCam = new Transform3d(Units.inchesToMeters(6), Units.inchesToMeters(-4),
             Units.inchesToMeters(46), new Rotation3d(0, 0, 0)); // these are just estimated
-    public static final Transform3d kRobotToBackCam = new Transform3d(Units.inchesToMeters(-10.75), Units.inchesToMeters(6.5), Units.inchesToMeters(6.75), new Rotation3d(Units.degreesToRadians(180),Units.degreesToRadians(-34),Units.degreesToRadians(180)));
+    public static final Transform3d kRobotToBackCam = new Transform3d(Units.inchesToMeters(-11.75), Units.inchesToMeters(6.5), Units.inchesToMeters(6.75), new Rotation3d(Units.degreesToRadians(180),Units.degreesToRadians(-36),Units.degreesToRadians(180)));
 
     // pathfinding
     private Optional<Alliance> ally = DriverStation.getAlliance();
-    public static Pose2d kSpeakerPose = new Pose2d(0, 5.5, Rotation2d.fromDegrees(180));
+    public static Pose2d kSpeakerPose = new Pose2d(0, 5.5, Rotation2d.fromDegrees(0));
     public static Pose2d kAmpPose = new Pose2d(1.85, 7.75, Rotation2d.fromDegrees(90));
     public static Pose2d kSourcePose = new Pose2d(14.5, 1.4, Rotation2d.fromDegrees(-30));
     public static boolean isRedAllience = false;
@@ -104,6 +104,9 @@ public class Constants {
                 kSourcePose = GeometryUtil.flipFieldPose(kSourcePose);
             }
         }
+
+        
+
     }
 
     public static final PathConstraints kPathfindingConstraints = new PathConstraints(

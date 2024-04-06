@@ -35,9 +35,12 @@ public class autoAim extends Command {
   private Trigger shootButton;
   Boolean readyToShoot = false;
   Boolean finished = false;
+  boolean reverseShot;
 
-  public autoAim(Shooter shooter, CommandSwerveDrivetrain swerve, SwerveRequest.FieldCentric fieldCentric, CommandXboxController joystick, Trigger shootButton) {
+  public autoAim(Shooter shooter, CommandSwerveDrivetrain swerve, SwerveRequest.FieldCentric fieldCentric, CommandXboxController joystick, Trigger shootButton, boolean reverseShot) {
     this.shooter = shooter;
+
+    this.reverseShot = reverseShot; 
     this.shootButton = shootButton;
     this.swerve = swerve;
     this.fieldCentric = fieldCentric;
@@ -62,18 +65,23 @@ public class autoAim extends Command {
       readyToShoot = true;
     }
     robotPose = swerve.getState().Pose;
-    Pose2d shooterPose = robotPose.plus(new Transform2d(Units.inchesToMeters(13), 0.0, new Rotation2d(0)));
-    double shooterDistance = Math.hypot(shooterPose.getX() - Constants.kSpeakerPose.getX(), shooterPose.getY() - Constants.kSpeakerPose.getY());
-    shooterAngle = -shooter.radiansToWristAngle(new Rotation2d(Units.inchesToMeters(90-32.25), shooterDistance).getRadians());
-    shooterField.setRobotPose(shooterPose);
-    rotationToGoal = new Rotation2d(robotPose.getX() - Constants.kSpeakerPose.getX(), robotPose.getY() - Constants.kSpeakerPose.getY());
 
+    Pose2d shooterPose = robotPose.plus(new Transform2d(Units.inchesToMeters(13
+    ), 0.0, new Rotation2d(0)));
+
+    double shooterDistance = Math.hypot(shooterPose.getX() - Constants.kSpeakerPose.getX(), shooterPose.getY() - Constants.kSpeakerPose.getY());
+
+    shooterAngle = (reverseShot?1:-1) * shooter.radiansToWristAngle(new Rotation2d(Units.inchesToMeters(59 + shooterDistance * 7.6), shooterDistance).getRadians());
+
+    shooterField.setRobotPose(shooterPose);
+
+    rotationToGoal = new Rotation2d(robotPose.getX() - Constants.kSpeakerPose.plus(new Transform2d(0, -0.1, new Rotation2d())).getX(), robotPose.getY() - Constants.kSpeakerPose.plus(new Transform2d(0, -0.1, new Rotation2d())).getY()).plus(Rotation2d.fromDegrees(reverseShot?180:0));
 
 
     swerve.setControl(   
       fieldCentric.withVelocityX(-joystick.getLeftY() * 6) // Drive forward with negative Y (forward)
           .withVelocityY(-joystick.getLeftX() * 6) // Drive left with negative X (left)
-          .withRotationalRate(rotationToGoal.minus(swerve.getState().Pose.getRotation().plus(new Rotation2d(Math.PI))).getRadians()*3)
+          .withRotationalRate(Math.min(rotationToGoal.minus(swerve.getState().Pose.getRotation().plus(Rotation2d.fromDegrees(180))).getRadians()*3, 3))
     );
 
     //shooter.setWristAngle(Constants.kShooterSpeakerAngle + shooter.radiansToWristAngle(Units.rotationsToRadians((joystick.getRightTriggerAxis() - joystick.getLeftTriggerAxis())/4)));
