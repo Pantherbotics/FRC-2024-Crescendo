@@ -115,6 +115,18 @@ public class RobotContainer {
 
 
     // shoot and auto aim speaker
+    second.povLeft().onTrue(
+      new reverseShoot(shooter, drivetrain, drive).andThen( 
+        new SequentialCommandGroup(
+          new setShooterIntakeSpeed(shooter, -1),
+          new WaitUntilCommand(()->!shooter.hasNote()),
+          new WaitCommand(0.5),
+          new setShooterSpeed(shooter, 0),
+          new setShooterIntakeSpeed(shooter, 0)
+        )
+        )
+    );
+
     shootButton.onTrue(
       new ConditionalCommand(
         new shootNote(shooter, intake, joystick, shootButton),

@@ -32,10 +32,9 @@ public class reverseShoot extends Command {
   boolean reverseShot;
 
 
-  public reverseShoot(Shooter shooter, CommandSwerveDrivetrain swerve, SwerveRequest.FieldCentric fieldCentric, boolean reverseShot) {
+  public reverseShoot(Shooter shooter, CommandSwerveDrivetrain swerve, SwerveRequest.FieldCentric fieldCentric) {
     this.shooter = shooter;
-
-    this.reverseShot = reverseShot; 
+ 
     this.swerve = swerve;
     this.fieldCentric = fieldCentric;
     addRequirements(shooter, swerve);
@@ -66,7 +65,7 @@ public class reverseShoot extends Command {
 
     shooter.setWristAngle(shooterAngle);
 
-    readyToShoot = rotationToGoal.getDegrees() < 5 && shooter.isAtGoal() && shooter.wrist.getAcceleration().getValueAsDouble() < 0.5;
+    readyToShoot = rotationToGoal.minus(swerve.getState().Pose.getRotation().plus(Rotation2d.fromDegrees(180))).getDegrees() < 10 && shooter.isAtGoal();
   }
 
   // Called once the command ends or is interrupted.
@@ -76,6 +75,6 @@ public class reverseShoot extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return readyToShoot;
   }
 }
