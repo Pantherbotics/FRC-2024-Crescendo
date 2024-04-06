@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -33,6 +34,7 @@ public class autoAim extends Command {
   private Rotation2d rotationToGoal;
   private Trigger shootButton;
   Boolean readyToShoot = false;
+  Boolean finished = false;
 
   public autoAim(Shooter shooter, CommandSwerveDrivetrain swerve, SwerveRequest.FieldCentric fieldCentric, CommandXboxController joystick, Trigger shootButton) {
     this.shooter = shooter;
@@ -43,11 +45,14 @@ public class autoAim extends Command {
     addRequirements(shooter, swerve);
   }
 
+  private final Field2d shooterField = new Field2d();
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    System.out.println("scheduled!");
     readyToShoot = false;
     shooter.setShooterFlywheelSpeed(1);
+    SmartDashboard.putData("shooter pose",shooterField);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -59,8 +64,8 @@ public class autoAim extends Command {
     robotPose = swerve.getState().Pose;
     Pose2d shooterPose = robotPose.plus(new Transform2d(Units.inchesToMeters(13), 0.0, new Rotation2d(0)));
     double shooterDistance = Math.hypot(shooterPose.getX() - Constants.kSpeakerPose.getX(), shooterPose.getY() - Constants.kSpeakerPose.getY());
-    shooterAngle = -shooter.radiansToWristAngle(new Rotation2d(Units.inchesToMeters(80.5-32.25), shooterDistance).getRadians());
-    
+    shooterAngle = -shooter.radiansToWristAngle(new Rotation2d(Units.inchesToMeters(90-32.25), shooterDistance).getRadians());
+    shooterField.setRobotPose(shooterPose);
     rotationToGoal = new Rotation2d(robotPose.getX() - Constants.kSpeakerPose.getX(), robotPose.getY() - Constants.kSpeakerPose.getY());
 
 
@@ -84,15 +89,7 @@ public class autoAim extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shooter.setIntakeSpeed(-1);
-    CommandScheduler.getInstance().schedule(
-      new SequentialCommandGroup(
-        new WaitUntilCommand(()->!shooter.hasNote()),
-        new WaitCommand(0.5),
-        new setShooterSpeed(shooter, 0),
-        new setShooterIntakeSpeed(shooter, 0)
-      )
-    );
+    System.out.println("done");
   }
 
   // Returns true when the command should end.

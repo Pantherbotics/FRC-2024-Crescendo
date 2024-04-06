@@ -52,7 +52,7 @@ public class Vision extends SubsystemBase {
     mainPoseEstimator = new PhotonPoseEstimator(tagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, mainCam, Constants.kRobotToMainCam);
     backPoseEstimator = new PhotonPoseEstimator(tagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, backCam, Constants.kRobotToBackCam);
 
-    SmartDashboard.putData("Field", m_field);
+    SmartDashboard.putData("cam poses", m_field);
 
     // port forwarding
     PortForwarder.add(5800, "maincam.local", 5800);

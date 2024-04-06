@@ -49,7 +49,7 @@ public class autoTargetNote extends Command {
 
     if (Vision.noteA > 0.001 && !collectedNote){
       drivetrain.setControl(   
-        robotCentric.withVelocityX(0)//1 - Vision.noteX/20 + Vision.noteY/20) // Drive forward with negative Y (forward)
+        robotCentric.withVelocityX(1 - Vision.noteX/20 + Vision.noteY/20) // Drive forward with negative Y (forward)
             .withRotationalRate(pid.calculate(Vision.noteX, 0))            
             .withRotationalDeadband(0)
       );
@@ -72,7 +72,8 @@ public class autoTargetNote extends Command {
     if(!interrupted){
       CommandScheduler.getInstance().schedule(
         new SequentialCommandGroup(
-          new WaitCommand(0.5),
+          new WaitCommand(0.1),
+          new setIntakeSpeed(intake, 0),
           new intakeHandoff(shooter, intake)
         )
       );

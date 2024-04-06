@@ -72,7 +72,7 @@ public class Shooter extends SubsystemBase {
 
 
   public void setShooterFlywheelSpeed(double speed){
-    leftShooterWheel.set(-speed*0.3);
+    leftShooterWheel.set(-speed*0.25);
     rightShooterWheel.set(speed);
   }
 
@@ -113,7 +113,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean noteInPosition(){
-    return(topSensor.getAverageValue() < 2400 && topSensor.getAverageValue() > 1500);
+    return(topSensor.getAverageValue() < 2400 && topSensor.getAverageValue() > 1700);
   }
 
 
