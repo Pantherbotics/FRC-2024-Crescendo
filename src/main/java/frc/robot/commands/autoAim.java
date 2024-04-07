@@ -9,13 +9,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.constants.Constants;
@@ -33,14 +28,13 @@ public class autoAim extends Command {
   private CommandXboxController joystick;
   private Rotation2d rotationToGoal;
   private Trigger shootButton;
-  Boolean readyToShoot = false;
-  Boolean finished = false;
-  boolean reverseShot;
+  private boolean autoTrigger;
+  boolean readyToShoot = false;
+  boolean finished = false;
 
-  public autoAim(Shooter shooter, CommandSwerveDrivetrain swerve, SwerveRequest.FieldCentric fieldCentric, CommandXboxController joystick, Trigger shootButton, boolean reverseShot) {
+  public autoAim(Shooter shooter, CommandSwerveDrivetrain swerve, SwerveRequest.FieldCentric fieldCentric, CommandXboxController joystick, Trigger shootButton, boolean autoTrigger) {
     this.shooter = shooter;
-
-    this.reverseShot = reverseShot; 
+    this.autoTrigger = autoTrigger;
     this.shootButton = shootButton;
     this.swerve = swerve;
     this.fieldCentric = fieldCentric;
@@ -48,14 +42,11 @@ public class autoAim extends Command {
     addRequirements(shooter, swerve);
   }
 
-  private final Field2d shooterField = new Field2d();
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    System.out.println("scheduled!");
     readyToShoot = false;
     shooter.setShooterFlywheelSpeed(1);
-    SmartDashboard.putData("shooter pose",shooterField);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -66,23 +57,27 @@ public class autoAim extends Command {
     }
     robotPose = swerve.getState().Pose;
 
-    Pose2d shooterPose = robotPose.plus(new Transform2d(Units.inchesToMeters(13
-    ), 0.0, new Rotation2d(0)));
+    Pose2d shooterPose = robotPose.plus(new Transform2d(Units.inchesToMeters(13), 0.0, new Rotation2d(0)));
 
     double shooterDistance = Math.hypot(shooterPose.getX() - Constants.kSpeakerPose.getX(), shooterPose.getY() - Constants.kSpeakerPose.getY());
 
-    shooterAngle = (reverseShot?1:-1) * shooter.radiansToWristAngle(new Rotation2d(Units.inchesToMeters(59 + shooterDistance * 7.6), shooterDistance).getRadians());
+    shooterAngle = -shooter.radiansToWristAngle(new Rotation2d(Units.inchesToMeters(59 + shooterDistance * 7.6), shooterDistance).getRadians());
 
-    shooterField.setRobotPose(shooterPose);
+    rotationToGoal = new Rotation2d(robotPose.getX() - Constants.kSpeakerPose.plus(new Transform2d(0, -0.1, new Rotation2d())).getX(), robotPose.getY() - Constants.kSpeakerPose.plus(new Transform2d(0, -0.1, new Rotation2d())).getY());
 
-    rotationToGoal = new Rotation2d(robotPose.getX() - Constants.kSpeakerPose.plus(new Transform2d(0, -0.1, new Rotation2d())).getX(), robotPose.getY() - Constants.kSpeakerPose.plus(new Transform2d(0, -0.1, new Rotation2d())).getY()).plus(Rotation2d.fromDegrees(reverseShot?180:0));
-
-
-    swerve.setControl(   
-      fieldCentric.withVelocityX(-joystick.getLeftY() * 6) // Drive forward with negative Y (forward)
-          .withVelocityY(-joystick.getLeftX() * 6) // Drive left with negative X (left)
-          .withRotationalRate(Math.min(rotationToGoal.minus(swerve.getState().Pose.getRotation().plus(Rotation2d.fromDegrees(180))).getRadians()*3, 3))
-    );
+    if (!autoTrigger){
+      swerve.setControl(
+        fieldCentric.withVelocityX(-joystick.getLeftY() * 6)
+            .withVelocityY(-joystick.getLeftX() * 6)
+            .withRotationalRate(Math.min(rotationToGoal.minus(swerve.getState().Pose.getRotation().plus(Rotation2d.fromDegrees(180))).getRadians()*3, 3))
+      );
+    } else {
+      swerve.setControl(
+        fieldCentric.withVelocityX(0)
+            .withVelocityY(0)
+            .withRotationalRate(Math.min(rotationToGoal.minus(swerve.getState().Pose.getRotation().plus(Rotation2d.fromDegrees(180))).getRadians()*3, 3))
+      );
+    }
 
     //shooter.setWristAngle(Constants.kShooterSpeakerAngle + shooter.radiansToWristAngle(Units.rotationsToRadians((joystick.getRightTriggerAxis() - joystick.getLeftTriggerAxis())/4)));
     shooter.setWristAngle(shooterAngle);
@@ -97,12 +92,11 @@ public class autoAim extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    System.out.println("done");
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return shootButton.getAsBoolean() && readyToShoot;
+    return (shootButton.getAsBoolean() && readyToShoot) || autoTrigger && rotationToGoal.minus(swerve.getState().Pose.getRotation()).getDegrees() < 10 && shooter.isAtGoal();
   }
 }

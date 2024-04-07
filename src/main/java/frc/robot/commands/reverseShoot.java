@@ -11,8 +11,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.constants.Constants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Shooter;
@@ -25,7 +23,6 @@ public class reverseShoot extends Command {
   private double shooterAngle;
   private SwerveRequest.FieldCentric fieldCentric;
   private Pose2d robotPose;
-  private CommandXboxController joystick;
   private Rotation2d rotationToGoal;
   Boolean readyToShoot = false;
   Boolean finished = false;
@@ -34,7 +31,6 @@ public class reverseShoot extends Command {
 
   public reverseShoot(Shooter shooter, CommandSwerveDrivetrain swerve, SwerveRequest.FieldCentric fieldCentric) {
     this.shooter = shooter;
- 
     this.swerve = swerve;
     this.fieldCentric = fieldCentric;
     addRequirements(shooter, swerve);
@@ -59,13 +55,14 @@ public class reverseShoot extends Command {
     rotationToGoal = new Rotation2d(robotPose.getX() - Constants.kSpeakerPose.plus(new Transform2d(0, -0.1, new Rotation2d())).getX(), robotPose.getY() - Constants.kSpeakerPose.plus(new Transform2d(0, -0.1, new Rotation2d())).getY()).plus(Rotation2d.fromDegrees(180));
 
     swerve.setControl(   
-      fieldCentric
+      fieldCentric.withVelocityX(0)
+          .withVelocityY(0)
           .withRotationalRate(Math.min(rotationToGoal.minus(swerve.getState().Pose.getRotation().plus(Rotation2d.fromDegrees(180))).getRadians()*3, 3))
     );
 
     shooter.setWristAngle(shooterAngle);
 
-    readyToShoot = rotationToGoal.minus(swerve.getState().Pose.getRotation().plus(Rotation2d.fromDegrees(180))).getDegrees() < 10 && shooter.isAtGoal();
+    readyToShoot = rotationToGoal.minus(swerve.getState().Pose.getRotation().plus(Rotation2d.fromDegrees(180))).getDegrees() < 13 && shooter.isAtGoal();
   }
 
   // Called once the command ends or is interrupted.

@@ -59,6 +59,14 @@ public class RobotContainer {
   private Trigger tacoBell = joystick.povDown();
   private Trigger cancelButton = joystick.povUp().or(second.x());
 
+  private Command shootEnding = new SequentialCommandGroup(
+          new setShooterIntakeSpeed(shooter, -1),
+          new WaitUntilCommand(()->!shooter.hasNote()),
+          new WaitCommand(0.5),
+          new setShooterSpeed(shooter, 0),
+          new setShooterIntakeSpeed(shooter, 0)
+        );
+
 
   //swerve settings
   public static double MaxSpeed = Constants.kNormalDriveSpeed; // 6 meters per second desired top speed
@@ -116,29 +124,13 @@ public class RobotContainer {
 
     // shoot and auto aim speaker
     second.povLeft().onTrue(
-      new reverseShoot(shooter, drivetrain, drive).andThen( 
-        new SequentialCommandGroup(
-          new setShooterIntakeSpeed(shooter, -1),
-          new WaitUntilCommand(()->!shooter.hasNote()),
-          new WaitCommand(0.5),
-          new setShooterSpeed(shooter, 0),
-          new setShooterIntakeSpeed(shooter, 0)
-        )
-        )
+      new reverseShoot(shooter, drivetrain, drive).andThen(shootEnding)
     );
 
     shootButton.onTrue(
       new ConditionalCommand(
         new shootNote(shooter, intake, joystick, shootButton),
-        new autoAim(shooter, drivetrain, drive, joystick, shootButton, false).andThen( 
-        new SequentialCommandGroup(
-          new setShooterIntakeSpeed(shooter, -1),
-          new WaitUntilCommand(()->!shooter.hasNote()),
-          new WaitCommand(0.5),
-          new setShooterSpeed(shooter, 0),
-          new setShooterIntakeSpeed(shooter, 0)
-        )
-        ),
+        new autoAim(shooter, drivetrain, drive, joystick, shootButton, false).asProxy().andThen(shootEnding),
         ()->manualShooting
       )
     );
@@ -147,7 +139,9 @@ public class RobotContainer {
     // prepare and score amp
     ampButton.onTrue(
       new ConditionalCommand(
+
         new scoreAmp(shooter, intake, ampButton),
+
         new SequentialCommandGroup(
           new ParallelCommandGroup(
           drivetrain.pathfindToPosition(Constants.kAmpPose),
@@ -197,9 +191,6 @@ public class RobotContainer {
       )
     );
 
-
-    // reset heading
-    joystick.a().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative(new Pose2d(0,0,new Rotation2d(0)))));
 
 
     // Robot centric drive
@@ -297,8 +288,8 @@ public class RobotContainer {
   public void setupPathPlanner(){
 
     NamedCommands.registerCommand("get note", new autoTargetNote(drivetrain, intake, shooter,  robotCentric));
-    NamedCommands.registerCommand("auto shoot", new InstantCommand());
-    NamedCommands.registerCommand("auto reverse shoot", new InstantCommand());
+    NamedCommands.registerCommand("auto shoot", new autoAim(shooter, drivetrain, drive, joystick, shootButton, true).andThen(shootEnding));
+    NamedCommands.registerCommand("auto reverse shoot", new reverseShoot(shooter, drivetrain, drive).andThen(shootEnding));
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", this.autoChooser);
