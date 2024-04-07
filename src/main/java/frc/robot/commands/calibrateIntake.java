@@ -34,7 +34,7 @@ public class calibrateIntake extends Command {
       System.out.println("shooter " + interrupted);
     }
     intake.setZeroPoint(0);
-    intake.setAngle(0);
+    intake.setOpenLoop(0);
   }
 
   // Returns true when the command should end.
