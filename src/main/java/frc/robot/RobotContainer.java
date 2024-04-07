@@ -288,6 +288,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("get note", new autoTargetNote(drivetrain, intake, shooter,  robotCentric));
     NamedCommands.registerCommand("auto shoot", new autoAim(shooter, drivetrain, drive, joystick, shootButton, true).andThen(shootEnding));
     NamedCommands.registerCommand("auto reverse shoot", new reverseShoot(shooter, drivetrain, drive).andThen(shootEnding));
+    NamedCommands.registerCommand("intake down", new setIntakeAngle(intake, Constants.kIntakeDownPosition));
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", this.autoChooser);

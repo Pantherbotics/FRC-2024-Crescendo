@@ -1,0 +1,49 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.0963668774184394,
+      "y": 3.855041223595961
+    },
+    "rotation": -58.86102756302113
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "reverse shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "get 5"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "get note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "shoot bottom"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "reverse shoot"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
