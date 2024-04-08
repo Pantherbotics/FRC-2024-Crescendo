@@ -83,6 +83,6 @@ public class autoTargetNote extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return intake.hasNote();
+    return intake.hasNote() || Vision.noteA < 0.01;
   }
 }
