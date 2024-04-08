@@ -46,7 +46,7 @@ public class RobotContainer {
 
 
   //states (very scuffed)
-  public static boolean manualShooting = true;
+  public static boolean manualShooting = false;
 
   // buttons and triggers
   private Trigger intakeButton = joystick.leftBumper().or(second.leftBumper()).and(()->!shooter.hasNote());//.and(()->!intake.hasNote());//.and(()->!shooter.hasNote());
@@ -57,13 +57,7 @@ public class RobotContainer {
   private Trigger tacoBell = joystick.povDown();
   private Trigger cancelButton = joystick.povUp().or(second.x());
 
-  private Command shootEnding = new SequentialCommandGroup(
-          new setShooterIntakeSpeed(shooter, -1),
-          new WaitUntilCommand(()->!shooter.hasNote()),
-          new WaitCommand(0.5),
-          new setShooterSpeed(shooter, 0),
-          new setShooterIntakeSpeed(shooter, 0)
-        );
+
 
 
   //swerve settings
@@ -81,10 +75,17 @@ public class RobotContainer {
   //logger
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
-
+  public static Command shootEnding = new SequentialCommandGroup(
+      new setShooterIntakeSpeed(shooter, -1),
+      new WaitUntilCommand(()->!shooter.hasNote()),
+      new WaitCommand(0.5),
+      new setShooterSpeed(shooter, Constants.kShooterIdleSpeed),
+      new setShooterIntakeSpeed(shooter, 0)
+    );
 
   private void configureBindings() {
 
+    
     // setup swerve
     drivetrain.setDefaultCommand(
       drivetrain.applyRequest(
@@ -95,7 +96,7 @@ public class RobotContainer {
       ).ignoringDisable(true));
 
     if (Constants.isRedAllience) { 
-      drivetrain.setOperatorPerspectiveForward(Rotation2d.fromDegrees(180));//180));
+      drivetrain.setOperatorPerspectiveForward(Rotation2d.fromDegrees(0));//180));
     } else {
       drivetrain.setOperatorPerspectiveForward(Rotation2d.fromDegrees(0));
     }
@@ -122,16 +123,32 @@ public class RobotContainer {
 
     // shoot and auto aim speaker
     second.povLeft().onTrue(
-      new reverseShoot(shooter, drivetrain, drive).andThen(shootEnding)
+      new reverseShoot(shooter, drivetrain, drive).andThen( 
+      new SequentialCommandGroup(
+        new setShooterIntakeSpeed(shooter, -1),
+        new WaitUntilCommand(()->!shooter.hasNote()),
+        new WaitCommand(0.5),
+        new setShooterSpeed(shooter, Constants.kShooterIdleSpeed),
+        new setShooterIntakeSpeed(shooter, 0)
+      ))
     );
 
     shootButton.onTrue(
       new ConditionalCommand(
         new shootNote(shooter, intake, joystick, shootButton),
-        new autoAim(shooter, drivetrain, drive, joystick, shootButton, false).asProxy().andThen(shootEnding),
+        new autoAim(shooter, drivetrain, drive, joystick, shootButton, true).andThen(
+          new SequentialCommandGroup(
+            new setShooterIntakeSpeed(shooter, -1),
+            new WaitUntilCommand(()->!shooter.hasNote()),
+            new WaitCommand(0.5),
+            new setShooterSpeed(shooter, Constants.kShooterIdleSpeed),
+            new setShooterIntakeSpeed(shooter, 0)
+          )
+          ),
         ()->manualShooting
       )
     );
+
 
 
     // prepare and score amp
@@ -286,8 +303,23 @@ public class RobotContainer {
   public void setupPathPlanner(){
 
     NamedCommands.registerCommand("get note", new autoTargetNote(drivetrain, intake, shooter,  robotCentric).withTimeout(5));
-    NamedCommands.registerCommand("auto shoot", new autoAim(shooter, drivetrain, drive, joystick, shootButton, true).andThen(shootEnding));
-    NamedCommands.registerCommand("auto reverse shoot", new reverseShoot(shooter, drivetrain, drive).andThen(shootEnding));
+    NamedCommands.registerCommand("auto shoot", new autoAim(shooter, drivetrain, drive, joystick, shootButton, true).andThen( 
+      new SequentialCommandGroup(
+        new setShooterIntakeSpeed(shooter, -1),
+        new WaitUntilCommand(()->!shooter.hasNote()),
+        new WaitCommand(0.5),
+        new setShooterSpeed(shooter, Constants.kShooterIdleSpeed),
+        new setShooterIntakeSpeed(shooter, 0)
+      ))
+      );
+    NamedCommands.registerCommand("auto reverse shoot", new reverseShoot(shooter, drivetrain, drive).andThen( 
+      new SequentialCommandGroup(
+        new setShooterIntakeSpeed(shooter, -1),
+        new WaitUntilCommand(()->!shooter.hasNote()),
+        new WaitCommand(0.5),
+        new setShooterSpeed(shooter, Constants.kShooterIdleSpeed),
+        new setShooterIntakeSpeed(shooter, 0)
+      )));
     NamedCommands.registerCommand("intake down", new setIntakeAngle(intake, Constants.kIntakeDownPosition));
 
     autoChooser = AutoBuilder.buildAutoChooser();

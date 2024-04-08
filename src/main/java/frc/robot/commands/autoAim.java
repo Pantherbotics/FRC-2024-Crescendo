@@ -61,21 +61,21 @@ public class autoAim extends Command {
 
     double shooterDistance = Math.hypot(shooterPose.getX() - Constants.kSpeakerPose.getX(), shooterPose.getY() - Constants.kSpeakerPose.getY());
 
-    shooterAngle = -shooter.radiansToWristAngle(new Rotation2d(Units.inchesToMeters(59 + shooterDistance * 7.6), shooterDistance).getRadians());
+    shooterAngle = -shooter.radiansToWristAngle(new Rotation2d(Units.inchesToMeters(49 + shooterDistance * 5.65), shooterDistance).getRadians());
 
-    rotationToGoal = new Rotation2d(robotPose.getX() - Constants.kSpeakerPose.plus(new Transform2d(0, -0.1, new Rotation2d())).getX(), robotPose.getY() - Constants.kSpeakerPose.plus(new Transform2d(0, -0.1, new Rotation2d())).getY());
+    rotationToGoal = new Rotation2d(robotPose.getX() - Constants.kSpeakerPose.plus(new Transform2d(0, -0.2, new Rotation2d())).getX(), robotPose.getY() - Constants.kSpeakerPose.plus(new Transform2d(0, -0.2, new Rotation2d())).getY());
 
     if (!autoTrigger){
       swerve.setControl(
         fieldCentric.withVelocityX(-joystick.getLeftY() * 6)
             .withVelocityY(-joystick.getLeftX() * 6)
-            .withRotationalRate(Math.min(rotationToGoal.minus(swerve.getState().Pose.getRotation().plus(Rotation2d.fromDegrees(180))).getRadians()*3, 3))
+            .withRotationalRate(Math.min(rotationToGoal.minus(swerve.getState().Pose.getRotation().plus(Rotation2d.fromDegrees(180))).getRadians()*4, 3))
       );
     } else {
       swerve.setControl(
         fieldCentric.withVelocityX(0)
             .withVelocityY(0)
-            .withRotationalRate(Math.min(rotationToGoal.minus(swerve.getState().Pose.getRotation().plus(Rotation2d.fromDegrees(180))).getRadians()*3, 3))
+            .withRotationalRate(Math.min(rotationToGoal.minus(swerve.getState().Pose.getRotation()).plus(Rotation2d.fromDegrees(180)).getRadians()*4, 3))
       );
     }
 
@@ -97,6 +97,7 @@ public class autoAim extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (shootButton.getAsBoolean() && readyToShoot) || autoTrigger && rotationToGoal.minus(swerve.getState().Pose.getRotation()).getDegrees() < 10 && shooter.isAtGoal();
+    return (shootButton.getAsBoolean() && readyToShoot) || (autoTrigger && shooter.isAtGoal());
+
   }
 }

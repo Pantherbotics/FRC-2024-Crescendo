@@ -49,7 +49,7 @@ public class autoTargetNote extends Command {
 
     if (Vision.noteA > 0.001 && !collectedNote){
       drivetrain.setControl(   
-        robotCentric.withVelocityX(1 - Vision.noteX/20 + Vision.noteY/20) // Drive forward with negative Y (forward)
+        robotCentric.withVelocityX((1 - Vision.noteX/10) * intake.intakeAngle()/Constants.kIntakeDownPosition) // Drive forward with negative Y (forward)
             .withRotationalRate(pid.calculate(Vision.noteX, 0))            
             .withRotationalDeadband(0)
       );
@@ -83,6 +83,6 @@ public class autoTargetNote extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return intake.hasNote() || Vision.noteA < 0.01;
+    return intake.hasNote();
   }
 }

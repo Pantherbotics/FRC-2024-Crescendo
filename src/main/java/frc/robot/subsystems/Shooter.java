@@ -67,12 +67,12 @@ public class Shooter extends SubsystemBase {
     );
     
     this.controller.setGoal(0);
-    this.controller.setTolerance(0.5);
+    this.controller.setTolerance(1);
   }
 
 
   public void setShooterFlywheelSpeed(double speed){
-    leftShooterWheel.set(-speed*0.4);
+    leftShooterWheel.set(-speed*0.35);
     rightShooterWheel.set(speed);
   }
 

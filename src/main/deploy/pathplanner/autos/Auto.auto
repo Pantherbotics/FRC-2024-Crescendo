@@ -20,19 +20,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "get 5"
+            "pathName": "get C"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "get note"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "shoot bottom"
           }
         },
         {

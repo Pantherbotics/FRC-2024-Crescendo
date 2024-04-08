@@ -47,7 +47,7 @@ public class intakeHandoff extends SequentialCommandGroup {
         intake.setZero(),
         new setIntakeAngle(intake, Constants.kIntakeHandoffPosition)
       ),
-
+      new setIntakeAngle(intake, 0.5),
       new WaitUntilCommand(shooter::isAtGoal),
       new setShooterIntakeSpeed(shooter, Constants.kShooterIntakeSpeed),
       new setIntakeSpeed(intake, Constants.kIntakeHandoffSpeed),
