@@ -50,19 +50,19 @@ public class reverseShoot extends Command {
     Pose2d shooterPose = robotPose.plus(new Transform2d(Units.inchesToMeters(13), 0.0, new Rotation2d(0)));
     double shooterDistance = Math.hypot(shooterPose.getX() - Constants.kSpeakerPose.getX(), shooterPose.getY() - Constants.kSpeakerPose.getY());
 
-    shooterAngle = shooter.radiansToWristAngle(new Rotation2d(Units.inchesToMeters(59 + shooterDistance * 7.6), shooterDistance).getRadians());
-
+    shooterAngle = shooter.radiansToWristAngle(new Rotation2d(Units.inchesToMeters(63 + Math.pow((shooterDistance * 0.41),2)*16.4 ), shooterDistance).getRadians());
+    // 60 + distance * 9.5
     rotationToGoal = new Rotation2d(robotPose.getX() - Constants.kSpeakerPose.plus(new Transform2d(0, -0.1, new Rotation2d())).getX(), robotPose.getY() - Constants.kSpeakerPose.plus(new Transform2d(0, -0.1, new Rotation2d())).getY()).plus(Rotation2d.fromDegrees(180));
 
     swerve.setControl(   
       fieldCentric.withVelocityX(0)
           .withVelocityY(0)
-          .withRotationalRate(Math.min(rotationToGoal.minus(swerve.getState().Pose.getRotation().plus(Rotation2d.fromDegrees(180))).getRadians()*3, 3))
+          .withRotationalRate(Math.min(rotationToGoal.minus(swerve.getState().Pose.getRotation().plus(Rotation2d.fromDegrees(180))).getRadians()*5, 3))
     );
 
     shooter.setWristAngle(shooterAngle);
 
-    readyToShoot = rotationToGoal.minus(swerve.getState().Pose.getRotation().plus(Rotation2d.fromDegrees(180))).getDegrees() < 13 && shooter.isAtGoal();
+    readyToShoot = rotationToGoal.minus(swerve.getState().Pose.getRotation().plus(Rotation2d.fromDegrees(180))).getDegrees() < 13 && shooter.controller.atSetpoint() && shooter.rightShooterWheel.getVelocity().getValueAsDouble() > 101;
   }
 
   // Called once the command ends or is interrupted.

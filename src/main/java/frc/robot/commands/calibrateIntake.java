@@ -30,9 +30,6 @@ public class calibrateIntake extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if (interrupted){
-      System.out.println("shooter " + interrupted);
-    }
     intake.setZeroPoint(0);
     intake.setOpenLoop(0);
   }

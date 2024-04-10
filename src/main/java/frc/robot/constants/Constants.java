@@ -36,14 +36,14 @@ public class Constants {
     public static final int kShooterEncoderID = 2;
     public static final int kShooterSideSensorID = 2;
     public static final int kShooterTopSensorID = 0;
-    public static final double kShooterSideSensorTreshold = 600.0;
+    public static final double kShooterSideSensorTreshold = 800.0;
     public static final double kShooterTopSensorThreshold = 1950.0;
 
     public static final int kwristID = 30; //
     public static final double kShooterRatio = (20 / 1) * (38.0 / 16.0);
     public static final double kShooterEncoderOffset = -11;
 
-    public static final double kShooterHandoffPosition = -2.7; //
+    public static final double kShooterHandoffPosition = -2.85; //
     public static final double kShooterAmpPosition = 6.7; // not tuned yet
     public static final double kShooterSpeakerAngle = -4.4;
     public static final double kReverseShootAngle = 5;
@@ -110,7 +110,7 @@ public class Constants {
     }
 
     public static final PathConstraints kPathfindingConstraints = new PathConstraints(
-            1.75, 1.5,
+            2, 1.75,
             Units.degreesToRadians(180), Units.degreesToRadians(180));
 
 }

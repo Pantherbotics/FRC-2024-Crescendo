@@ -115,7 +115,7 @@ public class RobotContainer {
     intakeButton.onTrue(
       new ConditionalCommand(    
         new intakeHandoff(shooter, intake),
-        new autoTargetNote(drivetrain, intake, shooter, robotCentric).asProxy(), 
+        new autoTargetNote(drivetrain, intake, shooter, robotCentric, true).asProxy(), 
         ()->manualShooting || intake.hasNote()
       )
     );
@@ -142,9 +142,10 @@ public class RobotContainer {
             new WaitUntilCommand(()->!shooter.hasNote()),
             new WaitCommand(0.5),
             new setShooterSpeed(shooter, Constants.kShooterIdleSpeed),
-            new setShooterIntakeSpeed(shooter, 0)
+            new setShooterIntakeSpeed(shooter, 0),
+            new setShooterAngle(shooter, Constants.kIntakeHandoffPosition)
           )
-          ),
+          ).asProxy(),
         ()->manualShooting
       )
     );
@@ -174,6 +175,8 @@ public class RobotContainer {
             new SequentialCommandGroup(
               new WaitCommand(0.5),
               new InstantCommand(()->shooter.setWristOpenLoop(0.1)),
+              new WaitCommand(0.5),
+              new InstantCommand(()->shooter.setWristOpenLoop(-0.1)),
               new WaitCommand(1)
             ),
             new WaitUntilCommand(()->!shooter.hasNote())
@@ -302,7 +305,7 @@ public class RobotContainer {
   // SETUP PATHPLANNER
   public void setupPathPlanner(){
 
-    NamedCommands.registerCommand("get note", new autoTargetNote(drivetrain, intake, shooter,  robotCentric).withTimeout(5));
+    NamedCommands.registerCommand("get note", new autoTargetNote(drivetrain, intake, shooter,  robotCentric, false).withTimeout(5));
     NamedCommands.registerCommand("auto shoot", new autoAim(shooter, drivetrain, drive, joystick, shootButton, true).andThen( 
       new SequentialCommandGroup(
         new setShooterIntakeSpeed(shooter, -1),
@@ -321,6 +324,7 @@ public class RobotContainer {
         new setShooterIntakeSpeed(shooter, 0)
       )));
     NamedCommands.registerCommand("intake down", new setIntakeAngle(intake, Constants.kIntakeDownPosition));
+    NamedCommands.registerCommand("handoff", new intakeHandoff(shooter, intake));
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", this.autoChooser);

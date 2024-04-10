@@ -24,7 +24,7 @@ import frc.robot.constants.Constants;
 
 public class Shooter extends SubsystemBase {
 
-  TalonFX rightShooterWheel = new TalonFX(Constants.kRightShooterID);
+  public TalonFX rightShooterWheel = new TalonFX(Constants.kRightShooterID);
   TalonFX leftShooterWheel = new TalonFX(Constants.kLeftShooterID);
 
   public TalonFX wrist = new TalonFX(Constants.kwristID);
@@ -37,7 +37,7 @@ public class Shooter extends SubsystemBase {
   AnalogInput topSensor = new AnalogInput(Constants.kShooterTopSensorID);
   double lastSpeed;
   double lastTime;
-  ProfiledPIDController controller;
+  public ProfiledPIDController controller;
   SimpleMotorFeedforward feedforward;
   boolean openLoop = false;
 
@@ -62,12 +62,12 @@ public class Shooter extends SubsystemBase {
     feedforward = new SimpleMotorFeedforward(0, 0, 0);
 
     this.controller = new ProfiledPIDController(
-      0.65, 0, 0.001,
-      new TrapezoidProfile.Constraints(13, 30)
+      0.8, 0.001, 0.001,
+      new TrapezoidProfile.Constraints(20, 40)
     );
     
     this.controller.setGoal(0);
-    this.controller.setTolerance(1);
+    controller.setTolerance(0.4);
   }
 
 
@@ -78,8 +78,7 @@ public class Shooter extends SubsystemBase {
 
   public void setIntakeSpeed(double speed){
     leftShooterIntake.set(-speed);
-    rightShooterIntake.set(
-      speed);
+    rightShooterIntake.set(speed);
   }
 
   public void setWristAngle(double position){
@@ -115,6 +114,7 @@ public class Shooter extends SubsystemBase {
   public boolean noteInPosition(){
     return(topSensor.getAverageValue() < 2400 && topSensor.getAverageValue() > 1700);
   }
+
 
 
   public void setZero(double position){

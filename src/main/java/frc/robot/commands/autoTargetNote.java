@@ -25,12 +25,14 @@ public class autoTargetNote extends Command {
   private SwerveRequest.RobotCentric robotCentric;
   private PIDController pid  = new PIDController(.1, 0, 0.006);
   private boolean collectedNote;
+  private boolean handoffAtEnd;
 
-  public autoTargetNote(CommandSwerveDrivetrain drivetrain, Intake intake, Shooter shooter, SwerveRequest.RobotCentric robotCentric ) {
+  public autoTargetNote(CommandSwerveDrivetrain drivetrain, Intake intake, Shooter shooter, SwerveRequest.RobotCentric robotCentric, boolean handoffAtEnd) {
     this.drivetrain = drivetrain;
     this.intake = intake;
     this.robotCentric = robotCentric;
     this.shooter = shooter;
+    this.handoffAtEnd = handoffAtEnd;
     addRequirements(drivetrain, intake, shooter);
   }
 
@@ -69,13 +71,20 @@ public class autoTargetNote extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if(!interrupted){
+    if(handoffAtEnd){
       CommandScheduler.getInstance().schedule(
         new SequentialCommandGroup(
           new WaitCommand(0.1),
           new setIntakeSpeed(intake, 0),
           new intakeHandoff(shooter, intake)
         )
+      );
+    } else {
+      intake.setSpeed(-0.01);
+      drivetrain.setControl(
+      robotCentric.withVelocityX(0)
+            .withRotationalRate(0)            
+            .withRotationalDeadband(0)
       );
     }
 }

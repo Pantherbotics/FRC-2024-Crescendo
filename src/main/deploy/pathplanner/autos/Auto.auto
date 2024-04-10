@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.0963668774184394,
-      "y": 3.855041223595961
+      "x": 1.454549670868242,
+      "y": 5.515804013063089
     },
-    "rotation": -58.86102756302113
+    "rotation": 0.0
   },
   "command": {
     "type": "sequential",
@@ -14,13 +14,13 @@
         {
           "type": "named",
           "data": {
-            "name": "reverse shoot"
+            "name": "auto reverse shoot"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "get C"
+            "pathName": "get A"
           }
         },
         {
@@ -30,9 +30,28 @@
           }
         },
         {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "shoot bottom"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "handoff"
+                }
+              }
+            ]
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "reverse shoot"
+            "name": "auto reverse shoot"
           }
         }
       ]

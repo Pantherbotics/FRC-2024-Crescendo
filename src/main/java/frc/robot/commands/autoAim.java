@@ -31,7 +31,7 @@ public class autoAim extends Command {
   private boolean autoTrigger;
   boolean readyToShoot = false;
   boolean finished = false;
-
+  boolean triggerReady = false;
   public autoAim(Shooter shooter, CommandSwerveDrivetrain swerve, SwerveRequest.FieldCentric fieldCentric, CommandXboxController joystick, Trigger shootButton, boolean autoTrigger) {
     this.shooter = shooter;
     this.autoTrigger = autoTrigger;
@@ -61,9 +61,9 @@ public class autoAim extends Command {
 
     double shooterDistance = Math.hypot(shooterPose.getX() - Constants.kSpeakerPose.getX(), shooterPose.getY() - Constants.kSpeakerPose.getY());
 
-    shooterAngle = -shooter.radiansToWristAngle(new Rotation2d(Units.inchesToMeters(49 + shooterDistance * 5.65), shooterDistance).getRadians());
+    shooterAngle = -shooter.radiansToWristAngle(new Rotation2d(Units.inchesToMeters(40 + shooterDistance * 10), shooterDistance).getRadians());
 
-    rotationToGoal = new Rotation2d(robotPose.getX() - Constants.kSpeakerPose.plus(new Transform2d(0, -0.2, new Rotation2d())).getX(), robotPose.getY() - Constants.kSpeakerPose.plus(new Transform2d(0, -0.2, new Rotation2d())).getY());
+    rotationToGoal = new Rotation2d(robotPose.getX() - Constants.kSpeakerPose.plus(new Transform2d(0, -0.1, new Rotation2d())).getX(), robotPose.getY() - Constants.kSpeakerPose.plus(new Transform2d(0, -0.1, new Rotation2d())).getY());
 
     if (!autoTrigger){
       swerve.setControl(
@@ -86,7 +86,8 @@ public class autoAim extends Command {
     SmartDashboard.putNumber("target rotation", rotationToGoal.getDegrees());
     SmartDashboard.putNumber("shooter target angle", shooterAngle);
 
-
+    triggerReady = shooter.controller.atSetpoint() && shooter.rightShooterWheel.getVelocity().getValueAsDouble() > 101;
+    
   }
 
   // Called once the command ends or is interrupted.
@@ -97,7 +98,8 @@ public class autoAim extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (shootButton.getAsBoolean() && readyToShoot) || (autoTrigger && shooter.isAtGoal());
+    return (shootButton.getAsBoolean() && readyToShoot) || (autoTrigger && triggerReady);
+
 
   }
 }
