@@ -5,6 +5,8 @@
 package frc.robot;
 
 
+import com.ctre.phoenix6.SignalLogger;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -34,7 +36,7 @@ public class Robot extends TimedRobot {
     m_robotContainer.drivetrain.getDaqThread().setThreadPriority(99);
 
     Constants.resetField();
-
+    SignalLogger.enableAutoLogging(false);
   }
   @Override
   public void robotPeriodic() {

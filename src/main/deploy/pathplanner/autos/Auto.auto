@@ -18,58 +18,9 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "intake down"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "get A"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "get note"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "handoff"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "shoot top"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "auto reverse shoot"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "get 1"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "get note"
           }
         }
       ]
