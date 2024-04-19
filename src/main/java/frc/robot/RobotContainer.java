@@ -11,8 +11,12 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -20,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -36,7 +41,7 @@ public class RobotContainer {
   // Instantiate subsystems
   public static final Intake intake = new Intake();
   public static final Shooter shooter = new Shooter();
-  Constants constants = new Constants();
+
   public static final Climber climber = new Climber();
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain;
 
@@ -49,7 +54,7 @@ public class RobotContainer {
   public static boolean manualShooting = false;
 
   // buttons and triggers
-  private Trigger intakeButton = joystick.leftBumper().or(second.leftBumper()).and(()->!shooter.hasNote());//.and(()->!intake.hasNote());//.and(()->!shooter.hasNote());
+  private Trigger intakeButton = joystick.leftBumper().and(()->!shooter.hasNote());//.and(()->!intake.hasNote());//.and(()->!shooter.hasNote());
   private Trigger ampButton = joystick.x();//joystick.leftBumper().and(shooter::hasNote).and(joystick.rightBumper().negate());
   private Trigger climbButton = second.y();
   private Trigger shootButton = joystick.rightBumper().and(shooter::hasNote);
@@ -95,8 +100,8 @@ public class RobotContainer {
         .withCenterOfRotation(new Translation2d(Math.round(-joystick.getRightY())*0.75, 0))
       ).ignoringDisable(true));
 
-    if (Constants.isRedAllience) { 
-      drivetrain.setOperatorPerspectiveForward(Rotation2d.fromDegrees(0));//180));
+    if (DriverStation.getAlliance().get() == Alliance.Red) { 
+      drivetrain.setOperatorPerspectiveForward(Rotation2d.fromDegrees(180));
     } else {
       drivetrain.setOperatorPerspectiveForward(Rotation2d.fromDegrees(0));
     }
@@ -136,7 +141,7 @@ public class RobotContainer {
     shootButton.onTrue(
       new ConditionalCommand(
         new shootNote(shooter, intake, joystick, shootButton),
-        new autoAim(shooter, drivetrain, drive, joystick, shootButton, true).andThen(
+        new autoAim(shooter, drivetrain, drive, joystick, shootButton, false).andThen(
           new SequentialCommandGroup(
             new setShooterIntakeSpeed(shooter, -1),
             new WaitUntilCommand(()->!shooter.hasNote()),
@@ -145,15 +150,20 @@ public class RobotContainer {
             new setShooterIntakeSpeed(shooter, 0),
             new setShooterAngle(shooter, Constants.kIntakeHandoffPosition)
           )
-          ).asProxy(),
+          ),
         ()->manualShooting
       )
+    );
+
+    joystick.a().onTrue(
+      new InstantCommand(()->drivetrain.seedFieldRelative(new Pose2d(drivetrain.getState().Pose.getTranslation(), Rotation2d.fromDegrees(DriverStation.getAlliance().get() == Alliance.Red?180:0))))
     );
 
 
 
     // prepare and score amp
     ampButton.onTrue(
+      new scoreAmp(shooter, intake, ampButton)/*
       new ConditionalCommand(
 
         new scoreAmp(shooter, intake, ampButton),
@@ -185,7 +195,7 @@ public class RobotContainer {
           new setShooterIntakeSpeed(shooter, 0),
           new setShooterAngle(shooter, Constants.kShooterHandoffPosition)
         ),
-        ()->manualShooting)
+        ()->manualShooting)*/
 
     );
 
@@ -308,6 +318,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("get note", new autoTargetNote(drivetrain, intake, shooter,  robotCentric, false).withTimeout(5));
     NamedCommands.registerCommand("auto shoot", new autoAim(shooter, drivetrain, drive, joystick, shootButton, true).andThen( 
       new SequentialCommandGroup(
+        new WaitCommand(0.5),
         new setShooterIntakeSpeed(shooter, -1),
         new WaitUntilCommand(()->!shooter.hasNote()),
         new WaitCommand(0.5),
@@ -317,6 +328,7 @@ public class RobotContainer {
       );
     NamedCommands.registerCommand("auto reverse shoot", new reverseShoot(shooter, drivetrain, drive).andThen( 
       new SequentialCommandGroup(
+        new WaitCommand(0.5),
         new setShooterIntakeSpeed(shooter, -1),
         new WaitUntilCommand(()->!shooter.hasNote()),
         new WaitCommand(0.5),

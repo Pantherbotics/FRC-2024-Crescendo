@@ -61,21 +61,22 @@ public class autoAim extends Command {
 
     double shooterDistance = Math.hypot(shooterPose.getX() - Constants.kSpeakerPose.getX(), shooterPose.getY() - Constants.kSpeakerPose.getY());
 
-    shooterAngle = -shooter.radiansToWristAngle(new Rotation2d(Units.inchesToMeters(40 + shooterDistance * 10), shooterDistance).getRadians());
+    shooterAngle = -shooter.radiansToWristAngle(new Rotation2d(Units.inchesToMeters(38 + shooterDistance * 8), shooterDistance).getRadians());
 
     rotationToGoal = new Rotation2d(robotPose.getX() - Constants.kSpeakerPose.plus(new Transform2d(0, -0.1, new Rotation2d())).getX(), robotPose.getY() - Constants.kSpeakerPose.plus(new Transform2d(0, -0.1, new Rotation2d())).getY());
 
+    Rotation2d rotationDifference = rotationToGoal.minus(swerve.getState().Pose.getRotation().plus(Rotation2d.fromDegrees(180)));
     if (!autoTrigger){
       swerve.setControl(
         fieldCentric.withVelocityX(-joystick.getLeftY() * 6)
             .withVelocityY(-joystick.getLeftX() * 6)
-            .withRotationalRate(Math.min(rotationToGoal.minus(swerve.getState().Pose.getRotation().plus(Rotation2d.fromDegrees(180))).getRadians()*4, 3))
+            .withRotationalRate(Math.min(rotationDifference.getRadians()*4, 3))
       );
     } else {
       swerve.setControl(
         fieldCentric.withVelocityX(0)
             .withVelocityY(0)
-            .withRotationalRate(Math.min(rotationToGoal.minus(swerve.getState().Pose.getRotation()).plus(Rotation2d.fromDegrees(180)).getRadians()*4, 3))
+            .withRotationalRate(Math.min(rotationDifference.getRadians()*4, 3))
       );
     }
 
@@ -86,7 +87,7 @@ public class autoAim extends Command {
     SmartDashboard.putNumber("target rotation", rotationToGoal.getDegrees());
     SmartDashboard.putNumber("shooter target angle", shooterAngle);
 
-    triggerReady = shooter.controller.atSetpoint() && shooter.rightShooterWheel.getVelocity().getValueAsDouble() > 101;
+    triggerReady = shooter.controller.atSetpoint() && shooter.rightShooterWheel.getVelocity().getValueAsDouble() > 101 && Math.abs(rotationDifference.getDegrees()) < 5; // check this
     
   }
 

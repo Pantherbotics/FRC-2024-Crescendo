@@ -51,13 +51,13 @@ public class autoTargetNote extends Command {
 
     if (Vision.noteA > 0.001 && !collectedNote){
       drivetrain.setControl(   
-        robotCentric.withVelocityX((1 - Vision.noteX/10) * intake.intakeAngle()/Constants.kIntakeDownPosition) // Drive forward with negative Y (forward)
+        robotCentric.withVelocityX((1 - Math.abs(Vision.noteX/15)) * intake.intakeAngle()/Constants.kIntakeDownPosition) // Drive forward with negative Y (forward)
             .withRotationalRate(pid.calculate(Vision.noteX, 0))            
             .withRotationalDeadband(0)
       );
     }
 
-    if (Vision.noteY < 0 && Math.abs(Vision.noteX) < 3 && !collectedNote) {
+    if (Vision.noteY < -1.5 && Math.abs(Vision.noteX) < 3 && !collectedNote) {
       collectedNote = true;
       drivetrain.setControl(
         robotCentric.withVelocityX(0.5)

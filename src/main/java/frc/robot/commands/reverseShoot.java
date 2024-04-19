@@ -16,7 +16,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Shooter;
 
 public class reverseShoot extends Command {
-  /** Creates a new reverseShoot. */
+  /* Creates a new reverseShoot. */
 
     private final Shooter shooter;
   private final CommandSwerveDrivetrain swerve;
@@ -50,7 +50,7 @@ public class reverseShoot extends Command {
     Pose2d shooterPose = robotPose.plus(new Transform2d(Units.inchesToMeters(13), 0.0, new Rotation2d(0)));
     double shooterDistance = Math.hypot(shooterPose.getX() - Constants.kSpeakerPose.getX(), shooterPose.getY() - Constants.kSpeakerPose.getY());
 
-    shooterAngle = shooter.radiansToWristAngle(new Rotation2d(Units.inchesToMeters(63 + Math.pow((shooterDistance * 0.41),2)*16.4 ), shooterDistance).getRadians());
+    shooterAngle = shooter.radiansToWristAngle(new Rotation2d(Units.inchesToMeters(60 + shooterDistance * 13/*63 + Math.pow((shooterDistance * 0.41),2)*16.4 */), shooterDistance).getRadians());
     // 60 + distance * 9.5
     rotationToGoal = new Rotation2d(robotPose.getX() - Constants.kSpeakerPose.plus(new Transform2d(0, -0.1, new Rotation2d())).getX(), robotPose.getY() - Constants.kSpeakerPose.plus(new Transform2d(0, -0.1, new Rotation2d())).getY()).plus(Rotation2d.fromDegrees(180));
 

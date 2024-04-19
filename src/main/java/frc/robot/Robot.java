@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.calibrateIntake;
 import frc.robot.commands.cancelAll;
+import frc.robot.constants.Constants;
 
 
 
@@ -32,6 +33,8 @@ public class Robot extends TimedRobot {
 
     m_robotContainer.drivetrain.getDaqThread().setThreadPriority(99);
 
+    Constants.resetField();
+
   }
   @Override
   public void robotPeriodic() {
@@ -51,6 +54,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    Constants.resetField();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     if (m_autonomousCommand != null) {
@@ -71,7 +75,7 @@ public class Robot extends TimedRobot {
   
   @Override
   public void teleopInit() {
-
+    Constants.resetField();
     CommandScheduler.getInstance().cancelAll();
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
@@ -89,6 +93,7 @@ public class Robot extends TimedRobot {
   boolean climbTime = false;
   @Override
   public void teleopPeriodic() {
+    
     SmartDashboard.putNumber("max speed", RobotContainer.MaxSpeed);
     SmartDashboard.putBoolean("manual aiming", RobotContainer.manualShooting);
   }

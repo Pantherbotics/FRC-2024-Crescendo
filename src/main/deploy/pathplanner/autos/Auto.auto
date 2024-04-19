@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.454549670868242,
-      "y": 5.515804013063089
+      "x": 0.8104536608502588,
+      "y": 6.745441850370149
     },
-    "rotation": 0.0
+    "rotation": 60.524110996754224
   },
   "command": {
     "type": "sequential",
@@ -15,6 +15,12 @@
           "type": "named",
           "data": {
             "name": "auto reverse shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intake down"
           }
         },
         {
@@ -34,15 +40,15 @@
           "data": {
             "commands": [
               {
-                "type": "path",
-                "data": {
-                  "pathName": "shoot bottom"
-                }
-              },
-              {
                 "type": "named",
                 "data": {
                   "name": "handoff"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "shoot top"
                 }
               }
             ]
@@ -52,6 +58,18 @@
           "type": "named",
           "data": {
             "name": "auto reverse shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "get 1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "get note"
           }
         }
       ]
